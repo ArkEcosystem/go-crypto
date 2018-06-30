@@ -3,4 +3,16 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package "crypto"
+package crypto
+
+func Deserialise(transaction string) {
+
+}
+
+func handleType(transaction interface{}) {
+
+}
+
+func handleVersionOne(transaction interface{}) {
+
+}
