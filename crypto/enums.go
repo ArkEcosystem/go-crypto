@@ -5,18 +5,6 @@
 
 package crypto
 
-type TransactionTypes struct {
-	Transfer                    int
-	SecondSignatureRegistration int
-	DelegateRegistration        int
-	Vote                        int
-	MultiSignatureRegistration  int
-	Ipfs                        int
-	TimelockTransfer            int
-	MultiPayment                int
-	DelegateResignation         int
-}
-
 var (
 	TRANSACTION_TYPES = &TransactionTypes{
 		Transfer:                    0,

@@ -10,11 +10,6 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 )
 
-type PrivateKey struct {
-	*btcec.PrivateKey
-	PublicKey *PublicKey
-}
-
 /*
  Usage
  ===============================================================================

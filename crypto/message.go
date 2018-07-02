@@ -10,12 +10,6 @@ import (
 	"encoding/hex"
 )
 
-type Message struct {
-	PublicKey string `json:"publickey"`
-	Signature string `json:"signature"`
-	Message   string `json:"message"`
-}
-
 /*
  Usage
  ===============================================================================

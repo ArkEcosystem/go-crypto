@@ -11,12 +11,6 @@ import (
 	"golang.org/x/crypto/ripemd160"
 )
 
-type PublicKey struct {
-	*btcec.PublicKey
-	isCompressed bool
-	network      *Network
-}
-
 /*
  Usage
  ===============================================================================

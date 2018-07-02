@@ -5,14 +5,6 @@
 
 package crypto
 
-type Network struct {
-	Epoch   string
-	Version byte
-	Nethash string
-	Wif     byte
-	WifByte []byte
-}
-
 var (
 	NETWORKS_MAINNET = &Network{
 		Epoch:   "2017-03-21T13:00:00.000Z",
