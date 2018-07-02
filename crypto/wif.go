@@ -6,7 +6,7 @@
 package crypto
 
 import (
-	"./base58"
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
 /*
