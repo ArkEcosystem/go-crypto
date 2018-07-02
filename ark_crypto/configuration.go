@@ -5,18 +5,22 @@
 
 package crypto
 
-func GetFee() {
+var (
+    NetworkConfiguration = &Network{}
+)
 
+func GetNetwork() *Network {
+    return NetworkConfiguration
 }
 
-func SetFee() {
-
+func SetNetwork(network *Network) {
+    NetworkConfiguration = network
 }
 
-func GetNetwork() {
+// func GetFee() {
 
-}
+// }
 
-func SetNetwork() {
+// func SetFee() {
 
-}
+// }
