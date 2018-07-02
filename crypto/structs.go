@@ -41,23 +41,24 @@ type TransactionTypes struct {
 }
 
 type Transaction struct {
-	Version         byte              `json:"version,omitempty"`
-	Network         byte              `json:"network,omitempty"`
-	Type            byte              `json:"type,omitempty"`
-	Timestamp       uint32            `json:"timestamp,omitempty"`
-	SenderPublicKey string            `json:"senderPublicKey,omitempty"`
-	Fee             uint64            `json:"fee,omitempty"`
-	Amount          uint64            `json:"amount,omitempty"`
-	Expiration      uint32            `json:"expiration,omitempty"`
-	RecipientId     string            `json:"recipientId,omitempty"`
-	Signature       string            `json:"signature,omitempty"`
-	SecondSignature string            `json:"secondSignature,omitempty"`
-	SignSignature   string            `json:"signSignature,omitempty"`
-	VendorFieldHex  []byte            `json:"vendorFieldHex,omitempty"`
-	VendorField     string            `json:"vendorField,omitempty"`
-	Asset           map[string]string `json:"asset,omitempty"`
-	Id              string            `json:"id,omitempty"`
-	Serialized      string            `json:"serialized,omitempty"`
+	Version               byte              `json:"version,omitempty"`
+	Network               byte              `json:"network,omitempty"`
+	Type                  byte              `json:"type,omitempty"`
+	Timestamp             uint32            `json:"timestamp,omitempty"`
+	SenderPublicKey       string            `json:"senderPublicKey,omitempty"`
+	SecondSenderPublicKey string            `json:"secondSenderPublicKey,omitempty"`
+	Fee                   uint64            `json:"fee,omitempty"`
+	Amount                uint64            `json:"amount,omitempty"`
+	Expiration            uint32            `json:"expiration,omitempty"`
+	RecipientId           string            `json:"recipientId,omitempty"`
+	Signature             string            `json:"signature,omitempty"`
+	SecondSignature       string            `json:"secondSignature,omitempty"`
+	SignSignature         string            `json:"signSignature,omitempty"`
+	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
+	VendorField           string            `json:"vendorField,omitempty"`
+	Asset                 map[string]string `json:"asset,omitempty"`
+	Id                    string            `json:"id,omitempty"`
+	Serialized            string            `json:"serialized,omitempty"`
 }
 
 type Message struct {

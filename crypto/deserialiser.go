@@ -10,17 +10,19 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
-func DeserialiseTransaction(serialised string) {
+func DeserialiseTransaction(serialised string) *Transaction {
 	bytes := HexDecode(serialised)
 
-	model := &Transaction{}
-	model.Serialized = serialised
+	transaction := &Transaction{}
+	transaction.Serialized = serialised
 
-	assetOffset, model := deserialiseHeader(bytes, model)
-	model = deserialiseTypeSpecific(assetOffset, bytes, model)
-	model = deserialiseVersionOne(bytes, model)
+	assetOffset, transaction := deserialiseHeader(bytes, transaction)
+	transaction = deserialiseTypeSpecific(assetOffset, bytes, transaction)
+	transaction = deserialiseVersionOne(bytes, transaction)
 
-	spew.Dump(model)
+	spew.Dump(transaction)
+
+	return transaction
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -101,8 +103,8 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 		transaction.VendorField = ReadHex(transaction.VendorFieldHex)
 	}
 
-	if transaction.Id != "" {
-		// transaction.Id = Crypto::getId($transaction)
+	if transaction.Id == "" {
+		transaction.Id = transaction.GetId()
 	}
 
 	return transaction
@@ -121,7 +123,7 @@ func deserialiseTransfer(assetOffset int, bytes []byte, transaction *Transaction
 	recipientOffset := offset + 12
 	transaction.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
 
-	return ParseSignatures(transaction, assetOffset+(21+12)*2)
+	return transaction.ParseSignatures(assetOffset + (21+12)*2)
 }
 
 func deserialiseSecondSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
