@@ -3,12 +3,20 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package builder
+package crypto
 
-func SignAndCreateID() {
+func GetFee() {
 
 }
 
-func SecondSign() {
+func SetFee() {
+
+}
+
+func GetNetwork() {
+
+}
+
+func SetNetwork() {
 
 }

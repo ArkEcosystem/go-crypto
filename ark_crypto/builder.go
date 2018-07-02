@@ -5,10 +5,22 @@
 
 package crypto
 
-func SignMessage(message string, secret string) {
+func BuildDelegateRegistration () {
 
 }
 
-func VerifyMessage(message string, public_key string, signature string) {
+func BuildMultiSignatureRegistration () {
+
+}
+
+func BuildSecondSignatureRegistration () {
+
+}
+
+func BuildTransfer () {
+
+}
+
+func BuildVote () {
 
 }

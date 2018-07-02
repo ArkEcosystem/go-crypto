@@ -6,17 +6,68 @@
 package crypto
 
 func Serialise(transaction interface{}) {
+    // serialiseHeader(transaction)
+    // serialiseVendorField(transaction)
+    // serialiseTypeSpecific(transaction)
+    // serialiseSignatures(transaction)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GENERIC SERIALISING /////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+func serialiseHeader(bytes []byte) {
 
 }
 
-func handleType(bytes []byte) {
+func serialiseVendorField(bytes []byte) {
 
 }
 
-func handleVendorField(bytes []byte) {
+func serialiseTypeSpecific(bytes []byte) {
 
 }
 
-func handleSignatures(bytes []byte) {
+func serialiseSignatures(bytes []byte) {
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TYPE SPECIFIC SERIALISING ///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+func serialiseDelegateRegistration (bytes []byte) {
+
+}
+
+func serialiseDelegateResignation (bytes []byte) {
+
+}
+
+func serialiseIpfs (bytes []byte) {
+
+}
+
+func serialiseMultiPayment (bytes []byte) {
+
+}
+
+func serialiseMultiSignatureRegistration (bytes []byte) {
+
+}
+
+func serialiseSecondSignatureRegistration (bytes []byte) {
+
+}
+
+func serialiseTimelockTransfer (bytes []byte) {
+
+}
+
+func serialiseTransfer (bytes []byte) {
+
+}
+
+func serialiseVote (bytes []byte) {
 
 }
