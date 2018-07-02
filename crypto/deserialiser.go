@@ -7,7 +7,7 @@ package crypto
 
 import (
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
-	"github.com/davecgh/go-spew/spew"
+	// "github.com/davecgh/go-spew/spew"
 )
 
 func DeserialiseTransaction(serialised string) *Transaction {
@@ -20,7 +20,7 @@ func DeserialiseTransaction(serialised string) *Transaction {
 	transaction = deserialiseTypeSpecific(assetOffset, bytes, transaction)
 	transaction = deserialiseVersionOne(bytes, transaction)
 
-	spew.Dump(transaction)
+	// spew.Dump(transaction)
 
 	return transaction
 }

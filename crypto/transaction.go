@@ -56,10 +56,9 @@ func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 			return transaction
 		}
 
-		// signatures = signatures[2:]
+		signatures = signatures[2:]
 		// transaction.Signatures = []
 
-		// spew.Dump(signatures)
 		// $moreSignatures = true;
 		// while ($moreSignatures) {
 		//     $mLength = intval(substr($signatures, 2, 2), 16);
@@ -81,7 +80,6 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 	buffer := new(bytes.Buffer)
 	binary.Write(buffer, binary.LittleEndian, transaction.Type)
 	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timestamp))
-
 	binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
 
 	if transaction.RecipientId != "" {
@@ -141,9 +139,9 @@ func (transaction *Transaction) Sign(passphrase string) {
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(true, true))
 
-	sig, err := privateKey.Sign(bytes.Sum(nil))
+	signature, err := privateKey.Sign(bytes.Sum(nil))
 	if err == nil {
-		transaction.Signature = HexEncode(sig)
+		transaction.Signature = HexEncode(signature)
 	}
 }
 
@@ -154,9 +152,9 @@ func (transaction *Transaction) SecondSign(passphrase string) {
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))
 
-	sig, err := privateKey.Sign(bytes.Sum(nil))
+	signature, err := privateKey.Sign(bytes.Sum(nil))
 	if err == nil {
-		transaction.SignSignature = HexEncode(sig)
+		transaction.SignSignature = HexEncode(signature)
 	}
 }
 
