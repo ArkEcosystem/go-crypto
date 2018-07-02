@@ -13,8 +13,8 @@ func ReadHex(data []byte) string {
 	return string(HexDecode(Hex2Byte(data)))
 }
 
-func ReadInt8(data []byte) string {
-	return Hex2Byte(data)
+func ReadInt8(data []byte) byte {
+	return data[0]
 }
 
 func ReadInt32(data []byte) uint32 {

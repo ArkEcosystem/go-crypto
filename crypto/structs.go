@@ -29,21 +29,21 @@ type PublicKey struct {
 }
 
 type TransactionTypes struct {
-	Transfer                    int
-	SecondSignatureRegistration int
-	DelegateRegistration        int
-	Vote                        int
-	MultiSignatureRegistration  int
-	Ipfs                        int
-	TimelockTransfer            int
-	MultiPayment                int
-	DelegateResignation         int
+	Transfer                    uint32
+	SecondSignatureRegistration uint32
+	DelegateRegistration        uint32
+	Vote                        uint32
+	MultiSignatureRegistration  uint32
+	Ipfs                        uint32
+	TimelockTransfer            uint32
+	MultiPayment                uint32
+	DelegateResignation         uint32
 }
 
 type Transaction struct {
-	Version         int               `json:"version,omitempty"`
-	Network         string            `json:"network,omitempty"`
-	Type            int               `json:"type,omitempty"`
+	Version         byte              `json:"version,omitempty"`
+	Network         byte              `json:"network,omitempty"`
+	Type            byte              `json:"type,omitempty"`
 	Timestamp       uint32            `json:"timestamp,omitempty"`
 	SenderPublicKey string            `json:"senderPublicKey,omitempty"`
 	Fee             uint64            `json:"fee,omitempty"`
@@ -51,6 +51,9 @@ type Transaction struct {
 	Expiration      uint32            `json:"expiration,omitempty"`
 	RecipientId     string            `json:"recipientId,omitempty"`
 	Signature       string            `json:"signature,omitempty"`
+	SecondSignature string            `json:"secondSignature,omitempty"`
+	SignSignature   string            `json:"signSignature,omitempty"`
+	VendorFieldHex  []byte            `json:"vendorFieldHex,omitempty"`
 	VendorField     string            `json:"vendorField,omitempty"`
 	Asset           map[string]string `json:"asset,omitempty"`
 	Id              string            `json:"id,omitempty"`
