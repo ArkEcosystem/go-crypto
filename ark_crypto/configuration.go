@@ -6,15 +6,15 @@
 package crypto
 
 var (
-    NetworkConfiguration = &Network{}
+	NetworkConfiguration = &Network{}
 )
 
 func GetNetwork() *Network {
-    return NetworkConfiguration
+	return NetworkConfiguration
 }
 
 func SetNetwork(network *Network) {
-    NetworkConfiguration = network
+	NetworkConfiguration = network
 }
 
 // func GetFee() {

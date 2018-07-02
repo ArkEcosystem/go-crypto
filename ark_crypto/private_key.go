@@ -6,42 +6,42 @@
 package crypto
 
 import (
-    "crypto/sha256"
-    "github.com/btcsuite/btcd/btcec"
+	"crypto/sha256"
+	"github.com/btcsuite/btcd/btcec"
 )
 
 type PrivateKey struct {
-    *btcec.PrivateKey
-    PublicKey *PublicKey
+	*btcec.PrivateKey
+	PublicKey *PublicKey
 }
 
 /*
  Usage
  ===============================================================================
- crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
- */
-func PrivateKeyFromSecret(secret string, network *Network) (*PrivateKey, error) {
-    hash := sha256.New()
-    _, err := hash.Write([]byte(secret))
+ crypto.PrivateKeyFromSecret("passphrase")
+*/
+func PrivateKeyFromSecret(secret string) (*PrivateKey, error) {
+	hash := sha256.New()
+	_, err := hash.Write([]byte(secret))
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    return PrivateKeyFromBytes(hash.Sum(nil), network), nil
+	return PrivateKeyFromBytes(hash.Sum(nil)), nil
 }
 
-func PrivateKeyFromBytes(bytes []byte, network *Network) *PrivateKey {
-    privateKey, publicKey := btcec.PrivKeyFromBytes(btcec.S256(), bytes)
+func PrivateKeyFromBytes(bytes []byte) *PrivateKey {
+	privateKey, publicKey := btcec.PrivKeyFromBytes(btcec.S256(), bytes)
 
-    return &PrivateKey{
-        PrivateKey: privateKey,
-        PublicKey: &PublicKey{
-            PublicKey:    publicKey,
-            isCompressed: true,
-            network:      network,
-        },
-    }
+	return &PrivateKey{
+		PrivateKey: privateKey,
+		PublicKey: &PublicKey{
+			PublicKey:    publicKey,
+			isCompressed: true,
+			network:      GetNetwork(),
+		},
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,17 +51,17 @@ func PrivateKeyFromBytes(bytes []byte, network *Network) *PrivateKey {
 /*
  Usage
  ===============================================================================
- privateKey, _ := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ privateKey, _ := crypto.PrivateKeyFromSecret("passphrase")
  privateKey.Address()
- */
+*/
 func (privateKey *PrivateKey) Address() (string, error) {
-    address, err := privateKey.PublicKey.Address()
+	address, err := privateKey.PublicKey.Address()
 
-    if err != nil {
-        return "", err
-    }
+	if err != nil {
+		return "", err
+	}
 
-    return address, nil
+	return address, nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,27 +69,27 @@ func (privateKey *PrivateKey) Address() (string, error) {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (privateKey *PrivateKey) Sign(hash []byte) ([]byte, error) {
-    signed, err := privateKey.PrivateKey.Sign(hash)
+	signed, err := privateKey.PrivateKey.Sign(hash)
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    return signed.Serialize(), nil
+	return signed.Serialize(), nil
 }
 
 func (publicKey *PublicKey) Verify(signature []byte, data []byte) (bool, error) {
-    parsedSignature, err := btcec.ParseSignature(signature, btcec.S256())
+	parsedSignature, err := btcec.ParseSignature(signature, btcec.S256())
 
-    if err != nil {
-        return false, err
-    }
+	if err != nil {
+		return false, err
+	}
 
-    verified := parsedSignature.Verify(data, publicKey.PublicKey)
+	verified := parsedSignature.Verify(data, publicKey.PublicKey)
 
-    if !verified {
-        return false, nil
-    }
+	if !verified {
+		return false, nil
+	}
 
-    return true, nil
+	return true, nil
 }

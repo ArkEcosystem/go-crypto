@@ -5,22 +5,22 @@
 
 package crypto
 
-func BuildDelegateRegistration () {
+func BuildDelegateRegistration() {
 
 }
 
-func BuildMultiSignatureRegistration () {
+func BuildMultiSignatureRegistration() {
 
 }
 
-func BuildSecondSignatureRegistration () {
+func BuildSecondSignatureRegistration() {
 
 }
 
-func BuildTransfer () {
+func BuildTransfer() {
 
 }
 
-func BuildVote () {
+func BuildVote() {
 
 }

@@ -6,16 +6,16 @@
 package crypto
 
 import (
-    "log"
-    "encoding/hex"
+	"encoding/hex"
+	"log"
 )
 
 func hexDecode(data string) []byte {
-    result, err := hex.DecodeString(data)
+	result, err := hex.DecodeString(data)
 
-    if err != nil {
-        log.Fatal(err.Error())
-    }
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-    return result
+	return result
 }

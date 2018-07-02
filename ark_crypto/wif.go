@@ -6,25 +6,25 @@
 package crypto
 
 import (
-    "./base58"
+	"./base58"
 )
 
 /*
  Usage
  ===============================================================================
- privateKey, _ := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ privateKey, _ := crypto.PrivateKeyFromSecret("passphrase")
  privateKey.WIF()
- */
+*/
 func (privateKey *PrivateKey) WIF() string {
-    p := privateKey.Serialize()
+	p := privateKey.Serialize()
 
-    if privateKey.PublicKey.isCompressed {
-        p = append(p, 0x1)
-    }
+	if privateKey.PublicKey.isCompressed {
+		p = append(p, 0x1)
+	}
 
-    p = append(p, 0x0)
-    copy(p[1:], p[:len(p)-1])
-    p[0] = privateKey.PublicKey.network.Wif
+	p = append(p, 0x0)
+	copy(p[1:], p[:len(p)-1])
+	p[0] = privateKey.PublicKey.network.Wif
 
-    return base58.Encode(p)
+	return base58.Encode(p)
 }

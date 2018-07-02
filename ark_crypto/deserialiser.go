@@ -6,9 +6,9 @@
 package crypto
 
 func Deserialise(transaction string) {
-    // deserialiseHeader(transaction)
-    // deserialiseTypeSpecific(transaction)
-    // deserialiseVersionOne(transaction)
+	// deserialiseHeader(transaction)
+	// deserialiseTypeSpecific(transaction)
+	// deserialiseVersionOne(transaction)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,38 +31,38 @@ func deserialiseVersionOne(transaction interface{}) {
 // TYPE SPECIFICDE SERIALISING /////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func deserialiseDelegateRegistration (bytes []byte) {
+func deserialiseDelegateRegistration(bytes []byte) {
 
 }
 
-func deserialiseDelegateResignation (bytes []byte) {
+func deserialiseDelegateResignation(bytes []byte) {
 
 }
 
-func deserialiseIpfs (bytes []byte) {
+func deserialiseIpfs(bytes []byte) {
 
 }
 
-func deserialiseMultiPayment (bytes []byte) {
+func deserialiseMultiPayment(bytes []byte) {
 
 }
 
-func deserialiseMultiSignatureRegistration (bytes []byte) {
+func deserialiseMultiSignatureRegistration(bytes []byte) {
 
 }
 
-func deserialiseSecondSignatureRegistration (bytes []byte) {
+func deserialiseSecondSignatureRegistration(bytes []byte) {
 
 }
 
-func deserialiseTimelockTransfer (bytes []byte) {
+func deserialiseTimelockTransfer(bytes []byte) {
 
 }
 
-func deserialiseTransfer (bytes []byte) {
+func deserialiseTransfer(bytes []byte) {
 
 }
 
-func deserialiseVote (bytes []byte) {
+func deserialiseVote(bytes []byte) {
 
 }
