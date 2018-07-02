@@ -7,8 +7,18 @@ package crypto
 
 import (
 	"encoding/hex"
+	"fmt"
 	"log"
+	"strings"
 )
+
+func byte2hex(data byte) string {
+	return fmt.Sprintf("%x", data)
+}
+
+func hex2byte(data []byte) string {
+	return strings.ToLower(fmt.Sprintf("%X", data))
+}
 
 func hexDecode(data string) []byte {
 	result, err := hex.DecodeString(data)

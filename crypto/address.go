@@ -43,9 +43,20 @@ func AddressToBytes(address string) ([]byte, error) {
 		return nil, err
 	}
 
-	return bytes[1:], nil
+	return bytes, nil
 }
 
+/*
+ Usage
+ ===============================================================================
+ crypto.ValidateAddress("DARiJqhogp2Lu6bxufUFQQMuMyZbxjCydN")
+*/
 func ValidateAddress(address string) (bool, error) {
-	return true, nil
+	bytes, err := AddressToBytes(address)
+
+	if err != nil {
+		return false, err
+	}
+
+	return byte2hex(GetNetwork().Version) == hex2byte(bytes[:1]), nil
 }
