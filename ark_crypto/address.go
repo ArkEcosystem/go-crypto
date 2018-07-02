@@ -9,6 +9,11 @@ import (
     "./base58"
 )
 
+/*
+ Usage
+ ===============================================================================
+ crypto.AddressFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ */
 func AddressFromSecret(secret string, network *Network) (string, error) {
     privateKey, err := PrivateKeyFromSecret(secret, network)
 
@@ -25,6 +30,12 @@ func AddressFromSecret(secret string, network *Network) (string, error) {
     return address, nil
 }
 
+/*
+ Usage
+ ===============================================================================
+ privateKey := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ crypto.AddressToBytes(privateKey.Address())
+ */
 func AddressToBytes(address string) ([]byte, error) {
     bytes, err := base58.Decode(address)
 

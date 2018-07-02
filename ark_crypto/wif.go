@@ -9,7 +9,12 @@ import (
     "./base58"
 )
 
-// Derive a WIF from the given privat key
+/*
+ Usage
+ ===============================================================================
+ privateKey, _ := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ privateKey.WIF()
+ */
 func (privateKey *PrivateKey) WIF() string {
     p := privateKey.Serialize()
 

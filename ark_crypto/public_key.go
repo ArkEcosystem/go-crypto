@@ -17,6 +17,11 @@ type PublicKey struct {
     network      *Network
 }
 
+/*
+ Usage
+ ===============================================================================
+ crypto.PublicKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ */
 func PublicKeyFromSecret(secret string, network *Network) (*PublicKey, error) {
     privateKey, err := PrivateKeyFromSecret(secret, network)
 
@@ -51,6 +56,12 @@ func PublicKeyFromBytes(bytes []byte, network *Network) (*PublicKey, error) {
 // ADDRESS COMPUTATION /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+/*
+ Usage
+ ===============================================================================
+ publicKey := crypto.PublicKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ publicKey.Address()
+ */
 func (publicKey *PublicKey) Address() (string, error) {
     ripeHashedBytes, err := publicKey.AddressBytes()
 

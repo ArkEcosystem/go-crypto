@@ -15,6 +15,22 @@ type PrivateKey struct {
     PublicKey *PublicKey
 }
 
+/*
+ Usage
+ ===============================================================================
+ crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ */
+func PrivateKeyFromSecret(secret string, network *Network) (*PrivateKey, error) {
+    hash := sha256.New()
+    _, err := hash.Write([]byte(secret))
+
+    if err != nil {
+        return nil, err
+    }
+
+    return PrivateKeyFromBytes(hash.Sum(nil), network), nil
+}
+
 func PrivateKeyFromBytes(bytes []byte, network *Network) *PrivateKey {
     privateKey, publicKey := btcec.PrivKeyFromBytes(btcec.S256(), bytes)
 
@@ -28,17 +44,16 @@ func PrivateKeyFromBytes(bytes []byte, network *Network) *PrivateKey {
     }
 }
 
-func PrivateKeyFromSecret(secret string, network *Network) (*PrivateKey, error) {
-    hash := sha256.New()
-    _, err := hash.Write([]byte(secret))
+////////////////////////////////////////////////////////////////////////////////
+// ADDRESS /////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-    if err != nil {
-        return nil, err
-    }
-
-    return PrivateKeyFromBytes(hash.Sum(nil), network), nil
-}
-
+/*
+ Usage
+ ===============================================================================
+ privateKey, _ := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ privateKey.Address()
+ */
 func (privateKey *PrivateKey) Address() (string, error) {
     address, err := privateKey.PublicKey.Address()
 

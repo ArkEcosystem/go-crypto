@@ -16,6 +16,11 @@ type Message struct {
     Message   string `json:"message"`
 }
 
+/*
+ Usage
+ ===============================================================================
+ crypto.SignMessage("Hello World", "passphrase")
+ */
 func SignMessage(message string, secret string) (*Message, error) {
     privateKey, err := PrivateKeyFromSecret(secret, NETWORKS_DEVNET)
 
@@ -43,6 +48,12 @@ func SignMessage(message string, secret string) (*Message, error) {
     }, nil
 }
 
+/*
+ Usage
+ ===============================================================================
+ message, _ := crypto.SignMessage("Hello World", "passphrase")
+ verified, _ := crypto.VerifyMessage(message)
+ */
 func VerifyMessage(message *Message) (bool, error) {
     publicKey, _ := PublicKeyFromBytes(hexDecode(message.PublicKey), NETWORKS_DEVNET)
 
