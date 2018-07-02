@@ -5,30 +5,13 @@
 
 package crypto
 
-func GetId() {
+// func GetId() {}
+// func GetTransactionBytes() {}
+// func VerifyTransaction() {}
+// func SecondVerifyTransaction() {}
+// func SignTransaction() {}
+// func SecondSignTransaction() {}
 
-}
-
-func GetTransactionBytes() {
-
-}
-
-func VerifyTransaction() {
-
-}
-
-func SecondVerifyTransaction() {
-
-}
-
-func SignTransaction() {
-
-}
-
-func SecondSignTransaction() {
-
-}
-
-func ParseSignatures() {
-
+func ParseSignatures(transaction *Transaction, startOffset int) *Transaction {
+    return transaction
 }

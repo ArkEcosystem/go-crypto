@@ -58,5 +58,5 @@ func ValidateAddress(address string) (bool, error) {
 		return false, err
 	}
 
-	return byte2hex(GetNetwork().Version) == hex2byte(bytes[:1]), nil
+	return Byte2Hex(GetNetwork().Version) == Hex2Byte(bytes[:1]), nil
 }

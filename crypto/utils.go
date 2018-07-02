@@ -12,15 +12,19 @@ import (
 	"strings"
 )
 
-func byte2hex(data byte) string {
+func Byte2Hex(data byte) string {
 	return fmt.Sprintf("%x", data)
 }
 
-func hex2byte(data []byte) string {
+func Hex2Byte(data []byte) string {
 	return strings.ToLower(fmt.Sprintf("%X", data))
 }
 
-func hexDecode(data string) []byte {
+func HexEncode(data []byte) string {
+	return hex.EncodeToString(data)
+}
+
+func HexDecode(data string) []byte {
 	result, err := hex.DecodeString(data)
 
 	if err != nil {

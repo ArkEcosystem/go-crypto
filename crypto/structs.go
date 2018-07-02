@@ -41,16 +41,14 @@ type TransactionTypes struct {
 }
 
 type Transaction struct {
-	Header          string            `json:"header,omitempty"`
-	Version         string            `json:"version,omitempty"`
+	Version         int               `json:"version,omitempty"`
 	Network         string            `json:"network,omitempty"`
-	Type            string            `json:"type,omitempty"`
+	Type            int               `json:"type,omitempty"`
 	Timestamp       uint32            `json:"timestamp,omitempty"`
 	SenderPublicKey string            `json:"senderPublicKey,omitempty"`
-	Fee             string            `json:"fee,omitempty"`
-	VendorFieldHex  string            `json:"vendorFieldHex,omitempty"`
-	Amount          int64             `json:"amount,omitempty"`
-	Expiration      int32             `json:"expiration,omitempty"`
+	Fee             uint64            `json:"fee,omitempty"`
+	Amount          uint64            `json:"amount,omitempty"`
+	Expiration      uint32            `json:"expiration,omitempty"`
 	RecipientId     string            `json:"recipientId,omitempty"`
 	Signature       string            `json:"signature,omitempty"`
 	VendorField     string            `json:"vendorField,omitempty"`

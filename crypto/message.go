@@ -7,7 +7,6 @@ package crypto
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 )
 
 /*
@@ -36,8 +35,8 @@ func SignMessage(message string, secret string) (*Message, error) {
 	}
 
 	return &Message{
-		PublicKey: hex.EncodeToString(privateKey.PublicKey.Serialise()),
-		Signature: hex.EncodeToString(signature),
+		PublicKey: HexEncode(privateKey.PublicKey.Serialise()),
+		Signature: HexEncode(signature),
 		Message:   message,
 	}, nil
 }
@@ -49,7 +48,7 @@ func SignMessage(message string, secret string) (*Message, error) {
  verified, _ := crypto.VerifyMessage(message)
 */
 func VerifyMessage(message *Message) (bool, error) {
-	publicKey, _ := PublicKeyFromBytes(hexDecode(message.PublicKey))
+	publicKey, _ := PublicKeyFromBytes(HexDecode(message.PublicKey))
 
 	hash := sha256.New()
 	_, err := hash.Write([]byte(message.Message))
@@ -58,7 +57,7 @@ func VerifyMessage(message *Message) (bool, error) {
 		return false, err
 	}
 
-	verified, _ := publicKey.Verify(hexDecode(message.Signature), hash.Sum(nil))
+	verified, _ := publicKey.Verify(HexDecode(message.Signature), hash.Sum(nil))
 
 	return verified, nil
 }
