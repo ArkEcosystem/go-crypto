@@ -5,30 +5,39 @@
 
 package crypto
 
-////////////////////////////////////////////////////////////////////////////////
-// TRANSACTION IDENTIFIERS /////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+type TransactionTypes struct {
+	Transfer                    int
+	SecondSignatureRegistration int
+	DelegateRegistration        int
+	Vote                        int
+	MultiSignatureRegistration  int
+	Ipfs                        int
+	TimelockTransfer            int
+	MultiPayment                int
+	DelegateResignation         int
+}
 
-var FEES_TRANSFER = 0
-var FEES_SECOND_SIGNATURE_REGISTRATION = 1
-var FEES_DELEGATE_REGISTRATION = 2
-var FEES_VOTE = 3
-var FEES_MULTI_SIGNATURE_REGISTRATION = 4
-var FEES_IPFS = 5
-var FEES_TIMELOCK_TRANSFER = 6
-var FEES_MULTI_PAYMENT = 7
-var FEES_DELEGATE_RESIGNATION = 8
-
-////////////////////////////////////////////////////////////////////////////////
-// TRANSACTION BASE FEES ///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-var TYPES_TRANSFER = 10000000
-var TYPES_SECOND_SIGNATURE_REGISTRATION = 500000000
-var TYPES_DELEGATE_REGISTRATION = 2500000000
-var TYPES_VOTE = 100000000
-var TYPES_MULTI_SIGNATURE_REGISTRATION = 500000000
-var TYPES_IPFS = 0
-var TYPES_TIMELOCK_TRANSFER = 0
-var TYPES_MULTI_PAYMENT = 0
-var TYPES_DELEGATE_RESIGNATION = 0
+var (
+	TRANSACTION_TYPES = &TransactionTypes{
+		Transfer:                    0,
+		SecondSignatureRegistration: 1,
+		DelegateRegistration:        2,
+		Vote:                        3,
+		MultiSignatureRegistration: 4,
+		Ipfs:                5,
+		TimelockTransfer:    6,
+		MultiPayment:        7,
+		DelegateResignation: 8,
+	}
+	TRANSACTION_FEES = &TransactionTypes{
+		Transfer:                    10000000,
+		SecondSignatureRegistration: 500000000,
+		DelegateRegistration:        2500000000,
+		Vote:                        100000000,
+		MultiSignatureRegistration: 500000000,
+		Ipfs:                0,
+		TimelockTransfer:    0,
+		MultiPayment:        0,
+		DelegateResignation: 0,
+	}
+)
