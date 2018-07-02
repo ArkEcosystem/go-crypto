@@ -5,6 +5,10 @@
 
 package crypto
 
+import (
+    "github.com/btcsuite/btcd/btcec"
+)
+
 type Network struct {
     Epoch   string
     Version byte
