@@ -10,7 +10,6 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
-	// "github.com/davecgh/go-spew/spew"
 	"log"
 	"strconv"
 )
@@ -114,12 +113,14 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 
 	switch uint32(transaction.Type) {
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
+		// FIX: no longer works, results in a wrong ID later on
 		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset.Signature.PublicKey))
 	case TRANSACTION_TYPES.DelegateRegistration:
 		usernameBytes := []byte(transaction.Asset.Delegate.Username)
 		binary.Write(buffer, binary.LittleEndian, usernameBytes)
 	case TRANSACTION_TYPES.Vote:
-		voteBytes := []byte(transaction.Asset.Votes[0]) // TODO: check if 0 index is fine
+		// FIX: no longer works, results in a wrong ID later on
+		voteBytes := []byte(transaction.Asset.Votes[0])
 		binary.Write(buffer, binary.LittleEndian, voteBytes)
 	}
 
