@@ -41,31 +41,33 @@ type TransactionTypes struct {
 }
 
 type Transaction struct {
-	Version               byte              `json:"version,omitempty"`
-	Network               byte              `json:"network,omitempty"`
-	Type                  byte              `json:"type,omitempty"`
-	Timestamp             uint32            `json:"timestamp,omitempty"`
-	SenderPublicKey       string            `json:"senderPublicKey,omitempty"`
-	SecondSenderPublicKey string            `json:"secondSenderPublicKey,omitempty"`
-	Fee                   uint64            `json:"fee,omitempty"`
 	Amount                uint64            `json:"amount,omitempty"`
-	Expiration            uint32            `json:"expiration,omitempty"`
-	RecipientId           string            `json:"recipientId,omitempty"`
-	Signature             string            `json:"signature,omitempty"`
-	SecondSignature       string            `json:"secondSignature,omitempty"`
-	SignSignature         string            `json:"signSignature,omitempty"`
-	Signatures            []string          `json:"signatures,omitempty"`
-	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
-	VendorField           string            `json:"vendorField,omitempty"`
 	Asset                 *TransactionAsset `json:"asset,omitempty"`
+	Expiration            uint32            `json:"expiration,omitempty"`
+	Fee                   uint64            `json:"fee,omitempty"`
 	Id                    string            `json:"id,omitempty"`
+	Network               byte              `json:"network,omitempty"`
+	RecipientId           string            `json:"recipientId,omitempty"`
+	SecondSenderPublicKey string            `json:"secondSenderPublicKey,omitempty"`
+	SecondSignature       string            `json:"secondSignature,omitempty"`
+	SenderPublicKey       string            `json:"senderPublicKey,omitempty"`
 	Serialized            string            `json:"serialized,omitempty"`
+	Signature             string            `json:"signature,omitempty"`
+	Signatures            []string          `json:"signatures,omitempty"`
+	SignSignature         string            `json:"signSignature,omitempty"`
+	Timelock              uint32            `json:"serialized,omitempty"`
+	TimelockType          string            `json:"serialized,omitempty"`
+	Timestamp             uint32            `json:"timestamp,omitempty"`
+	Type                  byte              `json:"type,omitempty"`
+	VendorField           string            `json:"vendorField,omitempty"`
+	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
+	Version               byte              `json:"version,omitempty"`
 }
 
 type Message struct {
+	Message   string `json:"message"`
 	PublicKey string `json:"publickey"`
 	Signature string `json:"signature"`
-	Message   string `json:"message"`
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +79,8 @@ type TransactionAsset struct {
 	Signature      *SecondSignatureRegistrationAsset
 	Delegate       *DelegateAsset
 	MultiSignature *MultiSignatureRegistrationAsset
+	Ipfs           *IpfsAsset
+	Payments       []*MultiPaymentAsset
 }
 
 type SecondSignatureRegistrationAsset struct {
@@ -91,4 +95,13 @@ type MultiSignatureRegistrationAsset struct {
 	Min       byte
 	Keysgroup []string
 	Lifetime  byte
+}
+
+type IpfsAsset struct {
+	Dag string
+}
+
+type MultiPaymentAsset struct {
+	Amount      uint64
+	RecipientId string
 }

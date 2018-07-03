@@ -201,15 +201,15 @@ func serialiseIpfs(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer
 
 func serialiseTimelockTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
 	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
-	binary.Write(buffer, binary.LittleEndian, uint8(transaction.timelocktype))
-	binary.Write(buffer, binary.LittleEndian, uint32(transaction.timelock))
+	binary.Write(buffer, binary.LittleEndian, transaction.TimelockType)
+	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timelock))
 	binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
 
 	return buffer
 }
 
 func serialiseMultiPayment(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Asset.Payments))
+	binary.Write(buffer, binary.LittleEndian, uint32(len(transaction.Asset.Payments)))
 
 	for _, element := range transaction.Asset.Payments {
 		binary.Write(buffer, binary.LittleEndian, uint64(element.Amount))
