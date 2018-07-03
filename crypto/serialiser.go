@@ -8,6 +8,7 @@ package crypto
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	// "github.com/davecgh/go-spew/spew"
 	"strings"
 )
@@ -133,14 +134,36 @@ func serialiseTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Bu
 }
 
 func serialiseSecondSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	signatureBytes := HexDecode(transaction.Asset.Signature.PublicKey)
+
+	binary.Write(buffer, binary.LittleEndian, signatureBytes)
+
 	return buffer
 }
 
 func serialiseDelegateRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	delegateBytes := []byte(transaction.Asset.Delegate.Username)
+
+	binary.Write(buffer, binary.LittleEndian, uint8(len(delegateBytes)))
+	binary.Write(buffer, binary.LittleEndian, delegateBytes)
+
 	return buffer
 }
 
 func serialiseVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	voteBytes := make([]string, len(transaction.Asset.Votes))
+
+	for _, element := range transaction.Asset.Votes {
+		if element[:1] == "+" {
+			voteBytes = append(voteBytes, fmt.Sprintf("%s%s", "01", element[1:]))
+		} else {
+			voteBytes = append(voteBytes, fmt.Sprintf("%s%s", "00", element[1:]))
+		}
+	}
+
+	binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.Votes)))
+	binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(voteBytes, "")))
+
 	return buffer
 }
 
