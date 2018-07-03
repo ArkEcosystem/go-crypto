@@ -6,15 +6,19 @@
 package crypto
 
 var (
-	NetworkConfiguration = &Network{}
+	CONFIG_NETWORK = &Network{}
 )
 
 func GetNetwork() *Network {
-	return NetworkConfiguration
+	if CONFIG_NETWORK.Nethash == "" {
+		return NETWORKS_DEVNET
+	}
+
+	return CONFIG_NETWORK
 }
 
 func SetNetwork(network *Network) {
-	NetworkConfiguration = network
+	CONFIG_NETWORK = network
 }
 
 // func GetFee() {

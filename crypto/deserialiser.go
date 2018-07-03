@@ -49,26 +49,24 @@ func deserialiseHeader(bytes []byte, transaction *Transaction) (int, *Transactio
 }
 
 func deserialiseTypeSpecific(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
-	transactionType := uint32(transaction.Type)
-
 	switch {
-	case transactionType == TRANSACTION_TYPES.Transfer:
+	case transaction.Type == TRANSACTION_TYPES.Transfer:
 		transaction = deserialiseTransfer(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.SecondSignatureRegistration:
+	case transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration:
 		transaction = deserialiseSecondSignatureRegistration(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.DelegateRegistration:
+	case transaction.Type == TRANSACTION_TYPES.DelegateRegistration:
 		transaction = deserialiseDelegateRegistration(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.Vote:
+	case transaction.Type == TRANSACTION_TYPES.Vote:
 		transaction = deserialiseVote(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.MultiSignatureRegistration:
+	case transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration:
 		transaction = deserialiseMultiSignatureRegistration(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.Ipfs:
+	case transaction.Type == TRANSACTION_TYPES.Ipfs:
 		transaction = deserialiseIpfs(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.TimelockTransfer:
+	case transaction.Type == TRANSACTION_TYPES.TimelockTransfer:
 		transaction = deserialiseTimelockTransfer(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.MultiPayment:
+	case transaction.Type == TRANSACTION_TYPES.MultiPayment:
 		transaction = deserialiseMultiPayment(assetOffset, bytes, transaction)
-	case transactionType == TRANSACTION_TYPES.DelegateResignation:
+	case transaction.Type == TRANSACTION_TYPES.DelegateResignation:
 		transaction = deserialiseDelegateResignation(assetOffset, bytes, transaction)
 	}
 
@@ -76,21 +74,19 @@ func deserialiseTypeSpecific(assetOffset int, bytes []byte, transaction *Transac
 }
 
 func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction {
-	transactionType := uint32(transaction.Type)
-
 	if transaction.SecondSignature != "" {
 		transaction.SignSignature = transaction.SecondSignature
 	}
 
-	if transactionType == TRANSACTION_TYPES.Vote {
+	if transaction.Type == TRANSACTION_TYPES.Vote {
 		// transaction.RecipientId = PublicKeyFromHex(transaction.SenderPublicKey).Address()
 	}
 
-	if transactionType == TRANSACTION_TYPES.SecondSignatureRegistration {
+	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration {
 		// transaction.RecipientId = PublicKeyFromHex(transaction.SenderPublicKey).Address()
 	}
 
-	if transactionType == TRANSACTION_TYPES.MultiSignatureRegistration {
+	if transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
 		// // The "recipientId" doesn't exist on v1 multi signature registrations
 		// // transaction.RecipientId = Address::fromPublicKey($transaction->senderPublicKey);
 		// $transaction->asset->multisignature->keysgroup = array_map(function ($key) {

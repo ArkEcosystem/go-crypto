@@ -12,7 +12,7 @@ import (
 /*
  Usage
  ===============================================================================
- crypto.AddressFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ crypto.AddressFromSecret("passphrase")
 */
 func AddressFromSecret(secret string) (string, error) {
 	privateKey, err := PrivateKeyFromSecret(secret)
@@ -33,7 +33,7 @@ func AddressFromSecret(secret string) (string, error) {
 /*
  Usage
  ===============================================================================
- privateKey := crypto.PrivateKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ privateKey := crypto.PrivateKeyFromSecret("passphrase")
  crypto.AddressToBytes(privateKey.Address())
 */
 func AddressToBytes(address string) ([]byte, error) {

@@ -14,7 +14,7 @@ import (
 /*
  Usage
  ===============================================================================
- crypto.PublicKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ crypto.PublicKeyFromSecret("passphrase")
 */
 func PublicKeyFromSecret(secret string) (*PublicKey, error) {
 	privateKey, err := PrivateKeyFromSecret(secret)
@@ -53,7 +53,7 @@ func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
 /*
  Usage
  ===============================================================================
- publicKey := crypto.PublicKeyFromSecret("passphrase", crypto.NETWORKS_DEVNET)
+ publicKey := crypto.PublicKeyFromSecret("passphrase")
  publicKey.Address()
 */
 func (publicKey *PublicKey) Address() (string, error) {

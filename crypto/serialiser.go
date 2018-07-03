@@ -70,26 +70,24 @@ func serialiseVendorField(buffer *bytes.Buffer, transaction *Transaction) *bytes
 }
 
 func serialiseTypeSpecific(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	transactionType := uint32(transaction.Type)
-
 	switch {
-	case transactionType == TRANSACTION_TYPES.Transfer:
+	case transaction.Type == TRANSACTION_TYPES.Transfer:
 		buffer = serialiseTransfer(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.SecondSignatureRegistration:
+	case transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration:
 		buffer = serialiseSecondSignatureRegistration(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.DelegateRegistration:
+	case transaction.Type == TRANSACTION_TYPES.DelegateRegistration:
 		buffer = serialiseDelegateRegistration(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.Vote:
+	case transaction.Type == TRANSACTION_TYPES.Vote:
 		buffer = serialiseVote(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.MultiSignatureRegistration:
+	case transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration:
 		buffer = serialiseMultiSignatureRegistration(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.Ipfs:
+	case transaction.Type == TRANSACTION_TYPES.Ipfs:
 		buffer = serialiseIpfs(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.TimelockTransfer:
+	case transaction.Type == TRANSACTION_TYPES.TimelockTransfer:
 		buffer = serialiseTimelockTransfer(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.MultiPayment:
+	case transaction.Type == TRANSACTION_TYPES.MultiPayment:
 		buffer = serialiseMultiPayment(buffer, transaction)
-	case transactionType == TRANSACTION_TYPES.DelegateResignation:
+	case transaction.Type == TRANSACTION_TYPES.DelegateResignation:
 		buffer = serialiseDelegateResignation(buffer, transaction)
 	}
 

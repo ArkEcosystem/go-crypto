@@ -7,10 +7,11 @@ package crypto
 
 import (
 	"github.com/btcsuite/btcd/btcec"
+	"time"
 )
 
 type Network struct {
-	Epoch   string
+	Epoch   time.Time
 	Version byte
 	Nethash string
 	Wif     byte
@@ -29,15 +30,27 @@ type PublicKey struct {
 }
 
 type TransactionTypes struct {
-	Transfer                    uint32
-	SecondSignatureRegistration uint32
-	DelegateRegistration        uint32
-	Vote                        uint32
-	MultiSignatureRegistration  uint32
-	Ipfs                        uint32
-	TimelockTransfer            uint32
-	MultiPayment                uint32
-	DelegateResignation         uint32
+	Transfer                    byte
+	SecondSignatureRegistration byte
+	DelegateRegistration        byte
+	Vote                        byte
+	MultiSignatureRegistration  byte
+	Ipfs                        byte
+	TimelockTransfer            byte
+	MultiPayment                byte
+	DelegateResignation         byte
+}
+
+type TransactionFees struct {
+	Transfer                    uint64
+	SecondSignatureRegistration uint64
+	DelegateRegistration        uint64
+	Vote                        uint64
+	MultiSignatureRegistration  uint64
+	Ipfs                        uint64
+	TimelockTransfer            uint64
+	MultiPayment                uint64
+	DelegateResignation         uint64
 }
 
 type Transaction struct {
@@ -58,7 +71,7 @@ type Transaction struct {
 	Timelock              uint32            `json:"serialized,omitempty"`
 	TimelockType          string            `json:"serialized,omitempty"`
 	Timestamp             uint32            `json:"timestamp,omitempty"`
-	Type                  byte              `json:"type,omitempty"`
+	Type                  byte              `json:"type"`
 	VendorField           string            `json:"vendorField,omitempty"`
 	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
 	Version               byte              `json:"version,omitempty"`
@@ -75,33 +88,33 @@ type Message struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 type TransactionAsset struct {
-	Votes          []string
-	Signature      *SecondSignatureRegistrationAsset
-	Delegate       *DelegateAsset
-	MultiSignature *MultiSignatureRegistrationAsset
-	Ipfs           *IpfsAsset
-	Payments       []*MultiPaymentAsset
+	Votes          []string                          `json:"votes,omitempty"`
+	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
+	Delegate       *DelegateAsset                    `json:"publicKey,omitempty"`
+	MultiSignature *MultiSignatureRegistrationAsset  `json:"multisignature,omitempty"`
+	Ipfs           *IpfsAsset                        `json:"ipfs,omitempty"`
+	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
 }
 
 type SecondSignatureRegistrationAsset struct {
-	PublicKey string
+	PublicKey string `json:"publicKey,omitempty"`
 }
 
 type DelegateAsset struct {
-	Username string
+	Username string `json:"username,omitempty"`
 }
 
 type MultiSignatureRegistrationAsset struct {
-	Min       byte
-	Keysgroup []string
-	Lifetime  byte
+	Min       byte     `json:"min,omitempty"`
+	Keysgroup []string `json:"keysgroup,omitempty"`
+	Lifetime  byte     `json:"lifetime,omitempty"`
 }
 
 type IpfsAsset struct {
-	Dag string
+	Dag string `json:"dag,omitempty"`
 }
 
 type MultiPaymentAsset struct {
-	Amount      uint64
-	RecipientId string
+	Amount      uint64 `json:"amount,omitempty"`
+	RecipientId string `json:"recipientId,omitempty"`
 }

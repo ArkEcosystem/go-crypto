@@ -17,7 +17,7 @@ var (
 		MultiPayment:        7,
 		DelegateResignation: 8,
 	}
-	TRANSACTION_FEES = &TransactionTypes{
+	TRANSACTION_FEES = &TransactionFees{
 		Transfer:                    10000000,
 		SecondSignatureRegistration: 500000000,
 		DelegateRegistration:        2500000000,

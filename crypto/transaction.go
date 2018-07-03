@@ -112,7 +112,7 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
 	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Fee))
 
-	switch uint32(transaction.Type) {
+	switch transaction.Type {
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
 		// FIX: no longer works, results in a wrong ID later on
 		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset.Signature.PublicKey))
@@ -123,6 +123,11 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 		// FIX: no longer works, results in a wrong ID later on
 		voteBytes := []byte(strings.Join(transaction.Asset.Votes, ""))
 		binary.Write(buffer, binary.LittleEndian, voteBytes)
+	case TRANSACTION_TYPES.MultiSignatureRegistration:
+		keysgroup := []byte(strings.Join(transaction.Asset.MultiSignature.Keysgroup, ""))
+		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
+		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
+		binary.Write(buffer, binary.LittleEndian, keysgroup)
 	}
 
 	if !skipSignature && len(transaction.Signature) > 0 {
@@ -139,7 +144,7 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 func (transaction *Transaction) Sign(passphrase string) {
 	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
-	// transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialise())
+	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialise())
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(true, true))
 
@@ -183,15 +188,9 @@ func (transaction *Transaction) Verify() (bool, error) {
 
 }
 
-func (transaction *Transaction) SecondVerify() (bool, error) {
-	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SecondSenderPublicKey))
-
-	if err != nil {
-		return false, err
-	}
-
+func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))
 
-	return publicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
+	return secondPublicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
 }
