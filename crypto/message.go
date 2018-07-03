@@ -37,7 +37,7 @@ func SignMessage(message string, secret string) (*Message, error) {
 	}
 
 	return &Message{
-		PublicKey: HexEncode(privateKey.PublicKey.Serialise()),
+		PublicKey: HexEncode(privateKey.PublicKey.Serialize()),
 		Signature: HexEncode(signature),
 		Message:   message,
 	}, nil

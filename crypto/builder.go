@@ -43,7 +43,7 @@ func BuildSecondSignatureRegistration(secret string, secondSecret string) *Trans
 	publicKey, _ := PublicKeyFromSecret(secret)
 
 	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{
-		PublicKey: HexEncode(publicKey.Serialise()),
+		PublicKey: HexEncode(publicKey.Serialize()),
 	}
 
 	return createSignedTransaction(transaction, secret, secondSecret)

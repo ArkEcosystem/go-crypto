@@ -11,11 +11,6 @@ import (
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
-/*
- Usage
- ===============================================================================
- crypto.AddressFromSecret("passphrase")
-*/
 func AddressFromSecret(secret string) (string, error) {
 	privateKey, err := PrivateKeyFromSecret(secret)
 
@@ -23,21 +18,9 @@ func AddressFromSecret(secret string) (string, error) {
 		return "", err
 	}
 
-	address, err := privateKey.Address()
-
-	if err != nil {
-		return "", err
-	}
-
-	return address, nil
+	return privateKey.toAddress(), nil
 }
 
-/*
- Usage
- ===============================================================================
- privateKey := crypto.PrivateKeyFromSecret("passphrase")
- crypto.AddressToBytes(privateKey.Address())
-*/
 func AddressToBytes(address string) ([]byte, error) {
 	bytes, err := base58.Decode(address)
 
@@ -48,11 +31,6 @@ func AddressToBytes(address string) ([]byte, error) {
 	return bytes, nil
 }
 
-/*
- Usage
- ===============================================================================
- crypto.ValidateAddress("DARiJqhogp2Lu6bxufUFQQMuMyZbxjCydN")
-*/
 func ValidateAddress(address string) (bool, error) {
 	bytes, err := AddressToBytes(address)
 

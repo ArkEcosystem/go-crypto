@@ -146,7 +146,7 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 func (transaction *Transaction) Sign(passphrase string) {
 	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
-	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialise())
+	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(true, true))
 
@@ -159,7 +159,6 @@ func (transaction *Transaction) Sign(passphrase string) {
 func (transaction *Transaction) SecondSign(passphrase string) {
 	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
-	// transaction.SecondSenderPublicKey = HexEncode(privateKey.PublicKey.Serialise())
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))
 

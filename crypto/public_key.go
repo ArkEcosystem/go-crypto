@@ -13,11 +13,6 @@ import (
 	"golang.org/x/crypto/ripemd160"
 )
 
-/*
- Usage
- ===============================================================================
- crypto.PublicKeyFromSecret("passphrase")
-*/
 func PublicKeyFromSecret(secret string) (*PublicKey, error) {
 	privateKey, err := PrivateKeyFromSecret(secret)
 
@@ -62,27 +57,20 @@ func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
 // ADDRESS COMPUTATION /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- Usage
- ===============================================================================
- publicKey := crypto.PublicKeyFromSecret("passphrase")
- publicKey.Address()
-*/
-func (publicKey *PublicKey) Address() (string, error) {
-	ripeHashedBytes, err := publicKey.AddressBytes()
+func (publicKey *PublicKey) toHex() string {
+	return HexEncode(publicKey.Serialize())
+}
 
-	if err != nil {
-		return "", err
-	}
-
+func (publicKey *PublicKey) toAddress() string {
+	ripeHashedBytes := publicKey.AddressBytes()
 	ripeHashedBytes = append(ripeHashedBytes, 0x0)
 	copy(ripeHashedBytes[1:], ripeHashedBytes[:len(ripeHashedBytes)-1])
 	ripeHashedBytes[0] = publicKey.network.Version
 
-	return base58.Encode(ripeHashedBytes), nil
+	return base58.Encode(ripeHashedBytes)
 }
 
-func (publicKey *PublicKey) Serialise() []byte {
+func (publicKey *PublicKey) Serialize() []byte {
 	if publicKey.isCompressed {
 		return publicKey.SerializeCompressed()
 	}
@@ -90,13 +78,9 @@ func (publicKey *PublicKey) Serialise() []byte {
 	return publicKey.SerializeUncompressed()
 }
 
-func (publicKey *PublicKey) AddressBytes() ([]byte, error) {
+func (publicKey *PublicKey) AddressBytes() []byte {
 	hash := ripemd160.New()
-	_, err := hash.Write(publicKey.Serialise())
+	hash.Write(publicKey.Serialize())
 
-	if err != nil {
-		return nil, err
-	}
-
-	return hash.Sum(nil), nil
+	return hash.Sum(nil)
 }

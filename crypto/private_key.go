@@ -9,14 +9,10 @@ package crypto
 
 import (
 	"crypto/sha256"
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"github.com/btcsuite/btcd/btcec"
 )
 
-/*
- Usage
- ===============================================================================
- crypto.PrivateKeyFromSecret("passphrase")
-*/
 func PrivateKeyFromSecret(secret string) (*PrivateKey, error) {
 	hash := sha256.New()
 	_, err := hash.Write([]byte(secret))
@@ -45,20 +41,26 @@ func PrivateKeyFromBytes(bytes []byte) *PrivateKey {
 // ADDRESS /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- Usage
- ===============================================================================
- privateKey, _ := crypto.PrivateKeyFromSecret("passphrase")
- privateKey.Address()
-*/
-func (privateKey *PrivateKey) Address() (string, error) {
-	address, err := privateKey.PublicKey.Address()
+func (privateKey *PrivateKey) toHex() string {
+	return HexEncode(privateKey.Serialize())
+}
 
-	if err != nil {
-		return "", err
+func (privateKey *PrivateKey) toAddress() string {
+	return privateKey.PublicKey.toAddress()
+}
+
+func (privateKey *PrivateKey) toWif() string {
+	p := privateKey.Serialize()
+
+	if privateKey.PublicKey.isCompressed {
+		p = append(p, 0x1)
 	}
 
-	return address, nil
+	p = append(p, 0x0)
+	copy(p[1:], p[:len(p)-1])
+	p[0] = privateKey.PublicKey.network.Wif
+
+	return base58.Encode(p)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
