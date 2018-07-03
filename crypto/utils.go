@@ -8,6 +8,7 @@ package crypto
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"log"
 	"strings"
 )
@@ -26,6 +27,20 @@ func HexEncode(data []byte) string {
 
 func HexDecode(data string) []byte {
 	result, err := hex.DecodeString(data)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return result
+}
+
+func Base58Encode(data []byte) string {
+	return base58.Encode(data)
+}
+
+func Base58Decode(data string) []byte {
+	result, err := base58.Decode(data)
 
 	if err != nil {
 		log.Fatal(err.Error())

@@ -12,6 +12,7 @@ import (
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"log"
 	"strconv"
+	"strings"
 )
 
 func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
@@ -120,7 +121,7 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 		binary.Write(buffer, binary.LittleEndian, usernameBytes)
 	case TRANSACTION_TYPES.Vote:
 		// FIX: no longer works, results in a wrong ID later on
-		voteBytes := []byte(transaction.Asset.Votes[0])
+		voteBytes := []byte(strings.Join(transaction.Asset.Votes, ""))
 		binary.Write(buffer, binary.LittleEndian, voteBytes)
 	}
 

@@ -5,69 +5,161 @@
 
 package crypto
 
-func Serialise(transaction interface{}) {
-	// serialiseHeader(transaction)
-	// serialiseVendorField(transaction)
-	// serialiseTypeSpecific(transaction)
-	// serialiseSignatures(transaction)
+import (
+	"bytes"
+	"encoding/binary"
+	// "github.com/davecgh/go-spew/spew"
+	"strings"
+)
+
+func SerialiseTransaction(transaction *Transaction) string {
+	buffer := new(bytes.Buffer)
+
+	buffer = serialiseHeader(buffer, transaction)
+	buffer = serialiseVendorField(buffer, transaction)
+	buffer = serialiseTypeSpecific(buffer, transaction)
+	buffer = serialiseSignatures(buffer, transaction)
+
+	return HexEncode(buffer.Bytes())
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // GENERIC SERIALISING /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func serialiseHeader(bytes []byte) {
+func serialiseHeader(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
 
+	if transaction.Version == 0 {
+		binary.Write(buffer, binary.LittleEndian, GetNetwork().Version)
+	} else {
+		binary.Write(buffer, binary.LittleEndian, transaction.Version)
+	}
+
+	if transaction.Network == 0 {
+		binary.Write(buffer, binary.LittleEndian, HexDecode("01")[0])
+	} else {
+		binary.Write(buffer, binary.LittleEndian, transaction.Network)
+	}
+
+	binary.Write(buffer, binary.LittleEndian, transaction.Type)
+	binary.Write(buffer, binary.LittleEndian, transaction.Timestamp)
+	binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
+	binary.Write(buffer, binary.LittleEndian, transaction.Fee)
+
+	return buffer
 }
 
-func serialiseVendorField(bytes []byte) {
+func serialiseVendorField(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	if transaction.VendorField != "" {
+		vendorFieldLength := len(transaction.VendorField)
 
+		binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldLength))
+		binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorField))
+	} else if len(transaction.VendorFieldHex) > 0 {
+		vendorFieldHexLength := len(transaction.VendorFieldHex)
+
+		binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldHexLength/2))
+		binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorFieldHex))
+	} else {
+		binary.Write(buffer, binary.LittleEndian, HexDecode("00")[0])
+	}
+
+	return buffer
 }
 
-func serialiseTypeSpecific(bytes []byte) {
+func serialiseTypeSpecific(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	transactionType := uint32(transaction.Type)
 
+	switch {
+	case transactionType == TRANSACTION_TYPES.Transfer:
+		buffer = serialiseTransfer(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.SecondSignatureRegistration:
+		buffer = serialiseSecondSignatureRegistration(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.DelegateRegistration:
+		buffer = serialiseDelegateRegistration(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.Vote:
+		buffer = serialiseVote(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.MultiSignatureRegistration:
+		buffer = serialiseMultiSignatureRegistration(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.Ipfs:
+		buffer = serialiseIpfs(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.TimelockTransfer:
+		buffer = serialiseTimelockTransfer(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.MultiPayment:
+		buffer = serialiseMultiPayment(buffer, transaction)
+	case transactionType == TRANSACTION_TYPES.DelegateResignation:
+		buffer = serialiseDelegateResignation(buffer, transaction)
+	}
+
+	return buffer
 }
 
-func serialiseSignatures(bytes []byte) {
+func serialiseSignatures(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	if transaction.Signature != "" {
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Signature))
+	}
 
+	if transaction.SecondSignature != "" {
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SecondSignature))
+	} else if transaction.SignSignature != "" {
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SignSignature))
+	}
+
+	if len(transaction.Signatures) > 0 {
+		binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
+		binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(transaction.Signatures, "")))
+	}
+
+	return buffer
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // TYPE SPECIFIC SERIALISING ///////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func serialiseDelegateRegistration(bytes []byte) {
+func serialiseTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
 
+	if transaction.Expiration == 0 {
+		binary.Write(buffer, binary.LittleEndian, uint32(0))
+	} else {
+		binary.Write(buffer, binary.LittleEndian, transaction.Expiration)
+	}
+
+	binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
+
+	return buffer
 }
 
-func serialiseDelegateResignation(bytes []byte) {
-
+func serialiseSecondSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseIpfs(bytes []byte) {
-
+func serialiseDelegateRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseMultiPayment(bytes []byte) {
-
+func serialiseVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseMultiSignatureRegistration(bytes []byte) {
-
+func serialiseMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseSecondSignatureRegistration(bytes []byte) {
-
+func serialiseIpfs(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseTimelockTransfer(bytes []byte) {
-
+func serialiseTimelockTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseTransfer(bytes []byte) {
-
+func serialiseMultiPayment(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
 
-func serialiseVote(bytes []byte) {
-
+func serialiseDelegateResignation(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	return buffer
 }
