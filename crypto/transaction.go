@@ -6,11 +6,11 @@
 package crypto
 
 import (
-	// "github.com/davecgh/go-spew/spew"
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
+	// "github.com/davecgh/go-spew/spew"
 	"log"
 	"strconv"
 )
@@ -46,7 +46,7 @@ func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 			}
 		}
 
-		signatures := transaction.Serialized[:(startOffset + multiSignatureOffset)]
+		signatures := transaction.Serialized[(startOffset + multiSignatureOffset):]
 
 		if len(signatures) == 0 {
 			return transaction
@@ -57,20 +57,23 @@ func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 		}
 
 		signatures = signatures[2:]
-		// transaction.Signatures = []
+		moreSignatures := true
+		for moreSignatures {
+			if signatures == "" {
+				return transaction
+			}
 
-		// $moreSignatures = true;
-		// while ($moreSignatures) {
-		//     $mLength = intval(substr($signatures, 2, 2), 16);
+			multiSignatureLength, _ := strconv.ParseInt(signatures[2:4], 16, 64)
+			multiSignatureLength += 2
 
-		//     if ($mLength > 0) {
-		//         $transaction->signatures[] = substr($signatures, 0, ($mLength + 2) * 2);
-		//     } else {
-		//         $moreSignatures = false;
-		//     }
+			if multiSignatureLength > 0 {
+				transaction.Signatures = append(transaction.Signatures, signatures[:(multiSignatureLength*2)])
+			} else {
+				moreSignatures = false
+			}
 
-		//     $signatures = substr($signatures, ($mLength + 2) * 2);
-		// }
+			signatures = signatures[(multiSignatureLength * 2):]
+		}
 	}
 
 	return transaction
@@ -111,12 +114,12 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 
 	switch uint32(transaction.Type) {
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset["signature"]))
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset.Signature.PublicKey))
 	case TRANSACTION_TYPES.DelegateRegistration:
-		usernameBytes := []byte(transaction.Asset["username"])
+		usernameBytes := []byte(transaction.Asset.Delegate.Username)
 		binary.Write(buffer, binary.LittleEndian, usernameBytes)
 	case TRANSACTION_TYPES.Vote:
-		voteBytes := []byte(transaction.Asset["votes"])
+		voteBytes := []byte(transaction.Asset.Votes[0]) // TODO: check if 0 index is fine
 		binary.Write(buffer, binary.LittleEndian, voteBytes)
 	}
 
@@ -135,7 +138,6 @@ func (transaction *Transaction) Sign(passphrase string) {
 	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
 	// transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialise())
-
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(true, true))
 

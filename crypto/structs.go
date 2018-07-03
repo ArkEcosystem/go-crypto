@@ -54,9 +54,10 @@ type Transaction struct {
 	Signature             string            `json:"signature,omitempty"`
 	SecondSignature       string            `json:"secondSignature,omitempty"`
 	SignSignature         string            `json:"signSignature,omitempty"`
+	Signatures            []string          `json:"signatures,omitempty"`
 	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
 	VendorField           string            `json:"vendorField,omitempty"`
-	Asset                 map[string]string `json:"asset,omitempty"`
+	Asset                 *TransactionAsset `json:"asset,omitempty"`
 	Id                    string            `json:"id,omitempty"`
 	Serialized            string            `json:"serialized,omitempty"`
 }
@@ -65,4 +66,29 @@ type Message struct {
 	PublicKey string `json:"publickey"`
 	Signature string `json:"signature"`
 	Message   string `json:"message"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TRANSACTION ASSETS //////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+type TransactionAsset struct {
+	Votes          []string
+	Signature      *SecondSignatureRegistrationAsset
+	Delegate       *DelegateAsset
+	MultiSignature *MultiSignatureRegistrationAsset
+}
+
+type SecondSignatureRegistrationAsset struct {
+	PublicKey string
+}
+
+type DelegateAsset struct {
+	Username string
+}
+
+type MultiSignatureRegistrationAsset struct {
+	Min       byte
+	Keysgroup []string
+	Lifetime  byte
 }
