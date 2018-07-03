@@ -143,8 +143,8 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 	return buffer.Bytes()
 }
 
-func (transaction *Transaction) Sign(passphrase string) {
-	privateKey, _ := PrivateKeyFromSecret(passphrase)
+func (transaction *Transaction) Sign(secret string) {
+	privateKey, _ := PrivateKeyFromSecret(secret)
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	bytes := sha256.New()
@@ -156,8 +156,8 @@ func (transaction *Transaction) Sign(passphrase string) {
 	}
 }
 
-func (transaction *Transaction) SecondSign(passphrase string) {
-	privateKey, _ := PrivateKeyFromSecret(passphrase)
+func (transaction *Transaction) SecondSign(secret string) {
+	privateKey, _ := PrivateKeyFromSecret(secret)
 
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))

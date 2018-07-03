@@ -11,11 +11,6 @@ import (
 	"crypto/sha256"
 )
 
-/*
- Usage
- ===============================================================================
- crypto.SignMessage("Hello World", "passphrase")
-*/
 func SignMessage(message string, secret string) (*Message, error) {
 	privateKey, err := PrivateKeyFromSecret(secret)
 
@@ -43,13 +38,7 @@ func SignMessage(message string, secret string) (*Message, error) {
 	}, nil
 }
 
-/*
- Usage
- ===============================================================================
- message, _ := crypto.SignMessage("Hello World", "passphrase")
- verified, _ := crypto.VerifyMessage(message)
-*/
-func VerifyMessage(message *Message) (bool, error) {
+func (message *Message) verify() (bool, error) {
 	publicKey, _ := PublicKeyFromBytes(HexDecode(message.PublicKey))
 
 	hash := sha256.New()
