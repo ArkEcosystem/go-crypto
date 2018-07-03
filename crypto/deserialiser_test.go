@@ -6,22 +6,135 @@
 package crypto
 
 import (
-    "testing"
-    "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestDeserialiseTransfer(t *testing.T) {
-    transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+	transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
 
-    assert := assert.New(t)
-    assert.Equal(transaction.Id, "01671092340b44c6892dfd47110e397fde5cd3641c33e7182b8c26acaf6198ed")
-    assert.Equal(transaction.Type, uint8(0))
-    assert.Equal(transaction.Timestamp, uint32(40439390))
-    assert.Equal(transaction.Amount, uint64(1000000000))
-    assert.Equal(transaction.Fee, uint64(10000000))
-    assert.Equal(transaction.VendorField, "brian cuck")
-    assert.Equal(transaction.RecipientId, "DRac35wghMcmUSe5jDMLBDLWkVVjyKZFxK")
-    assert.Equal(transaction.SenderPublicKey, "03d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d")
-    assert.Equal(transaction.Signature, "3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab1")
-    assert.Equal(transaction.SignSignature, "3044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+	assert := assert.New(t)
+	assert.Equal(transaction.Id, "01671092340b44c6892dfd47110e397fde5cd3641c33e7182b8c26acaf6198ed")
+	assert.Equal(transaction.Type, uint8(0))
+	assert.Equal(transaction.Timestamp, uint32(40439390))
+	assert.Equal(transaction.Amount, uint64(1000000000))
+	assert.Equal(transaction.Fee, uint64(10000000))
+	assert.Equal(transaction.VendorField, "brian cuck")
+	assert.Equal(transaction.RecipientId, "DRac35wghMcmUSe5jDMLBDLWkVVjyKZFxK")
+	assert.Equal(transaction.SenderPublicKey, "03d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d")
+	assert.Equal(transaction.Signature, "3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab1")
+	assert.Equal(transaction.SignSignature, "3044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+}
+
+func TestDeserialiseSecondSignatureRegistration(t *testing.T) {
+	// transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.Timestamp, timestamp)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+	// assert.Equal(transaction.Fee, fee)
+	// assert.Equal(transaction.Asset->signature->publicKey, asset->signature->publicKey)
+	// assert.Equal(transaction.Signature, signature)
+	// assert.Equal(transaction.Amount, amount)
+	// assert.Equal(transaction.RecipientId, recipientId)
+	// assert.Equal(transaction.Id, id)
+}
+
+func TestDeserialiseDelegateRegistration(t *testing.T) {
+	// transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.Timestamp, timestamp)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+	// assert.Equal(transaction.Fee, fee)
+	// assert.Equal(transaction.Asset->delegate->username, asset->delegate->username)
+	// assert.Equal(transaction.Signature, signature)
+	// assert.Equal(transaction.Amount, amount)
+	// assert.Equal(transaction.Id, id)
+}
+
+func TestDeserialiseVote(t *testing.T) {
+	// transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.Timestamp, timestamp)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+	// assert.Equal(transaction.Fee, fee)
+	// assert.Equal(transaction.Asset->votes, asset->votes)
+	// assert.Equal(transaction.Signature, signature)
+	// assert.Equal(transaction.Amount, amount)
+	// assert.Equal(transaction.RecipientId, recipientId)
+	// assert.Equal(transaction.Id, id)
+}
+
+func TestDeserialiseMultiSignatureRegistration(t *testing.T) {
+	// transaction := DeserialiseTransaction("ff0117005e0e690203d3c6889608074b44155ad2e6577c3368e27e6e129c457418eb3e5ed029544e8d80969800000000000a627269616e206375636b00ca9a3b00000000000000001ee03589a014baa6ec16fa87b57f3a1b368ce893ab3044022026f0187f89e3feba6365b9aaabab374ffb57d05ec859922a5c63fbaf9b4bad1d02206ebe4d2dadb909f276e966ebe957fc065b118d808a020b0d886b0e647eb8cab13044022000f058374d9f4a002d7080fc9b306898ecdbec56419d4b41a1fc1cbbc664bc66022010a887491b056c7695dfd072bed04d4ba09cd8472b07a440cd7f5e1e99afd75e")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Id, id)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+}
+
+func TestDeserialiseIpfs(t *testing.T) {
+	t.Skip("skipping test!")
+
+	// transaction := DeserialiseTransaction("...")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Id, id)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+}
+
+func TestDeserialiseTimelockTransfer(t *testing.T) {
+	t.Skip("skipping test!")
+
+	// transaction := DeserialiseTransaction("...")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Id, id)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+}
+
+func TestDeserialiseMultiPayment(t *testing.T) {
+	t.Skip("skipping test!")
+
+	// transaction := DeserialiseTransaction("...")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Id, id)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+}
+
+func TestDeserialiseDelegateResignation(t *testing.T) {
+	t.Skip("skipping test!")
+
+	// transaction := DeserialiseTransaction("...")
+
+	// assert := assert.New(t)
+	// assert.Equal(transaction.Id, id)
+	// assert.Equal(transaction.Version, version)
+	// assert.Equal(transaction.Network, network)
+	// assert.Equal(transaction.Type, type)
+	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
 }
