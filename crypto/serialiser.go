@@ -191,14 +191,31 @@ func serialiseMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Tran
 }
 
 func serialiseIpfs(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	dag := transaction.Asset.Ipfs.Dag
+
+	binary.Write(buffer, binary.LittleEndian, uint8(len(dag)))
+	binary.Write(buffer, binary.LittleEndian, HexDecode(dag))
+
 	return buffer
 }
 
 func serialiseTimelockTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
+	binary.Write(buffer, binary.LittleEndian, uint8(transaction.timelocktype))
+	binary.Write(buffer, binary.LittleEndian, uint32(transaction.timelock))
+	binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
+
 	return buffer
 }
 
 func serialiseMultiPayment(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Asset.Payments))
+
+	for _, element := range transaction.Asset.Payments {
+		binary.Write(buffer, binary.LittleEndian, uint64(element.Amount))
+		binary.Write(buffer, binary.LittleEndian, Base58Decode(element.RecipientId))
+	}
+
 	return buffer
 }
 
