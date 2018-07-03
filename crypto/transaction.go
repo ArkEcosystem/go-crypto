@@ -17,71 +17,60 @@ import (
 	"strings"
 )
 
-func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
-	transaction.Signature = transaction.Serialized[startOffset:]
+func (transaction *Transaction) getId() string {
+	bytes := sha256.New()
+	bytes.Write(transaction.toBytes(false, false))
 
-	multiSignatureOffset := 0
-
-	if len(transaction.Signature) == 0 {
-		transaction.Signature = ""
-	} else {
-		length1, _ := strconv.ParseInt(transaction.Signature[2:4], 16, 64)
-		length1 += 2
-
-		signatureOffset := startOffset + int(length1)*2
-		transaction.Signature = transaction.Serialized[startOffset:signatureOffset]
-
-		multiSignatureOffset += int(length1) * 2
-		transaction.SecondSignature = string(transaction.Serialized[signatureOffset:])
-
-		if len(transaction.SecondSignature) == 0 {
-			transaction.SecondSignature = ""
-		} else {
-			if "ff" == transaction.SecondSignature[:2] { // start of multi-signature
-				transaction.SecondSignature = ""
-			} else {
-				length2, _ := strconv.ParseInt(transaction.SecondSignature[2:4], 16, 64)
-				length2 += 2
-
-				transaction.SecondSignature = transaction.SecondSignature[:(length2 * 2)]
-				multiSignatureOffset += int(length2) * 2
-			}
-		}
-
-		signatures := transaction.Serialized[(startOffset + multiSignatureOffset):]
-
-		if len(signatures) == 0 {
-			return transaction
-		}
-
-		if "ff" != signatures[:2] {
-			return transaction
-		}
-
-		signatures = signatures[2:]
-		moreSignatures := true
-		for moreSignatures {
-			if signatures == "" {
-				return transaction
-			}
-
-			multiSignatureLength, _ := strconv.ParseInt(signatures[2:4], 16, 64)
-			multiSignatureLength += 2
-
-			if multiSignatureLength > 0 {
-				transaction.Signatures = append(transaction.Signatures, signatures[:(multiSignatureLength*2)])
-			} else {
-				moreSignatures = false
-			}
-
-			signatures = signatures[(multiSignatureLength * 2):]
-		}
-	}
-
-	return transaction
+	return HexEncode(bytes.Sum(nil))
 }
 
-func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool) []byte {
+func (transaction *Transaction) sign(secret string) {
+	privateKey, _ := PrivateKeyFromSecret(secret)
+
+	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
+	bytes := sha256.New()
+	bytes.Write(transaction.toBytes(true, true))
+
+	signature, err := privateKey.Sign(bytes.Sum(nil))
+	if err == nil {
+		transaction.Signature = HexEncode(signature)
+	}
+}
+
+func (transaction *Transaction) secondSign(secret string) {
+	privateKey, _ := PrivateKeyFromSecret(secret)
+
+	bytes := sha256.New()
+	bytes.Write(transaction.toBytes(false, true))
+
+	signature, err := privateKey.Sign(bytes.Sum(nil))
+	if err == nil {
+		transaction.SignSignature = HexEncode(signature)
+	}
+}
+
+func (transaction *Transaction) verify() (bool, error) {
+	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SenderPublicKey))
+
+	if err != nil {
+		return false, err
+	}
+
+	bytes := sha256.New()
+	bytes.Write(transaction.toBytes(true, true))
+
+	return publicKey.Verify(HexDecode(transaction.Signature), bytes.Sum(nil))
+
+}
+
+func (transaction *Transaction) secondVerify(secondPublicKey *PublicKey) (bool, error) {
+	bytes := sha256.New()
+	bytes.Write(transaction.toBytes(false, true))
+
+	return secondPublicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
+}
+
+func (transaction *Transaction) toBytes(skipSignature, skipSecondSignature bool) []byte {
 	buffer := new(bytes.Buffer)
 	binary.Write(buffer, binary.LittleEndian, transaction.Type)
 	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timestamp))
@@ -143,55 +132,66 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 	return buffer.Bytes()
 }
 
-func (transaction *Transaction) Sign(secret string) {
-	privateKey, _ := PrivateKeyFromSecret(secret)
+func (transaction *Transaction) parseSignatures(startOffset int) *Transaction {
+	transaction.Signature = transaction.Serialized[startOffset:]
 
-	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
-	bytes := sha256.New()
-	bytes.Write(transaction.ToBytes(true, true))
+	multiSignatureOffset := 0
 
-	signature, err := privateKey.Sign(bytes.Sum(nil))
-	if err == nil {
-		transaction.Signature = HexEncode(signature)
+	if len(transaction.Signature) == 0 {
+		transaction.Signature = ""
+	} else {
+		length1, _ := strconv.ParseInt(transaction.Signature[2:4], 16, 64)
+		length1 += 2
+
+		signatureOffset := startOffset + int(length1)*2
+		transaction.Signature = transaction.Serialized[startOffset:signatureOffset]
+
+		multiSignatureOffset += int(length1) * 2
+		transaction.SecondSignature = string(transaction.Serialized[signatureOffset:])
+
+		if len(transaction.SecondSignature) == 0 {
+			transaction.SecondSignature = ""
+		} else {
+			if "ff" == transaction.SecondSignature[:2] { // start of multi-signature
+				transaction.SecondSignature = ""
+			} else {
+				length2, _ := strconv.ParseInt(transaction.SecondSignature[2:4], 16, 64)
+				length2 += 2
+
+				transaction.SecondSignature = transaction.SecondSignature[:(length2 * 2)]
+				multiSignatureOffset += int(length2) * 2
+			}
+		}
+
+		signatures := transaction.Serialized[(startOffset + multiSignatureOffset):]
+
+		if len(signatures) == 0 {
+			return transaction
+		}
+
+		if "ff" != signatures[:2] {
+			return transaction
+		}
+
+		signatures = signatures[2:]
+		moreSignatures := true
+		for moreSignatures {
+			if signatures == "" {
+				return transaction
+			}
+
+			multiSignatureLength, _ := strconv.ParseInt(signatures[2:4], 16, 64)
+			multiSignatureLength += 2
+
+			if multiSignatureLength > 0 {
+				transaction.Signatures = append(transaction.Signatures, signatures[:(multiSignatureLength*2)])
+			} else {
+				moreSignatures = false
+			}
+
+			signatures = signatures[(multiSignatureLength * 2):]
+		}
 	}
-}
 
-func (transaction *Transaction) SecondSign(secret string) {
-	privateKey, _ := PrivateKeyFromSecret(secret)
-
-	bytes := sha256.New()
-	bytes.Write(transaction.ToBytes(false, true))
-
-	signature, err := privateKey.Sign(bytes.Sum(nil))
-	if err == nil {
-		transaction.SignSignature = HexEncode(signature)
-	}
-}
-
-func (transaction *Transaction) GetId() string {
-	bytes := sha256.New()
-	bytes.Write(transaction.ToBytes(false, false))
-
-	return HexEncode(bytes.Sum(nil))
-}
-
-func (transaction *Transaction) Verify() (bool, error) {
-	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SenderPublicKey))
-
-	if err != nil {
-		return false, err
-	}
-
-	bytes := sha256.New()
-	bytes.Write(transaction.ToBytes(true, true))
-
-	return publicKey.Verify(HexDecode(transaction.Signature), bytes.Sum(nil))
-
-}
-
-func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
-	bytes := sha256.New()
-	bytes.Write(transaction.ToBytes(false, true))
-
-	return secondPublicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
+	return transaction
 }

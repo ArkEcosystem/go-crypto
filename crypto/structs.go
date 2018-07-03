@@ -17,7 +17,6 @@ type Network struct {
 	Version byte
 	Nethash string
 	Wif     byte
-	WifByte []byte
 }
 
 type PrivateKey struct {

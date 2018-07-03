@@ -8,23 +8,22 @@
 package crypto
 
 import (
-    "github.com/stretchr/testify/assert"
-    "testing"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestSignMessage(t *testing.T) {
-    message, _ := SignMessage("Hello World", "This is a top secret passphrase")
+	message, _ := SignMessage("Hello World", "This is a top secret passphrase")
 
-    assert := assert.New(t)
-    assert.Equal("0366f4352b1f8456b0b43e8109522333931f51d7c685ea7c7d60a3cff51e7724a0", message.PublicKey)
-    assert.Equal("3045022100ef95928c81a034f0a81ff3d458140ef67ddced6632d9d72bca27ae9e0144ec4502206844c354f87757756b7035d30c8804dbafef8ca2760e20d4939269f360caba83", message.Signature)
-    assert.Equal("Hello World", message.Message)
+	assert := assert.New(t)
+	assert.Equal("0366f4352b1f8456b0b43e8109522333931f51d7c685ea7c7d60a3cff51e7724a0", message.PublicKey)
+	assert.Equal("3045022100ef95928c81a034f0a81ff3d458140ef67ddced6632d9d72bca27ae9e0144ec4502206844c354f87757756b7035d30c8804dbafef8ca2760e20d4939269f360caba83", message.Signature)
+	assert.Equal("Hello World", message.Message)
 }
 
-
 func TestVerifyMessage(t *testing.T) {
-    message, _ := SignMessage("Hello World", "This is a top secret passphrase")
+	message, _ := SignMessage("Hello World", "This is a top secret passphrase")
 
-    assert := assert.New(t)
-    assert.True(message.verify())
+	assert := assert.New(t)
+	assert.True(message.verify())
 }

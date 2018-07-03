@@ -9,13 +9,13 @@ package crypto
 
 func createSignedTransaction(transaction *Transaction, secret string, secondSecret string) *Transaction {
 	transaction.Timestamp = GetTime()
-	transaction.Sign(secret)
+	transaction.sign(secret)
 
 	if len(secondSecret) > 0 {
-		transaction.SecondSign(secondSecret)
+		transaction.secondSign(secondSecret)
 	}
 
-	transaction.Id = transaction.GetId()
+	transaction.Id = transaction.getId()
 
 	return transaction
 }

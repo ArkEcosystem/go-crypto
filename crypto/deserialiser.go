@@ -109,7 +109,7 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 	}
 
 	if transaction.Id == "" {
-		transaction.Id = transaction.GetId()
+		transaction.Id = transaction.getId()
 	}
 
 	return transaction
@@ -128,7 +128,7 @@ func deserialiseTransfer(assetOffset int, bytes []byte, transaction *Transaction
 	recipientOffset := offset + 12
 	transaction.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
 
-	return transaction.ParseSignatures(assetOffset + (21+12)*2)
+	return transaction.parseSignatures(assetOffset + (21+12)*2)
 }
 
 func deserialiseSecondSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
@@ -136,7 +136,7 @@ func deserialiseSecondSignatureRegistration(assetOffset int, bytes []byte, trans
 	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{}
 	transaction.Asset.Signature.PublicKey = transaction.Serialized[assetOffset:(assetOffset + 66)]
 
-	return transaction.ParseSignatures(assetOffset + 66)
+	return transaction.parseSignatures(assetOffset + 66)
 }
 
 func deserialiseDelegateRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
@@ -148,7 +148,7 @@ func deserialiseDelegateRegistration(assetOffset int, bytes []byte, transaction 
 	transaction.Asset.Delegate = &DelegateAsset{}
 	transaction.Asset.Delegate.Username = string(bytes[(offset + 1):((offset + 1) + int(usernameLength))])
 
-	return transaction.ParseSignatures(assetOffset + (int(usernameLength)+1)*2)
+	return transaction.parseSignatures(assetOffset + (int(usernameLength)+1)*2)
 }
 
 func deserialiseVote(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
@@ -172,7 +172,7 @@ func deserialiseVote(assetOffset int, bytes []byte, transaction *Transaction) *T
 		}
 	}
 
-	return transaction.ParseSignatures(assetOffset + 2 + (int(voteLength)*34)*2)
+	return transaction.parseSignatures(assetOffset + 2 + (int(voteLength)*34)*2)
 }
 
 func deserialiseMultiSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
@@ -194,7 +194,7 @@ func deserialiseMultiSignatureRegistration(assetOffset int, bytes []byte, transa
 		transaction.Asset.MultiSignature.Keysgroup = append(transaction.Asset.MultiSignature.Keysgroup, key)
 	}
 
-	return transaction.ParseSignatures(assetOffset + 6 + count*66)
+	return transaction.parseSignatures(assetOffset + 6 + count*66)
 }
 
 func deserialiseIpfs(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
