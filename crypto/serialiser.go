@@ -168,6 +168,25 @@ func serialiseVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer
 }
 
 func serialiseMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
+	keysgroup := make([]string, len(transaction.Asset.MultiSignature.Keysgroup))
+
+	if transaction.Version == 1 {
+		for _, element := range transaction.Asset.MultiSignature.Keysgroup {
+			if element[:1] == "+" {
+				keysgroup = append(keysgroup, element[1:])
+			} else {
+				keysgroup = append(keysgroup, element)
+			}
+		}
+	} else {
+		keysgroup = transaction.Asset.MultiSignature.Keysgroup
+	}
+
+	binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
+	binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.MultiSignature.Keysgroup)))
+	binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
+	binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(keysgroup, "")))
+
 	return buffer
 }
 
