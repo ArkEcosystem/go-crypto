@@ -11,7 +11,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	// "github.com/davecgh/go-spew/spew"
 	"strings"
 )
 
@@ -151,7 +150,7 @@ func serialiseDelegateRegistration(buffer *bytes.Buffer, transaction *Transactio
 }
 
 func serialiseVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	voteBytes := make([]string, len(transaction.Asset.Votes))
+	voteBytes := make([]string, 0)
 
 	for _, element := range transaction.Asset.Votes {
 		if element[:1] == "+" {
@@ -168,7 +167,7 @@ func serialiseVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer
 }
 
 func serialiseMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	keysgroup := make([]string, len(transaction.Asset.MultiSignature.Keysgroup))
+	keysgroup := make([]string, 0)
 
 	if transaction.Version == 1 {
 		for _, element := range transaction.Asset.MultiSignature.Keysgroup {
