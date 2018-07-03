@@ -81,19 +81,27 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.Vote {
-		// transaction.RecipientId = PublicKeyFromHex(transaction.SenderPublicKey).Address()
+		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+		transaction.RecipientId, _ = publicKey.Address()
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration {
-		// transaction.RecipientId = PublicKeyFromHex(transaction.SenderPublicKey).Address()
+		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+		transaction.RecipientId, _ = publicKey.Address()
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
-		// // The "recipientId" doesn't exist on v1 multi signature registrations
-		// // transaction.RecipientId = Address::fromPublicKey($transaction->senderPublicKey);
-		// $transaction->asset->multisignature->keysgroup = array_map(function ($key) {
-		//     return '+'.$key;
-		// }, $transaction->asset->multisignature->keysgroup);
+		keysgroup := make([]string, 0)
+
+		for _, element := range transaction.Asset.MultiSignature.Keysgroup {
+			if element[:1] == "+" {
+				keysgroup = append(keysgroup, element)
+			} else {
+				keysgroup = append(keysgroup, fmt.Sprintf("%s%s", "+", element))
+			}
+		}
+
+		transaction.Asset.MultiSignature.Keysgroup = keysgroup
 	}
 
 	if len(transaction.VendorFieldHex) > 0 {

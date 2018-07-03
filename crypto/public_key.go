@@ -28,6 +28,16 @@ func PublicKeyFromSecret(secret string) (*PublicKey, error) {
 	return privateKey.PublicKey, nil
 }
 
+func PublicKeyFromHex(publicKeyHex string) (*PublicKey, error) {
+	publicKey, err := PublicKeyFromBytes(HexDecode(publicKeyHex))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return publicKey, nil
+}
+
 func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
 	publicKey, err := btcec.ParsePubKey(bytes, btcec.S256())
 
