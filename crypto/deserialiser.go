@@ -8,6 +8,7 @@
 package crypto
 
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"strconv"
@@ -31,12 +32,12 @@ func DeserialiseTransaction(serialised string) *Transaction {
 ////////////////////////////////////////////////////////////////////////////////
 
 func deserialiseHeader(bytes []byte, transaction *Transaction) (int, *Transaction) {
-	transaction.Version = ReadInt8(bytes[1:2])
-	transaction.Network = ReadInt8(bytes[2:3])
-	transaction.Type = ReadInt8(bytes[3:4])
-	transaction.Timestamp = ReadInt32(bytes[4:8])
+	transaction.Version = bytes[1:2][0]
+	transaction.Network = bytes[2:3][0]
+	transaction.Type = bytes[3:4][0]
+	transaction.Timestamp = binary.LittleEndian.Uint32(bytes[4:8])
 	transaction.SenderPublicKey = HexEncode(bytes[8:41])
-	transaction.Fee = ReadInt64(bytes[41:49])
+	transaction.Fee = binary.LittleEndian.Uint64(bytes[41:49])
 
 	vendorFieldLength := bytes[49:50][0]
 
@@ -105,7 +106,7 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 	}
 
 	if len(transaction.VendorFieldHex) > 0 {
-		transaction.VendorField = ReadHex(transaction.VendorFieldHex)
+		transaction.VendorField = string(HexDecode(Hex2Byte(transaction.VendorFieldHex)))
 	}
 
 	if transaction.Id == "" {
@@ -122,8 +123,8 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 func deserialiseTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
-	transaction.Amount = ReadInt64(bytes[offset:(offset + 8)])
-	transaction.Expiration = ReadInt32(bytes[(offset + 8):(offset + 16)])
+	transaction.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+	transaction.Expiration = binary.LittleEndian.Uint32(bytes[(offset + 8):(offset + 16)])
 
 	recipientOffset := offset + 12
 	transaction.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
