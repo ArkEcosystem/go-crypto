@@ -7,5 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 0.1.2 - 2018-07-04
+### Changed
+- Return raw bytes from `SerialiseTransaction` _(instead of hex)_
+- Renamed `createSignedTransaction` to `buildSignedTransaction`
+
 ## 0.1.0 - 2018-07-04
 - Initial Release
