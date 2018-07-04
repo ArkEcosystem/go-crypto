@@ -17,19 +17,19 @@ import (
 	"strings"
 )
 
-func (transaction *Transaction) getId() string {
+func (transaction *Transaction) GetId() string {
 	bytes := sha256.New()
-	bytes.Write(transaction.toBytes(false, false))
+	bytes.Write(transaction.ToBytes(false, false))
 
 	return HexEncode(bytes.Sum(nil))
 }
 
-func (transaction *Transaction) sign(secret string) {
+func (transaction *Transaction) Sign(secret string) {
 	privateKey, _ := PrivateKeyFromSecret(secret)
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	bytes := sha256.New()
-	bytes.Write(transaction.toBytes(true, true))
+	bytes.Write(transaction.ToBytes(true, true))
 
 	signature, err := privateKey.Sign(bytes.Sum(nil))
 	if err == nil {
@@ -37,11 +37,11 @@ func (transaction *Transaction) sign(secret string) {
 	}
 }
 
-func (transaction *Transaction) secondSign(secret string) {
+func (transaction *Transaction) SecondSign(secret string) {
 	privateKey, _ := PrivateKeyFromSecret(secret)
 
 	bytes := sha256.New()
-	bytes.Write(transaction.toBytes(false, true))
+	bytes.Write(transaction.ToBytes(false, true))
 
 	signature, err := privateKey.Sign(bytes.Sum(nil))
 	if err == nil {
@@ -49,7 +49,7 @@ func (transaction *Transaction) secondSign(secret string) {
 	}
 }
 
-func (transaction *Transaction) verify() (bool, error) {
+func (transaction *Transaction) Verify() (bool, error) {
 	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SenderPublicKey))
 
 	if err != nil {
@@ -57,20 +57,20 @@ func (transaction *Transaction) verify() (bool, error) {
 	}
 
 	bytes := sha256.New()
-	bytes.Write(transaction.toBytes(true, true))
+	bytes.Write(transaction.ToBytes(true, true))
 
 	return publicKey.Verify(HexDecode(transaction.Signature), bytes.Sum(nil))
 
 }
 
-func (transaction *Transaction) secondVerify(secondPublicKey *PublicKey) (bool, error) {
+func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
 	bytes := sha256.New()
-	bytes.Write(transaction.toBytes(false, true))
+	bytes.Write(transaction.ToBytes(false, true))
 
 	return secondPublicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
 }
 
-func (transaction *Transaction) toBytes(skipSignature, skipSecondSignature bool) []byte {
+func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool) []byte {
 	buffer := new(bytes.Buffer)
 	binary.Write(buffer, binary.LittleEndian, transaction.Type)
 	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timestamp))
@@ -132,7 +132,7 @@ func (transaction *Transaction) toBytes(skipSignature, skipSecondSignature bool)
 	return buffer.Bytes()
 }
 
-func (transaction *Transaction) parseSignatures(startOffset int) *Transaction {
+func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 	transaction.Signature = transaction.Serialized[startOffset:]
 
 	multiSignatureOffset := 0

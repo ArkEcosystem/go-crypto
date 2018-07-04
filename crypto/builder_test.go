@@ -22,7 +22,7 @@ func TestBuildTransferWithSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildTransferWithSecondSecret(t *testing.T) {
@@ -35,10 +35,10 @@ func TestBuildTransferWithSecondSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 
 	secondPublicKey, _ := PublicKeyFromSecret("this is a top secret second passphrase")
-	assert.True(transaction.secondVerify(secondPublicKey))
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 
 func TestBuildSecondSignatureRegistration(t *testing.T) {
@@ -48,7 +48,7 @@ func TestBuildSecondSignatureRegistration(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildDelegateRegistrationWithSecret(t *testing.T) {
@@ -59,7 +59,7 @@ func TestBuildDelegateRegistrationWithSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildDelegateRegistrationWithSecondSecret(t *testing.T) {
@@ -70,10 +70,10 @@ func TestBuildDelegateRegistrationWithSecondSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 
 	secondPublicKey, _ := PublicKeyFromSecret("this is a top secret second passphrase")
-	assert.True(transaction.secondVerify(secondPublicKey))
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 
 func TestBuildVoteWithSecret(t *testing.T) {
@@ -84,7 +84,7 @@ func TestBuildVoteWithSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildVoteWithSecondSecret(t *testing.T) {
@@ -95,8 +95,8 @@ func TestBuildVoteWithSecondSecret(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(transaction.verify())
+	assert.True(transaction.Verify())
 
 	secondPublicKey, _ := PublicKeyFromSecret("this is a top secret second passphrase")
-	assert.True(transaction.secondVerify(secondPublicKey))
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }

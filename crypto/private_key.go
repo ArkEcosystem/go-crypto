@@ -41,15 +41,15 @@ func PrivateKeyFromBytes(bytes []byte) *PrivateKey {
 // ADDRESS /////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func (privateKey *PrivateKey) toHex() string {
+func (privateKey *PrivateKey) ToHex() string {
 	return HexEncode(privateKey.Serialize())
 }
 
-func (privateKey *PrivateKey) toAddress() string {
-	return privateKey.PublicKey.toAddress()
+func (privateKey *PrivateKey) ToAddress() string {
+	return privateKey.PublicKey.ToAddress()
 }
 
-func (privateKey *PrivateKey) toWif() string {
+func (privateKey *PrivateKey) ToWif() string {
 	p := privateKey.Serialize()
 
 	if privateKey.PublicKey.isCompressed {

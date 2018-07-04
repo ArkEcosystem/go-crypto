@@ -57,11 +57,11 @@ func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
 // ADDRESS COMPUTATION /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func (publicKey *PublicKey) toHex() string {
+func (publicKey *PublicKey) ToHex() string {
 	return HexEncode(publicKey.Serialize())
 }
 
-func (publicKey *PublicKey) toAddress() string {
+func (publicKey *PublicKey) ToAddress() string {
 	ripeHashedBytes := publicKey.AddressBytes()
 	ripeHashedBytes = append(ripeHashedBytes, 0x0)
 	copy(ripeHashedBytes[1:], ripeHashedBytes[:len(ripeHashedBytes)-1])

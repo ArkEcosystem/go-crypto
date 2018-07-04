@@ -18,7 +18,7 @@ func AddressFromSecret(secret string) (string, error) {
 		return "", err
 	}
 
-	return privateKey.toAddress(), nil
+	return privateKey.ToAddress(), nil
 }
 
 func AddressToBytes(address string) ([]byte, error) {
