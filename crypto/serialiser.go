@@ -22,7 +22,7 @@ func SerialiseTransaction(transaction *Transaction) string {
 	buffer = serialiseTypeSpecific(buffer, transaction)
 	buffer = serialiseSignatures(buffer, transaction)
 
-	return HexEncode(buffer.Bytes())
+	return buffer.Bytes()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
