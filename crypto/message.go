@@ -38,7 +38,7 @@ func SignMessage(message string, secret string) (*Message, error) {
 	}, nil
 }
 
-func (message *Message) verify() (bool, error) {
+func (message *Message) Verify() (bool, error) {
 	publicKey, _ := PublicKeyFromBytes(HexDecode(message.PublicKey))
 
 	hash := sha256.New()

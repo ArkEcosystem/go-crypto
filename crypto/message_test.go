@@ -25,5 +25,5 @@ func TestVerifyMessage(t *testing.T) {
 	message, _ := SignMessage("Hello World", "This is a top secret passphrase")
 
 	assert := assert.New(t)
-	assert.True(message.verify())
+	assert.True(message.Verify())
 }
