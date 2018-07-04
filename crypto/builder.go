@@ -7,7 +7,7 @@
 
 package crypto
 
-func createSignedTransaction(transaction *Transaction, secret string, secondSecret string) *Transaction {
+func buildSignedTransaction(transaction *Transaction, secret string, secondSecret string) *Transaction {
 	transaction.Timestamp = GetTime()
 	transaction.Sign(secret)
 
@@ -30,7 +30,7 @@ func BuildTransfer(recipient string, amount uint64, vendorField string, secret s
 		Asset:       &TransactionAsset{},
 	}
 
-	return createSignedTransaction(transaction, secret, secondSecret)
+	return buildSignedTransaction(transaction, secret, secondSecret)
 }
 
 func BuildSecondSignatureRegistration(secret string, secondSecret string) *Transaction {
@@ -46,7 +46,7 @@ func BuildSecondSignatureRegistration(secret string, secondSecret string) *Trans
 		PublicKey: HexEncode(publicKey.Serialize()),
 	}
 
-	return createSignedTransaction(transaction, secret, secondSecret)
+	return buildSignedTransaction(transaction, secret, secondSecret)
 }
 
 func BuildDelegateRegistration(username string, secret string, secondSecret string) *Transaction {
@@ -60,7 +60,7 @@ func BuildDelegateRegistration(username string, secret string, secondSecret stri
 		Username: username,
 	}
 
-	return createSignedTransaction(transaction, secret, secondSecret)
+	return buildSignedTransaction(transaction, secret, secondSecret)
 }
 
 func BuildVote(vote, secret, secondSecret string) *Transaction {
@@ -73,7 +73,7 @@ func BuildVote(vote, secret, secondSecret string) *Transaction {
 	transaction.RecipientId, _ = AddressFromSecret(secret)
 	transaction.Asset.Votes = append(transaction.Asset.Votes, vote)
 
-	return createSignedTransaction(transaction, secret, secondSecret)
+	return buildSignedTransaction(transaction, secret, secondSecret)
 }
 
 // func BuildMultiSignatureRegistration() *Transaction {}
