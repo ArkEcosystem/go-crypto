@@ -13,7 +13,7 @@
 ## Installation
 
 ```bash
-go get github.com/ArkEcosystem/go-crypto
+go get github.com/ArkEcosystem/go-crypto/crypto
 ```
 
 ## Security
