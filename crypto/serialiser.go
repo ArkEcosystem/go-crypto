@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-func SerialiseTransaction(transaction *Transaction) string {
+func SerialiseTransaction(transaction *Transaction) []byte {
 	buffer := new(bytes.Buffer)
 
 	buffer = serialiseHeader(buffer, transaction)

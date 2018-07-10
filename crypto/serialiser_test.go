@@ -8,8 +8,9 @@
 package crypto
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSerialiseTransfer(t *testing.T) {
@@ -17,7 +18,7 @@ func TestSerialiseTransfer(t *testing.T) {
 	transaction := DeserialiseTransaction(serialised)
 
 	assert := assert.New(t)
-	assert.Equal(serialised, SerialiseTransaction(transaction))
+	assert.Equal(serialised, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseSecondSignatureRegistration(t *testing.T) {
@@ -25,7 +26,7 @@ func TestSerialiseSecondSignatureRegistration(t *testing.T) {
 	transaction := DeserialiseTransaction(serialised)
 
 	assert := assert.New(t)
-	assert.Equal(serialised, SerialiseTransaction(transaction))
+	assert.Equal(serialised, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseDelegateRegistration(t *testing.T) {
@@ -33,7 +34,7 @@ func TestSerialiseDelegateRegistration(t *testing.T) {
 	transaction := DeserialiseTransaction(serialised)
 
 	assert := assert.New(t)
-	assert.Equal(serialised, SerialiseTransaction(transaction))
+	assert.Equal(serialised, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseVote(t *testing.T) {
@@ -41,7 +42,7 @@ func TestSerialiseVote(t *testing.T) {
 	transaction := DeserialiseTransaction(serialised)
 
 	assert := assert.New(t)
-	assert.Equal(serialised, SerialiseTransaction(transaction))
+	assert.Equal(serialised, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseMultiSignatureRegistration(t *testing.T) {
@@ -49,7 +50,7 @@ func TestSerialiseMultiSignatureRegistration(t *testing.T) {
 	transaction := DeserialiseTransaction(serialised)
 
 	assert := assert.New(t)
-	assert.Equal(serialised, SerialiseTransaction(transaction))
+	assert.Equal(serialised, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseIpfs(t *testing.T) {
