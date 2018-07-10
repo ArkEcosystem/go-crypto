@@ -15,15 +15,15 @@ import (
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
-func DeserialiseTransaction(serialised string) *Transaction {
-	bytes := HexDecode(serialised)
+func DeserializeTransaction(serialized string) *Transaction {
+	bytes := HexDecode(serialized)
 
 	transaction := &Transaction{}
-	transaction.Serialized = serialised
+	transaction.Serialized = serialized
 
-	assetOffset, transaction := deserialiseHeader(bytes, transaction)
-	transaction = deserialiseTypeSpecific(assetOffset, bytes, transaction)
-	transaction = deserialiseVersionOne(bytes, transaction)
+	assetOffset, transaction := deserializeHeader(bytes, transaction)
+	transaction = deserializeTypeSpecific(assetOffset, bytes, transaction)
+	transaction = deserializeVersionOne(bytes, transaction)
 
 	return transaction
 }
@@ -32,7 +32,7 @@ func DeserialiseTransaction(serialised string) *Transaction {
 // GENERIC DESERIALISING ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func deserialiseHeader(bytes []byte, transaction *Transaction) (int, *Transaction) {
+func deserializeHeader(bytes []byte, transaction *Transaction) (int, *Transaction) {
 	transaction.Version = bytes[1:2][0]
 	transaction.Network = bytes[2:3][0]
 	transaction.Type = bytes[3:4][0]
@@ -52,32 +52,32 @@ func deserialiseHeader(bytes []byte, transaction *Transaction) (int, *Transactio
 	return assetOffset, transaction
 }
 
-func deserialiseTypeSpecific(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeTypeSpecific(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	switch {
 	case transaction.Type == TRANSACTION_TYPES.Transfer:
-		transaction = deserialiseTransfer(assetOffset, bytes, transaction)
+		transaction = deserializeTransfer(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration:
-		transaction = deserialiseSecondSignatureRegistration(assetOffset, bytes, transaction)
+		transaction = deserializeSecondSignatureRegistration(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.DelegateRegistration:
-		transaction = deserialiseDelegateRegistration(assetOffset, bytes, transaction)
+		transaction = deserializeDelegateRegistration(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.Vote:
-		transaction = deserialiseVote(assetOffset, bytes, transaction)
+		transaction = deserializeVote(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration:
-		transaction = deserialiseMultiSignatureRegistration(assetOffset, bytes, transaction)
+		transaction = deserializeMultiSignatureRegistration(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.Ipfs:
-		transaction = deserialiseIpfs(assetOffset, bytes, transaction)
+		transaction = deserializeIpfs(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.TimelockTransfer:
-		transaction = deserialiseTimelockTransfer(assetOffset, bytes, transaction)
+		transaction = deserializeTimelockTransfer(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.MultiPayment:
-		transaction = deserialiseMultiPayment(assetOffset, bytes, transaction)
+		transaction = deserializeMultiPayment(assetOffset, bytes, transaction)
 	case transaction.Type == TRANSACTION_TYPES.DelegateResignation:
-		transaction = deserialiseDelegateResignation(assetOffset, bytes, transaction)
+		transaction = deserializeDelegateResignation(assetOffset, bytes, transaction)
 	}
 
 	return transaction
 }
 
-func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction {
+func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction {
 	if transaction.SecondSignature != "" {
 		transaction.SignSignature = transaction.SecondSignature
 	}
@@ -125,7 +125,7 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 // TYPE SPECIFICDE SERIALISING /////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-func deserialiseTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
 	transaction.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
@@ -137,7 +137,7 @@ func deserialiseTransfer(assetOffset int, bytes []byte, transaction *Transaction
 	return transaction.ParseSignatures(assetOffset + (21+12)*2)
 }
 
-func deserialiseSecondSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeSecondSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	transaction.Asset = &TransactionAsset{}
 	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{}
 	transaction.Asset.Signature.PublicKey = transaction.Serialized[assetOffset:(assetOffset + 66)]
@@ -145,7 +145,7 @@ func deserialiseSecondSignatureRegistration(assetOffset int, bytes []byte, trans
 	return transaction.ParseSignatures(assetOffset + 66)
 }
 
-func deserialiseDelegateRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeDelegateRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
 	usernameLength := bytes[offset:(offset + 1)][0]
@@ -157,7 +157,7 @@ func deserialiseDelegateRegistration(assetOffset int, bytes []byte, transaction 
 	return transaction.ParseSignatures(assetOffset + (int(usernameLength)+1)*2)
 }
 
-func deserialiseVote(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeVote(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
 	voteLength := bytes[offset:(offset + 1)][0]
@@ -181,7 +181,7 @@ func deserialiseVote(assetOffset int, bytes []byte, transaction *Transaction) *T
 	return transaction.ParseSignatures(assetOffset + 2 + (int(voteLength)*34)*2)
 }
 
-func deserialiseMultiSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeMultiSignatureRegistration(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
 	transaction.Asset = &TransactionAsset{}
@@ -203,18 +203,18 @@ func deserialiseMultiSignatureRegistration(assetOffset int, bytes []byte, transa
 	return transaction.ParseSignatures(assetOffset + 6 + count*66)
 }
 
-func deserialiseIpfs(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeIpfs(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	return transaction
 }
 
-func deserialiseTimelockTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeTimelockTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	return transaction
 }
 
-func deserialiseMultiPayment(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeMultiPayment(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	return transaction
 }
 
-func deserialiseDelegateResignation(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
+func deserializeDelegateResignation(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	return transaction
 }
