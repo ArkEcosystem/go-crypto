@@ -10,8 +10,9 @@ package crypto
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"strconv"
+
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
 func DeserialiseTransaction(serialised string) *Transaction {
@@ -83,11 +84,15 @@ func deserialiseVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 
 	if transaction.Type == TRANSACTION_TYPES.Vote {
 		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+		publicKey.network.Version = transaction.Network
+
 		transaction.RecipientId = publicKey.ToAddress()
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration {
 		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+		publicKey.network.Version = transaction.Network
+
 		transaction.RecipientId = publicKey.ToAddress()
 	}
 
