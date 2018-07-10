@@ -14,7 +14,7 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 )
 
-func PrivateKeyFromSecret(passphrase string) (*PrivateKey, error) {
+func PrivateKeyFromPassphrase(passphrase string) (*PrivateKey, error) {
 	hash := sha256.New()
 	_, err := hash.Write([]byte(passphrase))
 

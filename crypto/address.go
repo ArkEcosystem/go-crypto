@@ -11,8 +11,8 @@ import (
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
-func AddressFromSecret(passphrase string) (string, error) {
-	privateKey, err := PrivateKeyFromSecret(passphrase)
+func AddressFromPassphrase(passphrase string) (string, error) {
+	privateKey, err := PrivateKeyFromPassphrase(passphrase)
 
 	if err != nil {
 		return "", err

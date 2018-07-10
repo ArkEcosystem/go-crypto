@@ -7,12 +7,12 @@
 
 package crypto
 
-func buildSignedTransaction(transaction *Transaction, passphrase string, secondSecret string) *Transaction {
+func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	transaction.Timestamp = GetTime()
 	transaction.Sign(passphrase)
 
-	if len(secondSecret) > 0 {
-		transaction.SecondSign(secondSecret)
+	if len(secondPassphrase) > 0 {
+		transaction.SecondSign(secondPassphrase)
 	}
 
 	transaction.Id = transaction.GetId()
@@ -20,7 +20,7 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondS
 	return transaction
 }
 
-func BuildTransfer(recipient string, amount uint64, vendorField string, passphrase string, secondSecret string) *Transaction {
+func BuildTransfer(recipient string, amount uint64, vendorField string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:        TRANSACTION_TYPES.Transfer,
 		Fee:         TRANSACTION_FEES.Transfer,
@@ -30,26 +30,26 @@ func BuildTransfer(recipient string, amount uint64, vendorField string, passphra
 		Asset:       &TransactionAsset{},
 	}
 
-	return buildSignedTransaction(transaction, passphrase, secondSecret)
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildSecondSignatureRegistration(passphrase string, secondSecret string) *Transaction {
+func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.SecondSignatureRegistration,
 		Fee:   TRANSACTION_FEES.SecondSignatureRegistration,
 		Asset: &TransactionAsset{},
 	}
 
-	publicKey, _ := PublicKeyFromSecret(passphrase)
+	publicKey, _ := PublicKeyFromPassphrase(passphrase)
 
 	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{
 		PublicKey: HexEncode(publicKey.Serialize()),
 	}
 
-	return buildSignedTransaction(transaction, passphrase, secondSecret)
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildDelegateRegistration(username string, passphrase string, secondSecret string) *Transaction {
+func BuildDelegateRegistration(username string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.DelegateRegistration,
 		Fee:   TRANSACTION_FEES.DelegateRegistration,
@@ -60,20 +60,20 @@ func BuildDelegateRegistration(username string, passphrase string, secondSecret 
 		Username: username,
 	}
 
-	return buildSignedTransaction(transaction, passphrase, secondSecret)
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildVote(vote, passphrase, secondSecret string) *Transaction {
+func BuildVote(vote, passphrase, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.Vote,
 		Fee:   TRANSACTION_FEES.Vote,
 		Asset: &TransactionAsset{},
 	}
 
-	transaction.RecipientId, _ = AddressFromSecret(passphrase)
+	transaction.RecipientId, _ = AddressFromPassphrase(passphrase)
 	transaction.Asset.Votes = append(transaction.Asset.Votes, vote)
 
-	return buildSignedTransaction(transaction, passphrase, secondSecret)
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
 // func BuildMultiSignatureRegistration() *Transaction {}

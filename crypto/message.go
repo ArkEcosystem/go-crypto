@@ -12,7 +12,7 @@ import (
 )
 
 func SignMessage(message string, passphrase string) (*Message, error) {
-	privateKey, err := PrivateKeyFromSecret(passphrase)
+	privateKey, err := PrivateKeyFromPassphrase(passphrase)
 
 	if err != nil {
 		return nil, err

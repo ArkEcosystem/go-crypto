@@ -26,7 +26,7 @@ func (transaction *Transaction) GetId() string {
 }
 
 func (transaction *Transaction) Sign(passphrase string) {
-	privateKey, _ := PrivateKeyFromSecret(passphrase)
+	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	bytes := sha256.New()
@@ -39,7 +39,7 @@ func (transaction *Transaction) Sign(passphrase string) {
 }
 
 func (transaction *Transaction) SecondSign(passphrase string) {
-	privateKey, _ := PrivateKeyFromSecret(passphrase)
+	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
 
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))
