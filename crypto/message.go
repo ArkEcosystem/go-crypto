@@ -11,8 +11,8 @@ import (
 	"crypto/sha256"
 )
 
-func SignMessage(message string, secret string) (*Message, error) {
-	privateKey, err := PrivateKeyFromSecret(secret)
+func SignMessage(message string, passphrase string) (*Message, error) {
+	privateKey, err := PrivateKeyFromSecret(passphrase)
 
 	if err != nil {
 		return nil, err

@@ -13,8 +13,8 @@ import (
 	"golang.org/x/crypto/ripemd160"
 )
 
-func PublicKeyFromSecret(secret string) (*PublicKey, error) {
-	privateKey, err := PrivateKeyFromSecret(secret)
+func PublicKeyFromSecret(passphrase string) (*PublicKey, error) {
+	privateKey, err := PrivateKeyFromSecret(passphrase)
 
 	if err != nil {
 		return nil, err

@@ -9,13 +9,14 @@ package crypto
 
 import (
 	"crypto/sha256"
+
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"github.com/btcsuite/btcd/btcec"
 )
 
-func PrivateKeyFromSecret(secret string) (*PrivateKey, error) {
+func PrivateKeyFromSecret(passphrase string) (*PrivateKey, error) {
 	hash := sha256.New()
-	_, err := hash.Write([]byte(secret))
+	_, err := hash.Write([]byte(passphrase))
 
 	if err != nil {
 		return nil, err

@@ -11,10 +11,11 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
 func (transaction *Transaction) GetId() string {
@@ -24,8 +25,8 @@ func (transaction *Transaction) GetId() string {
 	return HexEncode(bytes.Sum(nil))
 }
 
-func (transaction *Transaction) Sign(secret string) {
-	privateKey, _ := PrivateKeyFromSecret(secret)
+func (transaction *Transaction) Sign(passphrase string) {
+	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	bytes := sha256.New()
@@ -37,8 +38,8 @@ func (transaction *Transaction) Sign(secret string) {
 	}
 }
 
-func (transaction *Transaction) SecondSign(secret string) {
-	privateKey, _ := PrivateKeyFromSecret(secret)
+func (transaction *Transaction) SecondSign(passphrase string) {
+	privateKey, _ := PrivateKeyFromSecret(passphrase)
 
 	bytes := sha256.New()
 	bytes.Write(transaction.ToBytes(false, true))
