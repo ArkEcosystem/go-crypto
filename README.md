@@ -1,10 +1,10 @@
-# ARK Go - Crypto
+# Ark Go - Crypto
 
 <p align="center">
     <img src="https://github.com/ArkEcosystem/go-crypto/blob/master/banner.png" />
 </p>
 
-> A simple Cryptography Implementation in Go for the ARK Blockchain.
+> A simple Cryptography Implementation in Go for the Ark Blockchain.
 
 [![Build Status](https://img.shields.io/travis/ArkEcosystem/go-crypto/master.svg?style=flat-square)](https://travis-ci.org/ArkEcosystem/go-crypto)
 [![Latest Version](https://img.shields.io/github/release/ArkEcosystem/go-crypto.svg?style=flat-square)](https://github.com/ArkEcosystem/go-crypto/releases)
