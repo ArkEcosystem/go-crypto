@@ -10,9 +10,10 @@ package crypto
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"log"
 	"strings"
+
+	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 )
 
 func Byte2Hex(data byte) string {

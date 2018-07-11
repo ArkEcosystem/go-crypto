@@ -8,8 +8,9 @@
 package crypto
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSignMessage(t *testing.T) {

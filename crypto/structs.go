@@ -8,8 +8,9 @@
 package crypto
 
 import (
-	"github.com/btcsuite/btcd/btcec"
 	"time"
+
+	"github.com/btcsuite/btcd/btcec"
 )
 
 type Network struct {
