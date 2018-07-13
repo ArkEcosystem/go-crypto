@@ -14,13 +14,17 @@ import (
 )
 
 func TestAddressFromPassphrase(t *testing.T) {
-	address, _ := AddressFromPassphrase("this is a top secret passphrase")
+	fixture := GetIdentityFixture()
+
+	address, _ := AddressFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
-	assert.Equal("D61mfSggzbvQgTUe6JhYKH2doHaqJ3Dyib", address)
+	assert.Equal(fixture.Data.Address, address)
 }
 
 func TestValidateAddress(t *testing.T) {
+	fixture := GetIdentityFixture()
+
 	assert := assert.New(t)
-	assert.True(ValidateAddress("D61mfSggzbvQgTUe6JhYKH2doHaqJ3Dyib"))
+	assert.True(ValidateAddress(fixture.Data.Address))
 }

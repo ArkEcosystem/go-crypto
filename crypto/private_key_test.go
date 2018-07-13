@@ -14,22 +14,29 @@ import (
 )
 
 func TestPrivateKeyFromPassphrase(t *testing.T) {
-	privateKey, _ := PrivateKeyFromPassphrase("this is a top secret passphrase")
+	fixture := GetIdentityFixture()
+
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
-	assert.Equal("d8839c2432bfd0a67ef10a804ba991eabba19f154a3d707917681d45822a5712", privateKey.ToHex())
+	assert.Equal(fixture.Data.PrivateKey, privateKey.ToHex())
 }
 
 func TestPrivateKeyToAddress(t *testing.T) {
-	privateKey, _ := PrivateKeyFromPassphrase("this is a top secret passphrase")
+	fixture := GetIdentityFixture()
+
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
+	privateKey.PublicKey.network.Version = 0x1e
 
 	assert := assert.New(t)
-	assert.Equal("D61mfSggzbvQgTUe6JhYKH2doHaqJ3Dyib", privateKey.ToAddress())
+	assert.Equal(fixture.Data.Address, privateKey.ToAddress())
 }
 
 func TestPrivateKeyToWif(t *testing.T) {
-	privateKey, _ := PrivateKeyFromPassphrase("this is a top secret passphrase")
+	fixture := GetIdentityFixture()
+
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
-	assert.Equal("SGq4xLgZKCGxs7bjmwnBrWcT4C1ADFEermj846KC97FSv1WFD1dA", privateKey.ToWif())
+	assert.Equal(fixture.Data.WIF, privateKey.ToWif())
 }

@@ -92,7 +92,7 @@ type Message struct {
 type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
 	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
-	Delegate       *DelegateAsset                    `json:"publicKey,omitempty"`
+	Delegate       *DelegateAsset                    `json:"delegate,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multisignature,omitempty"`
 	Ipfs           *IpfsAsset                        `json:"ipfs,omitempty"`
 	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`

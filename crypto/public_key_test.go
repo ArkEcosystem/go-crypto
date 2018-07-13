@@ -14,15 +14,19 @@ import (
 )
 
 func TestPublicKeyFromPassphrase(t *testing.T) {
-	publicKey, _ := PublicKeyFromPassphrase("this is a top secret passphrase")
+	fixture := GetIdentityFixture()
+
+	publicKey, _ := PublicKeyFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
-	assert.Equal("034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192", publicKey.ToHex())
+	assert.Equal(fixture.Data.PublicKey, publicKey.ToHex())
 }
 
 func TestPublicKeyFromHex(t *testing.T) {
-	publicKey, _ := PublicKeyFromHex("034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192")
+	fixture := GetIdentityFixture()
+
+	publicKey, _ := PublicKeyFromHex(fixture.Data.PublicKey)
 
 	assert := assert.New(t)
-	assert.Equal("034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192", publicKey.ToHex())
+	assert.Equal(fixture.Data.PublicKey, publicKey.ToHex())
 }
