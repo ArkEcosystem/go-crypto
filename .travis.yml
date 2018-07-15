@@ -1,1 +1,4 @@
 language: go
+
+git:
+  depth: 1
