@@ -13,90 +13,92 @@
 ## TO-DO
 
 ### AIP11 Serialization
-- [ ] Transfer
-- [ ] Second Signature Registration
-- [ ] Delegate Registration
-- [ ] Vote
-- [ ] Multi Signature Registration
+- [x] Transfer
+- [x] Second Signature Registration
+- [x] Delegate Registration
+- [x] Vote
+- [x] Multi Signature Registration
 - [ ] IPFS
 - [ ] Timelock Transfer
 - [ ] Multi Payment
 - [ ] Delegate Resignation
 
 ### AIP11 Deserialization
-- [ ] Transfer
-- [ ] Second Signature Registration
-- [ ] Delegate Registration
-- [ ] Vote
-- [ ] Multi Signature Registration
+- [x] Transfer
+- [x] Second Signature Registration
+- [x] Delegate Registration
+- [x] Vote
+- [x] Multi Signature Registration
 - [ ] IPFS
 - [ ] Timelock Transfer
 - [ ] Multi Payment
 - [ ] Delegate Resignation
 
 ### Transaction Signing
-- [ ] Transfer
-- [ ] Second Signature Registration
-- [ ] Delegate Registration
-- [ ] Vote
+- [x] Transfer
+- [x] Second Signature Registration
+- [x] Delegate Registration
+- [x] Vote
 - [ ] Multi Signature Registration
 
 ### Transaction Verifying
-- [ ] Transfer
-- [ ] Second Signature Registration
-- [ ] Delegate Registration
-- [ ] Vote
+- [x] Transfer
+- [x] Second Signature Registration
+- [x] Delegate Registration
+- [x] Vote
 - [ ] Multi Signature Registration
 
 ### Transaction Entity
-- [ ] getId
-- [ ] sign
-- [ ] secondSign
-- [ ] parseSignatures
+- [x] getId
+- [x] sign
+- [x] secondSign
+- [x] verify
+- [x] secondVerify
+- [x] parseSignatures
 - [ ] serialize
 - [ ] deserialize
-- [ ] toBytes
+- [x] toBytes
 - [ ] toArray
 - [ ] toJson
 
 ### Message
-- [ ] sign
-- [ ] verify
+- [x] sign
+- [x] verify
 - [ ] toArray
 - [ ] toJson
 
 ### Address Identity
-- [ ] fromPassphrase
-- [ ] fromPublicKey
-- [ ] fromPrivateKey
-- [ ] validate
+- [x] fromPassphrase
+- [x] fromPublicKey
+- [x] fromPrivateKey
+- [x] validate
 
 ### Private Key Identity
-- [ ] fromPassphrase
+- [x] fromPassphrase
 - [ ] fromHex
 
 ### Public Key Identity
-- [ ] fromPassphrase
-- [ ] fromHex
+- [x] fromPassphrase
+- [x] fromHex
 
 ### WIF Identity
-- [ ] fromPassphrase
+- [x] fromPassphrase
 
 ### Configuration
-- [ ] getNetwork
-- [ ] setNetwork
+- [x] getNetwork
+- [x] setNetwork
 - [ ] getFee
 - [ ] setFee
 
 ### Slot
-- [ ] time
+- [x] time
 - [ ] epoch
 
 ### Networks (Mainnet, Devnet & Testnet)
-- [ ] epoch
-- [ ] version
-- [ ] nethash
-- [ ] wif
+- [x] epoch
+- [x] version
+- [x] nethash
+- [x] wif
 
 ## Installation
 
