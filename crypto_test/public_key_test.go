@@ -10,7 +10,7 @@ package crypto_test
 import (
 	"testing"
 
-	. "github.com/ArkEcosystem/go-crypto/crypto"
+	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 

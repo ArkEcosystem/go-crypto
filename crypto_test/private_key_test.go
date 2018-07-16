@@ -10,7 +10,7 @@ package crypto_test
 import (
 	"testing"
 
-	. "github.com/ArkEcosystem/go-crypto/crypto"
+	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +27,7 @@ func TestPrivateKeyToAddress(t *testing.T) {
 	fixture := GetIdentityFixture()
 
 	privateKey, _ := crypto.PrivateKeyFromPassphrase(fixture.Passphrase)
-	privateKey.PublicKey.network.Version = 0x1e
+	privateKey.PublicKey.Network.Version = 0x1e
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Address, privateKey.ToAddress())

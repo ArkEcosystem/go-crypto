@@ -49,7 +49,7 @@ func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
 	return &PublicKey{
 		PublicKey:    publicKey,
 		isCompressed: isCompressed,
-		network:      GetNetwork(),
+		Network:      GetNetwork(),
 	}, nil
 }
 
@@ -65,7 +65,7 @@ func (publicKey *PublicKey) ToAddress() string {
 	ripeHashedBytes := publicKey.AddressBytes()
 	ripeHashedBytes = append(ripeHashedBytes, 0x0)
 	copy(ripeHashedBytes[1:], ripeHashedBytes[:len(ripeHashedBytes)-1])
-	ripeHashedBytes[0] = publicKey.network.Version
+	ripeHashedBytes[0] = publicKey.Network.Version
 
 	return base58.Encode(ripeHashedBytes)
 }

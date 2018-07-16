@@ -28,7 +28,7 @@ type PrivateKey struct {
 type PublicKey struct {
 	*btcec.PublicKey
 	isCompressed bool
-	network      *Network
+	Network      *Network
 }
 
 type TransactionTypes struct {

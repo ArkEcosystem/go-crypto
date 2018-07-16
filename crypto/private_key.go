@@ -33,7 +33,7 @@ func PrivateKeyFromBytes(bytes []byte) *PrivateKey {
 		PublicKey: &PublicKey{
 			PublicKey:    publicKey,
 			isCompressed: true,
-			network:      GetNetwork(),
+			Network:      GetNetwork(),
 		},
 	}
 }
@@ -59,7 +59,7 @@ func (privateKey *PrivateKey) ToWif() string {
 
 	p = append(p, 0x0)
 	copy(p[1:], p[:len(p)-1])
-	p[0] = privateKey.PublicKey.network.Wif
+	p[0] = privateKey.PublicKey.Network.Wif
 
 	return base58.Encode(p)
 }

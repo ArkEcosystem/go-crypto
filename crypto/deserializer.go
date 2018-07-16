@@ -84,7 +84,7 @@ func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 
 	if transaction.Type == TRANSACTION_TYPES.Vote {
 		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.network.Version = transaction.Network
+		publicKey.Network.Version = transaction.Network
 
 		transaction.RecipientId = publicKey.ToAddress()
 	}
@@ -113,14 +113,14 @@ func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 
 	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration {
 		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.network.Version = transaction.Network
+		publicKey.Network.Version = transaction.Network
 
 		transaction.RecipientId = publicKey.ToAddress()
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
 		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.network.Version = transaction.Network
+		publicKey.Network.Version = transaction.Network
 
 		transaction.RecipientId = publicKey.ToAddress()
 	}

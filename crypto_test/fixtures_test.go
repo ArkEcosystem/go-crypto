@@ -11,24 +11,33 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+
+	"github.com/ArkEcosystem/go-crypto/crypto"
 )
 
-func GetTransactionFixtureWithPassphrase(transactionType byte) string {
-	data, _ := ioutil.ReadFile(fmt.Sprintf("./fixtures/Transactions/type-%v/passphrase.json", transactionType))
+func GetFixture(file string) string {
+	data, _ := ioutil.ReadFile(fmt.Sprintf("./fixtures/%s.json", file))
 
 	return string(data)
 }
 
-func GetTransactionFixtureWithSecondPassphrase(transactionType byte) string {
-	data, _ := ioutil.ReadFile(fmt.Sprintf("./fixtures/Transactions/type-%v/second-passphrase.json", transactionType))
-
-	return string(data)
+func GetTransactionFixture(transactionType string, file string) string {
+	return GetFixture(fmt.Sprintf("transactions/%s/%s", transactionType, file))
 }
 
 func GetIdentityFixture() TestingIdentityFixture {
-	data, _ := ioutil.ReadFile("./fixtures/identity.json")
+	data := GetFixture("identity")
 
 	var fixture TestingIdentityFixture
+	json.Unmarshal([]byte(data), &fixture)
+
+	return fixture
+}
+
+func GetMessageFixture() TestingMessageFixture {
+	data := GetFixture("message")
+
+	var fixture TestingMessageFixture
 	json.Unmarshal([]byte(data), &fixture)
 
 	return fixture
@@ -60,7 +69,7 @@ type TestingSecondSignatureRegistrationFixture struct {
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
 		Asset           struct {
-			Signature SecondSignatureRegistrationAsset `json:"signature,omitempty"`
+			Signature crypto.SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -77,7 +86,7 @@ type TestingDelegateRegistrationFixture struct {
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
 		Asset           struct {
-			Delegate DelegateAsset `json:"delegate,omitempty"`
+			Delegate crypto.DelegateAsset `json:"delegate,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -113,7 +122,7 @@ type TestingMultiSignatureRegistrationFixture struct {
 		Id              string   `json:"id,omitempty"`
 		Signatures      []string `json:"signatures,omitempty"`
 		Asset           struct {
-			MultiSignature MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
+			MultiSignature crypto.MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -125,6 +134,15 @@ type TestingIdentityFixture struct {
 		PublicKey  string `json:"publicKey,omitempty"`
 		Address    string `json:"address,omitempty"`
 		WIF        string `json:"wif,omitempty"`
+	} `json:"data,omitempty"`
+	Passphrase string `json:"passphrase,omitempty"`
+}
+
+type TestingMessageFixture struct {
+	Data struct {
+		PublicKey string `json:"publickey,omitempty"`
+		Signature string `json:"signature,omitempty"`
+		Message   string `json:"message,omitempty"`
 	} `json:"data,omitempty"`
 	Passphrase string `json:"passphrase,omitempty"`
 }

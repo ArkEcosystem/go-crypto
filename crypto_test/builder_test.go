@@ -10,7 +10,7 @@ package crypto_test
 import (
 	"testing"
 
-	. "github.com/ArkEcosystem/go-crypto/crypto"
+	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +24,7 @@ func TestBuildTransferWithPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildTransferWithSecondPassphrase(t *testing.T) {
@@ -37,10 +37,10 @@ func TestBuildTransferWithSecondPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
-	assert.True(crypto.transaction.SecondVerify(secondPublicKey))
+	secondPublicKey, _ := crypto.PublicKeyFromPassphrase("this is a top secret second passphrase")
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 
 func TestBuildSecondSignatureRegistration(t *testing.T) {
@@ -50,7 +50,7 @@ func TestBuildSecondSignatureRegistration(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildDelegateRegistrationWithPassphrase(t *testing.T) {
@@ -61,7 +61,7 @@ func TestBuildDelegateRegistrationWithPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
@@ -72,10 +72,10 @@ func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
-	assert.True(crypto.transaction.SecondVerify(secondPublicKey))
+	secondPublicKey, _ := crypto.PublicKeyFromPassphrase("this is a top secret second passphrase")
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 
 func TestBuildVoteWithPassphrase(t *testing.T) {
@@ -86,7 +86,7 @@ func TestBuildVoteWithPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 }
 
 func TestBuildVoteWithSecondPassphrase(t *testing.T) {
@@ -97,8 +97,8 @@ func TestBuildVoteWithSecondPassphrase(t *testing.T) {
 	)
 
 	assert := assert.New(t)
-	assert.True(crypto.transaction.Verify())
+	assert.True(transaction.Verify())
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
-	assert.True(crypto.transaction.SecondVerify(secondPublicKey))
+	secondPublicKey, _ := crypto.PublicKeyFromPassphrase("this is a top secret second passphrase")
+	assert.True(transaction.SecondVerify(secondPublicKey))
 }
