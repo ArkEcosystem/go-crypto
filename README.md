@@ -10,6 +10,94 @@
 [![Latest Version](https://img.shields.io/github/release/ArkEcosystem/go-crypto.svg?style=flat-square)](https://github.com/ArkEcosystem/go-crypto/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## TO-DO
+
+### AIP11 Serialization
+- [ ] Transfer
+- [ ] Second Signature Registration
+- [ ] Delegate Registration
+- [ ] Vote
+- [ ] Multi Signature Registration
+- [ ] IPFS
+- [ ] Timelock Transfer
+- [ ] Multi Payment
+- [ ] Delegate Resignation
+
+### AIP11 Deserialization
+- [ ] Transfer
+- [ ] Second Signature Registration
+- [ ] Delegate Registration
+- [ ] Vote
+- [ ] Multi Signature Registration
+- [ ] IPFS
+- [ ] Timelock Transfer
+- [ ] Multi Payment
+- [ ] Delegate Resignation
+
+### Transaction Signing
+- [ ] Transfer
+- [ ] Second Signature Registration
+- [ ] Delegate Registration
+- [ ] Vote
+- [ ] Multi Signature Registration
+
+### Transaction Verifying
+- [ ] Transfer
+- [ ] Second Signature Registration
+- [ ] Delegate Registration
+- [ ] Vote
+- [ ] Multi Signature Registration
+
+### Transaction Entity
+- [ ] getId
+- [ ] sign
+- [ ] secondSign
+- [ ] parseSignatures
+- [ ] serialize
+- [ ] deserialize
+- [ ] toBytes
+- [ ] toArray
+- [ ] toJson
+
+### Message
+- [ ] sign
+- [ ] verify
+- [ ] toArray
+- [ ] toJson
+
+### Address Identity
+- [ ] fromPassphrase
+- [ ] fromPublicKey
+- [ ] fromPrivateKey
+- [ ] validate
+
+### Private Key Identity
+- [ ] fromPassphrase
+- [ ] fromHex
+
+### Public Key Identity
+- [ ] fromPassphrase
+- [ ] fromHex
+
+### WIF Identity
+- [ ] fromPassphrase
+
+### Configuration
+- [ ] getNetwork
+- [ ] setNetwork
+- [ ] getFee
+- [ ] setFee
+
+### Slot
+- [ ] time
+- [ ] epoch
+
+### Networks (Mainnet, Devnet & Testnet)
+- [ ] epoch
+- [ ] version
+- [ ] nethash
+- [ ] wif
+
 ## Installation
 
 ```bash
