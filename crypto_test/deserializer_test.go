@@ -5,21 +5,22 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto
+package crypto_test
 
 import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDeserializeTransfer(t *testing.T) {
-	fixtureContents := GetTransactionFixtureWithPassphrase(0)
+func TestDeserializeTransferWithPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("transfer", "passphrase")
 	var fixture TestingTransferFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -34,12 +35,32 @@ func TestDeserializeTransfer(t *testing.T) {
 	assert.Equal(uint8(1), transaction.Version)
 }
 
-func TestDeserializeSecondSignatureRegistration(t *testing.T) {
-	fixtureContents := GetTransactionFixtureWithPassphrase(1)
+func TestDeserializeTransferWithSecondPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("transfer", "second-passphrase")
+	var fixture TestingTransferFixture
+	json.Unmarshal([]byte(fixtureContents), &fixture)
+
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+
+	assert := assert.New(t)
+	assert.Equal(fixture.Data.Amount, transaction.Amount)
+	assert.Equal(fixture.Data.Fee, transaction.Fee)
+	assert.Equal(fixture.Data.Id, transaction.Id)
+	assert.Equal(fixture.Data.RecipientId, transaction.RecipientId)
+	assert.Equal(fixture.Data.SenderPublicKey, transaction.SenderPublicKey)
+	assert.Equal(fixture.Data.Signature, transaction.Signature)
+	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
+	assert.Equal(fixture.Data.Type, transaction.Type)
+	assert.Equal(uint8(30), transaction.Network)
+	assert.Equal(uint8(1), transaction.Version)
+}
+
+func TestDeserializeSecondSignatureRegistrationWithPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("second_signature_registration", "passphrase")
 	var fixture TestingSecondSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -54,16 +75,16 @@ func TestDeserializeSecondSignatureRegistration(t *testing.T) {
 	assert.Equal(uint8(1), transaction.Version)
 
 	// special case as the type 1 transaction itself has no recipientId
-	publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+	publicKey, _ := crypto.PublicKeyFromHex(transaction.SenderPublicKey)
 	assert.Equal(transaction.RecipientId, publicKey.ToAddress())
 }
 
-func TestDeserializeDelegateRegistration(t *testing.T) {
-	fixtureContents := GetTransactionFixtureWithPassphrase(2)
+func TestDeserializeDelegateRegistrationWithPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("delegate_registration", "passphrase")
 	var fixture TestingDelegateRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -78,12 +99,32 @@ func TestDeserializeDelegateRegistration(t *testing.T) {
 	assert.Equal(uint8(1), transaction.Version)
 }
 
-func TestDeserializeVote(t *testing.T) {
-	fixtureContents := GetTransactionFixtureWithPassphrase(3)
+func TestDeserializeDelegateSecondRegistrationWithSecondPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("delegate_registration", "second-passphrase")
+	var fixture TestingDelegateRegistrationFixture
+	json.Unmarshal([]byte(fixtureContents), &fixture)
+
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+
+	assert := assert.New(t)
+	assert.Equal(fixture.Data.Amount, transaction.Amount)
+	assert.Equal(fixture.Data.Asset.Delegate.Username, transaction.Asset.Delegate.Username)
+	assert.Equal(fixture.Data.Fee, transaction.Fee)
+	assert.Equal(fixture.Data.Id, transaction.Id)
+	assert.Equal(fixture.Data.SenderPublicKey, transaction.SenderPublicKey)
+	assert.Equal(fixture.Data.Signature, transaction.Signature)
+	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
+	assert.Equal(fixture.Data.Type, transaction.Type)
+	assert.Equal(uint8(30), transaction.Network)
+	assert.Equal(uint8(1), transaction.Version)
+}
+
+func TestDeserializeVoteWithPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("vote", "passphrase")
 	var fixture TestingVoteFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -99,12 +140,33 @@ func TestDeserializeVote(t *testing.T) {
 	assert.Equal(uint8(1), transaction.Version)
 }
 
-func TestDeserializeMultiSignatureRegistration(t *testing.T) {
-	fixtureContents := GetTransactionFixtureWithPassphrase(4)
+func TestDeserializeVoteWithSecondPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("vote", "second-passphrase")
+	var fixture TestingVoteFixture
+	json.Unmarshal([]byte(fixtureContents), &fixture)
+
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+
+	assert := assert.New(t)
+	assert.Equal(fixture.Data.Amount, transaction.Amount)
+	assert.Equal(fixture.Data.Asset.Votes[0], transaction.Asset.Votes[0])
+	assert.Equal(fixture.Data.Fee, transaction.Fee)
+	assert.Equal(fixture.Data.Id, transaction.Id)
+	assert.Equal(fixture.Data.RecipientId, transaction.RecipientId)
+	assert.Equal(fixture.Data.SenderPublicKey, transaction.SenderPublicKey)
+	assert.Equal(fixture.Data.Signature, transaction.Signature)
+	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
+	assert.Equal(fixture.Data.Type, transaction.Type)
+	assert.Equal(uint8(30), transaction.Network)
+	assert.Equal(uint8(1), transaction.Version)
+}
+
+func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
+	fixtureContents := GetTransactionFixture("multi_signature_registration", "second-passphrase")
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -129,7 +191,7 @@ func TestDeserializeMultiSignatureRegistration(t *testing.T) {
 func TestDeserializeIpfs(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -142,7 +204,7 @@ func TestDeserializeIpfs(t *testing.T) {
 func TestDeserializeTimelockTransfer(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -155,7 +217,7 @@ func TestDeserializeTimelockTransfer(t *testing.T) {
 func TestDeserializeMultiPayment(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -168,7 +230,7 @@ func TestDeserializeMultiPayment(t *testing.T) {
 func TestDeserializeDelegateResignation(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
