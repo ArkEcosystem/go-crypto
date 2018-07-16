@@ -5,12 +5,13 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto
+package crypto_test
 
 import (
 	"encoding/json"
 	"testing"
 
+	. "github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +20,7 @@ func TestDeserializeTransfer(t *testing.T) {
 	var fixture TestingTransferFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -39,7 +40,7 @@ func TestDeserializeSecondSignatureRegistration(t *testing.T) {
 	var fixture TestingSecondSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -63,7 +64,7 @@ func TestDeserializeDelegateRegistration(t *testing.T) {
 	var fixture TestingDelegateRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -83,7 +84,7 @@ func TestDeserializeVote(t *testing.T) {
 	var fixture TestingVoteFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -104,7 +105,7 @@ func TestDeserializeMultiSignatureRegistration(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := DeserializeTransaction(fixture.Serialized)
+	transaction := crypto.DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.Amount, transaction.Amount)
@@ -129,7 +130,7 @@ func TestDeserializeMultiSignatureRegistration(t *testing.T) {
 func TestDeserializeIpfs(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -142,7 +143,7 @@ func TestDeserializeIpfs(t *testing.T) {
 func TestDeserializeTimelockTransfer(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -155,7 +156,7 @@ func TestDeserializeTimelockTransfer(t *testing.T) {
 func TestDeserializeMultiPayment(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)
@@ -168,7 +169,7 @@ func TestDeserializeMultiPayment(t *testing.T) {
 func TestDeserializeDelegateResignation(t *testing.T) {
 	t.Skip("skipping test!")
 
-	// transaction := DeserializeTransaction("...")
+	// transaction := crypto.DeserializeTransaction("...")
 
 	// assert := assert.New(t)
 	// assert.Equal(transaction.Id, id)

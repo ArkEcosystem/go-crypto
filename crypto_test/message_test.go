@@ -5,16 +5,17 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto
+package crypto_test
 
 import (
 	"testing"
 
+	. "github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSignMessage(t *testing.T) {
-	message, _ := SignMessage("Hello World", "This is a top secret passphrase")
+	message, _ := crypto.SignMessage("Hello World", "This is a top secret passphrase")
 
 	assert := assert.New(t)
 	assert.Equal("0366f4352b1f8456b0b43e8109522333931f51d7c685ea7c7d60a3cff51e7724a0", message.PublicKey)
@@ -23,7 +24,7 @@ func TestSignMessage(t *testing.T) {
 }
 
 func TestVerifyMessage(t *testing.T) {
-	message, _ := SignMessage("Hello World", "This is a top secret passphrase")
+	message, _ := crypto.SignMessage("Hello World", "This is a top secret passphrase")
 
 	assert := assert.New(t)
 	assert.True(message.Verify())
