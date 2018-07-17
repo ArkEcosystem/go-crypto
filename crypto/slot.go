@@ -15,3 +15,7 @@ func GetTime() uint32 {
 
 	return uint32(diff.Seconds())
 }
+
+func GetEpoch() uint32 {
+	return uint32(GetNetwork().Epoch.Second())
+}
