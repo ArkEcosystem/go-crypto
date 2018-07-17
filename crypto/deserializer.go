@@ -211,15 +211,56 @@ func deserializeMultiSignatureRegistration(assetOffset int, bytes []byte, transa
 }
 
 func deserializeIpfs(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
-	return transaction
+	offset := assetOffset / 2
+
+	dagLength := int(bytes[offset:(offset + 1)][0])
+
+	offsetStart := assetOffset + 2
+	offsetEnd := assetOffset + 2 + dagLength*2
+
+	transaction.Asset = &TransactionAsset{
+		Dag: transaction.Serialized[offsetStart:offsetEnd],
+	}
+
+	return transaction.ParseSignatures(assetOffset + 2*dagLength*2)
 }
 
 func deserializeTimelockTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
-	return transaction
+	offset := assetOffset / 2
+
+	transaction.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+	transaction.Expiration = binary.LittleEndian.Uint32(bytes[(offset + 8):(offset + 16)])
+
+	recipientOffset := offset + 13
+	transaction.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
+
+	return transaction.ParseSignatures(assetOffset + (21+13)*2)
 }
 
 func deserializeMultiPayment(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
-	return transaction
+	offset := assetOffset / 2
+
+	total := int(binary.LittleEndian.Uint16(bytes[offset:(offset + 4)]))
+	offset = assetOffset/2 + 1
+
+	transaction.Asset = &TransactionAsset{}
+
+	for i := 0; i < total; i++ {
+		payment := &MultiPaymentAsset{}
+		payment.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+		recipientOffset := offset + 1
+		payment.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
+
+		transaction.Asset.Payments = append(transaction.Asset.Payments, payment)
+
+		offset += 22
+	}
+
+	for i := 0; i < len(transaction.Asset.Payments); i++ {
+		transaction.Amount += transaction.Asset.Payments[i].Amount
+	}
+
+	return transaction.ParseSignatures(offset * 2)
 }
 
 func deserializeDelegateResignation(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
