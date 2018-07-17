@@ -102,3 +102,22 @@ func TestBuildVoteWithSecondPassphrase(t *testing.T) {
 	secondPublicKey, _ := crypto.PublicKeyFromPassphrase("this is a top secret second passphrase")
 	assert.True(transaction.SecondVerify(secondPublicKey))
 }
+
+func TestBuildMultiSignatureRegistrationWithPassphrase(t *testing.T) {
+	keysgroup := []string{
+		"03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+		"13a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+		"23a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+	}
+
+	transaction := crypto.BuildMultiSignatureRegistration(
+		2,
+		255,
+		keysgroup,
+		"This is a top secret passphrase",
+		"",
+	)
+
+	assert := assert.New(t)
+	assert.True(transaction.Verify())
+}

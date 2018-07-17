@@ -63,7 +63,7 @@ func BuildDelegateRegistration(username string, passphrase string, secondPassphr
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildVote(vote, passphrase, secondPassphrase string) *Transaction {
+func BuildVote(vote, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.Vote,
 		Fee:   TRANSACTION_FEES.Vote,
@@ -76,4 +76,19 @@ func BuildVote(vote, passphrase, secondPassphrase string) *Transaction {
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-// func BuildMultiSignatureRegistration() *Transaction {}
+func BuildMultiSignatureRegistration(min byte, lifetime byte, keysgroup []string, passphrase string, secondPassphrase string) *Transaction {
+	transaction := &Transaction{
+		Type:  TRANSACTION_TYPES.MultiSignatureRegistration,
+		Asset: &TransactionAsset{},
+	}
+
+	transaction.Asset.MultiSignature = &MultiSignatureRegistrationAsset{
+		Min:       min,
+		Keysgroup: keysgroup,
+		Lifetime:  lifetime,
+	}
+
+	transaction.Fee = uint64(len(keysgroup)+1) + TRANSACTION_FEES.MultiSignatureRegistration
+
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
