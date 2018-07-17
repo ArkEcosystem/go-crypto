@@ -25,6 +25,10 @@ func PrivateKeyFromPassphrase(passphrase string) (*PrivateKey, error) {
 	return PrivateKeyFromBytes(hash.Sum(nil)), nil
 }
 
+func PrivateKeyFromHex(privateKeyHex string) (*PrivateKey, error) {
+	return PrivateKeyFromBytes(HexDecode(privateKeyHex)), nil
+}
+
 func PrivateKeyFromBytes(bytes []byte) *PrivateKey {
 	privateKey, publicKey := btcec.PrivKeyFromBytes(btcec.S256(), bytes)
 

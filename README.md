@@ -75,7 +75,7 @@
 
 ### Private Key Identity
 - [x] fromPassphrase
-- [ ] fromHex
+- [x] fromHex
 
 ### Public Key Identity
 - [x] fromPassphrase
