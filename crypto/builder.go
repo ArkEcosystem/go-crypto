@@ -23,7 +23,7 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 func BuildTransfer(recipient string, amount uint64, vendorField string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:        TRANSACTION_TYPES.Transfer,
-		Fee:         TRANSACTION_FEES.Transfer,
+		Fee:         GetFee(TRANSACTION_TYPES.Transfer),
 		RecipientId: recipient,
 		Amount:      amount,
 		VendorField: vendorField,
@@ -36,7 +36,7 @@ func BuildTransfer(recipient string, amount uint64, vendorField string, passphra
 func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.SecondSignatureRegistration,
-		Fee:   TRANSACTION_FEES.SecondSignatureRegistration,
+		Fee:   GetFee(TRANSACTION_TYPES.SecondSignatureRegistration),
 		Asset: &TransactionAsset{},
 	}
 
@@ -52,7 +52,7 @@ func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string
 func BuildDelegateRegistration(username string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.DelegateRegistration,
-		Fee:   TRANSACTION_FEES.DelegateRegistration,
+		Fee:   GetFee(TRANSACTION_TYPES.DelegateRegistration),
 		Asset: &TransactionAsset{},
 	}
 
@@ -66,7 +66,7 @@ func BuildDelegateRegistration(username string, passphrase string, secondPassphr
 func BuildVote(vote, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:  TRANSACTION_TYPES.Vote,
-		Fee:   TRANSACTION_FEES.Vote,
+		Fee:   GetFee(TRANSACTION_TYPES.Vote),
 		Asset: &TransactionAsset{},
 	}
 
@@ -88,7 +88,7 @@ func BuildMultiSignatureRegistration(min byte, lifetime byte, keysgroup []string
 		Lifetime:  lifetime,
 	}
 
-	transaction.Fee = uint64(len(keysgroup)+1) + TRANSACTION_FEES.MultiSignatureRegistration
+	transaction.Fee = uint64(len(keysgroup)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }

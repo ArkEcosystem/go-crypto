@@ -9,6 +9,17 @@ package crypto
 
 var (
 	CONFIG_NETWORK = &Network{}
+	CONFIG_FEES    = []uint64{
+		TRANSACTION_FEES.Transfer,
+		TRANSACTION_FEES.SecondSignatureRegistration,
+		TRANSACTION_FEES.DelegateRegistration,
+		TRANSACTION_FEES.Vote,
+		TRANSACTION_FEES.MultiSignatureRegistration,
+		TRANSACTION_FEES.Ipfs,
+		TRANSACTION_FEES.TimelockTransfer,
+		TRANSACTION_FEES.MultiPayment,
+		TRANSACTION_FEES.DelegateResignation,
+	}
 )
 
 func GetNetwork() *Network {
@@ -23,10 +34,10 @@ func SetNetwork(network *Network) {
 	CONFIG_NETWORK = network
 }
 
-// func GetFee() {
+func GetFee(transactionType byte) uint64 {
+	return CONFIG_FEES[transactionType]
+}
 
-// }
-
-// func SetFee() {
-
-// }
+func SetFee(transactionType byte, value uint64) {
+	CONFIG_FEES[transactionType] = value
+}
