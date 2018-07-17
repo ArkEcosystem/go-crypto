@@ -16,7 +16,6 @@ import (
 type Network struct {
 	Epoch   time.Time
 	Version byte
-	Nethash string
 	Wif     byte
 }
 

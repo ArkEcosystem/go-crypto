@@ -23,7 +23,7 @@ var (
 )
 
 func GetNetwork() *Network {
-	if CONFIG_NETWORK.Nethash == "" {
+	if CONFIG_NETWORK.Version == 0 {
 		return NETWORKS_DEVNET
 	}
 
