@@ -137,6 +137,10 @@ func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 	return transaction
 }
 
+func (transaction *Transaction) Serialize() []byte {
+	return SerialiseTransaction(transaction)
+}
+
 func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool) []byte {
 	buffer := new(bytes.Buffer)
 	binary.Write(buffer, binary.LittleEndian, transaction.Type)

@@ -55,7 +55,7 @@
 - [x] verify
 - [x] secondVerify
 - [x] parseSignatures
-- [ ] serialize
+- [x] serialize
 - [ ] deserialize
 - [x] toBytes
 - [x] toArray
