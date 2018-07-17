@@ -11,11 +11,13 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/json"
 	"log"
 	"strconv"
 	"strings"
 
 	"github.com/ArkEcosystem/go-crypto/crypto/base58"
+	"github.com/fatih/structs"
 )
 
 func (transaction *Transaction) GetId() string {
@@ -69,68 +71,6 @@ func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, 
 	bytes.Write(transaction.ToBytes(false, true))
 
 	return secondPublicKey.Verify(HexDecode(transaction.SignSignature), bytes.Sum(nil))
-}
-
-func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool) []byte {
-	buffer := new(bytes.Buffer)
-	binary.Write(buffer, binary.LittleEndian, transaction.Type)
-	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timestamp))
-	binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
-
-	if transaction.RecipientId != "" {
-		res, err := base58.Decode(transaction.RecipientId)
-
-		if err != nil {
-			log.Fatal("Error converting Decoding b58 ", err.Error())
-		}
-
-		binary.Write(buffer, binary.LittleEndian, res)
-	} else {
-		binary.Write(buffer, binary.LittleEndian, make([]byte, 21))
-	}
-
-	if transaction.VendorField != "" {
-		vendorBytes := []byte(transaction.VendorField)
-		if len(vendorBytes) < 65 {
-			binary.Write(buffer, binary.LittleEndian, vendorBytes)
-
-			bs := make([]byte, 64-len(vendorBytes))
-			binary.Write(buffer, binary.LittleEndian, bs)
-		}
-	} else {
-		binary.Write(buffer, binary.LittleEndian, make([]byte, 64))
-	}
-
-	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
-	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Fee))
-
-	switch transaction.Type {
-	case TRANSACTION_TYPES.SecondSignatureRegistration:
-		// FIX: no longer works, results in a wrong ID later on
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset.Signature.PublicKey))
-	case TRANSACTION_TYPES.DelegateRegistration:
-		usernameBytes := []byte(transaction.Asset.Delegate.Username)
-		binary.Write(buffer, binary.LittleEndian, usernameBytes)
-	case TRANSACTION_TYPES.Vote:
-		// FIX: no longer works, results in a wrong ID later on
-		voteBytes := []byte(strings.Join(transaction.Asset.Votes, ""))
-		binary.Write(buffer, binary.LittleEndian, voteBytes)
-	case TRANSACTION_TYPES.MultiSignatureRegistration:
-		keysgroup := []byte(strings.Join(transaction.Asset.MultiSignature.Keysgroup, ""))
-		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
-		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
-		binary.Write(buffer, binary.LittleEndian, keysgroup)
-	}
-
-	if !skipSignature && len(transaction.Signature) > 0 {
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Signature))
-	}
-
-	if !skipSecondSignature && len(transaction.SignSignature) > 0 {
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SignSignature))
-	}
-
-	return buffer.Bytes()
 }
 
 func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
@@ -195,4 +135,80 @@ func (transaction *Transaction) ParseSignatures(startOffset int) *Transaction {
 	}
 
 	return transaction
+}
+
+func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool) []byte {
+	buffer := new(bytes.Buffer)
+	binary.Write(buffer, binary.LittleEndian, transaction.Type)
+	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timestamp))
+	binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
+
+	if transaction.RecipientId != "" {
+		res, err := base58.Decode(transaction.RecipientId)
+
+		if err != nil {
+			log.Fatal("Error converting Decoding b58 ", err.Error())
+		}
+
+		binary.Write(buffer, binary.LittleEndian, res)
+	} else {
+		binary.Write(buffer, binary.LittleEndian, make([]byte, 21))
+	}
+
+	if transaction.VendorField != "" {
+		vendorBytes := []byte(transaction.VendorField)
+		if len(vendorBytes) < 65 {
+			binary.Write(buffer, binary.LittleEndian, vendorBytes)
+
+			bs := make([]byte, 64-len(vendorBytes))
+			binary.Write(buffer, binary.LittleEndian, bs)
+		}
+	} else {
+		binary.Write(buffer, binary.LittleEndian, make([]byte, 64))
+	}
+
+	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
+	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Fee))
+
+	switch transaction.Type {
+	case TRANSACTION_TYPES.SecondSignatureRegistration:
+		// FIX: no longer works, results in a wrong ID later on
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Asset.Signature.PublicKey))
+	case TRANSACTION_TYPES.DelegateRegistration:
+		usernameBytes := []byte(transaction.Asset.Delegate.Username)
+		binary.Write(buffer, binary.LittleEndian, usernameBytes)
+	case TRANSACTION_TYPES.Vote:
+		// FIX: no longer works, results in a wrong ID later on
+		voteBytes := []byte(strings.Join(transaction.Asset.Votes, ""))
+		binary.Write(buffer, binary.LittleEndian, voteBytes)
+	case TRANSACTION_TYPES.MultiSignatureRegistration:
+		keysgroup := []byte(strings.Join(transaction.Asset.MultiSignature.Keysgroup, ""))
+		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
+		binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
+		binary.Write(buffer, binary.LittleEndian, keysgroup)
+	}
+
+	if !skipSignature && len(transaction.Signature) > 0 {
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Signature))
+	}
+
+	if !skipSecondSignature && len(transaction.SignSignature) > 0 {
+		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SignSignature))
+	}
+
+	return buffer.Bytes()
+}
+
+func (transaction *Transaction) ToMap() map[string]interface{} {
+	return structs.Map(transaction)
+}
+
+func (transaction *Transaction) ToJson() (string, error) {
+	jason, err := json.Marshal(transaction)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(jason), nil
 }
