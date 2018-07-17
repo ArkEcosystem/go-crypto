@@ -18,7 +18,7 @@ go get github.com/ArkEcosystem/go-crypto/crypto
 
 ## Documentation
 
-Have a look at the [official documentation](https://docs.ark.io/v1.0/docs/cryptography-go) for advanced examples and features.
+You can find installation instructions and detailed instructions on how to use this package at the [dedicated documentation site](https://docs.ark.io/v1.0/docs/cryptography-go).
 
 ## Security
 
