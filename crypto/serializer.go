@@ -208,7 +208,7 @@ func serializeTimelockTransfer(buffer *bytes.Buffer, transaction *Transaction) *
 }
 
 func serializeMultiPayment(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, uint32(len(transaction.Asset.Payments)))
+	binary.Write(buffer, binary.LittleEndian, uint16(len(transaction.Asset.Payments)))
 
 	for _, element := range transaction.Asset.Payments {
 		binary.Write(buffer, binary.LittleEndian, uint64(element.Amount))

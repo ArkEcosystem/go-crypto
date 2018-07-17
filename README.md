@@ -18,10 +18,10 @@
 - [x] Delegate Registration
 - [x] Vote
 - [x] Multi Signature Registration
-- [ ] IPFS
-- [ ] Timelock Transfer
-- [ ] Multi Payment
-- [ ] Delegate Resignation
+- [x] IPFS
+- [x] Timelock Transfer
+- [x] Multi Payment
+- [x] Delegate Resignation
 
 ### AIP11 Deserialization
 - [x] Transfer
