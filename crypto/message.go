@@ -9,6 +9,9 @@ package crypto
 
 import (
 	"crypto/sha256"
+	"encoding/json"
+
+	"github.com/fatih/structs"
 )
 
 func SignMessage(message string, passphrase string) (*Message, error) {
@@ -51,4 +54,18 @@ func (message *Message) Verify() (bool, error) {
 	verified, _ := publicKey.Verify(HexDecode(message.Signature), hash.Sum(nil))
 
 	return verified, nil
+}
+
+func (message *Message) ToMap() map[string]interface{} {
+	return structs.Map(message)
+}
+
+func (message *Message) ToJson() (string, error) {
+	jason, err := json.Marshal(message)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(jason), nil
 }

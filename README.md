@@ -64,8 +64,8 @@
 ### Message
 - [x] sign
 - [x] verify
-- [ ] toArray
-- [ ] toJson
+- [x] toArray
+- [x] toJson
 
 ### Address Identity
 - [x] fromPassphrase
@@ -92,7 +92,7 @@
 
 ### Slot
 - [x] time
-- [ ] epoch
+- [x] epoch
 
 ### Networks (Mainnet, Devnet & Testnet)
 - [x] epoch
