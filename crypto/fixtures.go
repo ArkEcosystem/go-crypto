@@ -5,14 +5,12 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto_test
+package crypto
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-
-	"github.com/ArkEcosystem/go-crypto/crypto"
 )
 
 func GetFixture(file string) string {
@@ -69,7 +67,7 @@ type TestingSecondSignatureRegistrationFixture struct {
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
 		Asset           struct {
-			Signature crypto.SecondSignatureRegistrationAsset `json:"signature,omitempty"`
+			Signature SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -86,7 +84,7 @@ type TestingDelegateRegistrationFixture struct {
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
 		Asset           struct {
-			Delegate crypto.DelegateAsset `json:"delegate,omitempty"`
+			Delegate DelegateAsset `json:"delegate,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -122,7 +120,7 @@ type TestingMultiSignatureRegistrationFixture struct {
 		Id              string   `json:"id,omitempty"`
 		Signatures      []string `json:"signatures,omitempty"`
 		Asset           struct {
-			MultiSignature crypto.MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
+			MultiSignature MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
 		} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`

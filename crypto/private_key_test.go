@@ -5,19 +5,18 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto_test
+package crypto
 
 import (
 	"testing"
 
-	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPrivateKeyFromPassphrase(t *testing.T) {
 	fixture := GetIdentityFixture()
 
-	privateKey, _ := crypto.PrivateKeyFromPassphrase(fixture.Passphrase)
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.PrivateKey, privateKey.ToHex())
@@ -26,7 +25,7 @@ func TestPrivateKeyFromPassphrase(t *testing.T) {
 func TestPrivateKeyToAddress(t *testing.T) {
 	fixture := GetIdentityFixture()
 
-	privateKey, _ := crypto.PrivateKeyFromPassphrase(fixture.Passphrase)
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
 	privateKey.PublicKey.Network.Version = 0x1e
 
 	assert := assert.New(t)
@@ -36,7 +35,7 @@ func TestPrivateKeyToAddress(t *testing.T) {
 func TestPrivateKeyToWif(t *testing.T) {
 	fixture := GetIdentityFixture()
 
-	privateKey, _ := crypto.PrivateKeyFromPassphrase(fixture.Passphrase)
+	privateKey, _ := PrivateKeyFromPassphrase(fixture.Passphrase)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.WIF, privateKey.ToWif())

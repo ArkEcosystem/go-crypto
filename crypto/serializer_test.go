@@ -5,13 +5,12 @@
 // For the full copyright and license information, please view the LICENSE
 // file that was distributed with this source code.
 
-package crypto_test
+package crypto
 
 import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ArkEcosystem/go-crypto/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,10 +19,10 @@ func TestSerialiseTransferWithPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseTransferWithSecondPassphrase(t *testing.T) {
@@ -31,10 +30,10 @@ func TestSerialiseTransferWithSecondPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseTransferWithPassphraseAndVendorField(t *testing.T) {
@@ -42,10 +41,10 @@ func TestSerialiseTransferWithPassphraseAndVendorField(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseTransferWithSecondPassphraseAndVendorField(t *testing.T) {
@@ -53,10 +52,10 @@ func TestSerialiseTransferWithSecondPassphraseAndVendorField(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseTransferWithPassphraseAndVendorFieldHex(t *testing.T) {
@@ -64,10 +63,10 @@ func TestSerialiseTransferWithPassphraseAndVendorFieldHex(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseTransferWithSecondPassphraseAndVendorFieldHex(t *testing.T) {
@@ -75,10 +74,10 @@ func TestSerialiseTransferWithSecondPassphraseAndVendorFieldHex(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseSecondSignatureRegistrationWithPassphrase(t *testing.T) {
@@ -86,10 +85,10 @@ func TestSerialiseSecondSignatureRegistrationWithPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseDelegateRegistrationWithPassphrase(t *testing.T) {
@@ -97,10 +96,10 @@ func TestSerialiseDelegateRegistrationWithPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseDelegateRegistrationWithSecondPassphrase(t *testing.T) {
@@ -108,10 +107,10 @@ func TestSerialiseDelegateRegistrationWithSecondPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseVoteWithPassphraseWithPassphrase(t *testing.T) {
@@ -119,10 +118,10 @@ func TestSerialiseVoteWithPassphraseWithPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
@@ -130,10 +129,10 @@ func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
@@ -141,10 +140,10 @@ func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
 	var fixture TestingMultiSignatureRegistrationFixture
 	json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	transaction := crypto.DeserializeTransaction(fixture.Serialized)
+	transaction := DeserializeTransaction(fixture.Serialized)
 
 	assert := assert.New(t)
-	assert.Equal(fixture.Serialized, crypto.HexEncode(crypto.SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 }
 
 func TestSerialiseIpfs(t *testing.T) {
