@@ -2,8 +2,10 @@ language: go
 
 before_install:
   - go get -t -v ./...
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v1.9.1
 
 script:
+  - golangci-lint run ./...
   - go test ./crypto -race -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
