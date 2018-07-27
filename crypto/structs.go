@@ -69,8 +69,8 @@ type Transaction struct {
 	Signature             string            `json:"signature,omitempty"`
 	Signatures            []string          `json:"signatures,omitempty"`
 	SignSignature         string            `json:"signSignature,omitempty"`
-	Timelock              uint32            `json:"serialized,omitempty"`
-	TimelockType          string            `json:"serialized,omitempty"`
+	Timelock              uint32            `json:"timelock,omitempty"`
+	TimelockType          string            `json:"timelockType,omitempty"`
 	Timestamp             uint32            `json:"timestamp,omitempty"`
 	Type                  byte              `json:"type"`
 	VendorField           string            `json:"vendorField,omitempty"`
