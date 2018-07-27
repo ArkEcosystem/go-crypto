@@ -31,9 +31,9 @@ type testpair struct {
 }
 
 var pairs = []testpair{
-	{10002343, "tGMC"},
-	{1000, "JF"},
-	{0, ""},
+    {decoded: 10002343, encoded: "tGMC"},
+	{decoded: 1000, encoded: "JF"},
+	{decoded: 0, encoded: ""},
 }
 
 func TestEncode(t *testing.T) {
@@ -65,12 +65,12 @@ func TestDecodeCorrupt(t *testing.T) {
 		offset int
 	}
 	examples := []corrupt{
-		{"!!!!", 0},
-		{"x===", 1},
-		{"x0", 1},
-		{"xl", 1},
-		{"xI", 1},
-		{"xO", 1},
+        {input: "!!!!", offset: 0},
+		{input: "x===", offset: 1},
+		{input: "x0", offset: 1},
+		{input: "xl", offset: 1},
+		{input: "xI", offset: 1},
+		{input: "xO", offset: 1},
 	}
 
 	for _, e := range examples {

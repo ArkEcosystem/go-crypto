@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+    "io"
 	"strings"
 )
 
@@ -30,24 +31,24 @@ func SerialiseTransaction(transaction *Transaction) []byte {
 ////////////////////////////////////////////////////////////////////////////////
 
 func serializeHeader(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
+	_ = binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
 
 	if transaction.Version == 0 {
-		binary.Write(buffer, binary.LittleEndian, GetNetwork().Version)
+		_ = binary.Write(buffer, binary.LittleEndian, GetNetwork().Version)
 	} else {
-		binary.Write(buffer, binary.LittleEndian, transaction.Version)
+		_ = binary.Write(buffer, binary.LittleEndian, transaction.Version)
 	}
 
 	if transaction.Network == 0 {
-		binary.Write(buffer, binary.LittleEndian, HexDecode("01")[0])
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode("01")[0])
 	} else {
-		binary.Write(buffer, binary.LittleEndian, transaction.Network)
+		_ = binary.Write(buffer, binary.LittleEndian, transaction.Network)
 	}
 
-	binary.Write(buffer, binary.LittleEndian, transaction.Type)
-	binary.Write(buffer, binary.LittleEndian, transaction.Timestamp)
-	binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
-	binary.Write(buffer, binary.LittleEndian, transaction.Fee)
+	_ = binary.Write(buffer, binary.LittleEndian, transaction.Type)
+	_ = binary.Write(buffer, binary.LittleEndian, transaction.Timestamp)
+	_ = binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SenderPublicKey))
+	_ = binary.Write(buffer, binary.LittleEndian, transaction.Fee)
 
 	return buffer
 }
@@ -56,15 +57,15 @@ func serializeVendorField(buffer *bytes.Buffer, transaction *Transaction) *bytes
 	if transaction.VendorField != "" {
 		vendorFieldLength := len(transaction.VendorField)
 
-		binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldLength))
-		binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorField))
+		_ = binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldLength))
+		_ = binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorField))
 	} else if len(transaction.VendorFieldHex) > 0 {
 		vendorFieldHexLength := len(transaction.VendorFieldHex)
 
-		binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldHexLength/2))
-		binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorFieldHex))
+		_ = binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldHexLength/2))
+		_ = binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorFieldHex))
 	} else {
-		binary.Write(buffer, binary.LittleEndian, HexDecode("00")[0])
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode("00")[0])
 	}
 
 	return buffer
@@ -97,18 +98,18 @@ func serializeTypeSpecific(buffer *bytes.Buffer, transaction *Transaction) *byte
 
 func serializeSignatures(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
 	if transaction.Signature != "" {
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Signature))
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.Signature))
 	}
 
 	if transaction.SecondSignature != "" {
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SecondSignature))
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SecondSignature))
 	} else if transaction.SignSignature != "" {
-		binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SignSignature))
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.SignSignature))
 	}
 
 	if len(transaction.Signatures) > 0 {
-		binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
-		binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(transaction.Signatures, "")))
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode("ff")[0])
+		_ = binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(transaction.Signatures, "")))
 	}
 
 	return buffer
@@ -119,15 +120,15 @@ func serializeSignatures(buffer *bytes.Buffer, transaction *Transaction) *bytes.
 ////////////////////////////////////////////////////////////////////////////////
 
 func serializeTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
+	_ = binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
 
 	if transaction.Expiration == 0 {
-		binary.Write(buffer, binary.LittleEndian, uint32(0))
+		_ = binary.Write(buffer, binary.LittleEndian, uint32(0))
 	} else {
-		binary.Write(buffer, binary.LittleEndian, transaction.Expiration)
+		_ = binary.Write(buffer, binary.LittleEndian, transaction.Expiration)
 	}
 
-	binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
+	_ = binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
 
 	return buffer
 }
@@ -135,7 +136,7 @@ func serializeTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Bu
 func serializeSecondSignatureRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
 	signatureBytes := HexDecode(transaction.Asset.Signature.PublicKey)
 
-	binary.Write(buffer, binary.LittleEndian, signatureBytes)
+	_ = binary.Write(buffer, binary.LittleEndian, signatureBytes)
 
 	return buffer
 }
@@ -143,8 +144,8 @@ func serializeSecondSignatureRegistration(buffer *bytes.Buffer, transaction *Tra
 func serializeDelegateRegistration(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
 	delegateBytes := []byte(transaction.Asset.Delegate.Username)
 
-	binary.Write(buffer, binary.LittleEndian, uint8(len(delegateBytes)))
-	binary.Write(buffer, binary.LittleEndian, delegateBytes)
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(len(delegateBytes)))
+	_ = binary.Write(buffer, binary.LittleEndian, delegateBytes)
 
 	return buffer
 }
@@ -160,8 +161,8 @@ func serializeVote(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer
 		}
 	}
 
-	binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.Votes)))
-	binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(voteBytes, "")))
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.Votes)))
+	_ = binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(voteBytes, "")))
 
 	return buffer
 }
@@ -181,10 +182,10 @@ func serializeMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Tran
 		keysgroup = transaction.Asset.MultiSignature.Keysgroup
 	}
 
-	binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
-	binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.MultiSignature.Keysgroup)))
-	binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
-	binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(keysgroup, "")))
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Min))
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.Asset.MultiSignature.Keysgroup)))
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(transaction.Asset.MultiSignature.Lifetime))
+	_ = binary.Write(buffer, binary.LittleEndian, HexDecode(strings.Join(keysgroup, "")))
 
 	return buffer
 }
@@ -192,27 +193,27 @@ func serializeMultiSignatureRegistration(buffer *bytes.Buffer, transaction *Tran
 func serializeIpfs(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
 	dag := transaction.Asset.Ipfs.Dag
 
-	binary.Write(buffer, binary.LittleEndian, uint8(len(dag)))
-	binary.Write(buffer, binary.LittleEndian, HexDecode(dag))
+	_ = binary.Write(buffer, binary.LittleEndian, uint8(len(dag)))
+	_ = binary.Write(buffer, binary.LittleEndian, HexDecode(dag))
 
 	return buffer
 }
 
 func serializeTimelockTransfer(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
-	binary.Write(buffer, binary.LittleEndian, transaction.TimelockType)
-	binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timelock))
-	binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
+	_ = binary.Write(buffer, binary.LittleEndian, uint64(transaction.Amount))
+	_, _ = io.WriteString(buffer, transaction.TimelockType)
+	_ = binary.Write(buffer, binary.LittleEndian, uint32(transaction.Timelock))
+	_ = binary.Write(buffer, binary.LittleEndian, Base58Decode(transaction.RecipientId))
 
 	return buffer
 }
 
 func serializeMultiPayment(buffer *bytes.Buffer, transaction *Transaction) *bytes.Buffer {
-	binary.Write(buffer, binary.LittleEndian, uint16(len(transaction.Asset.Payments)))
+	_ = binary.Write(buffer, binary.LittleEndian, uint16(len(transaction.Asset.Payments)))
 
 	for _, element := range transaction.Asset.Payments {
-		binary.Write(buffer, binary.LittleEndian, uint64(element.Amount))
-		binary.Write(buffer, binary.LittleEndian, Base58Decode(element.RecipientId))
+		_ = binary.Write(buffer, binary.LittleEndian, uint64(element.Amount))
+		_ = binary.Write(buffer, binary.LittleEndian, Base58Decode(element.RecipientId))
 	}
 
 	return buffer
