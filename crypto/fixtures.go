@@ -27,7 +27,7 @@ func GetIdentityFixture() TestingIdentityFixture {
 	data := GetFixture("identity")
 
 	var fixture TestingIdentityFixture
-	json.Unmarshal([]byte(data), &fixture)
+	_ = json.Unmarshal([]byte(data), &fixture)
 
 	return fixture
 }
@@ -36,7 +36,7 @@ func GetMessageFixture() TestingMessageFixture {
 	data := GetFixture("message")
 
 	var fixture TestingMessageFixture
-	json.Unmarshal([]byte(data), &fixture)
+	_ = json.Unmarshal([]byte(data), &fixture)
 
 	return fixture
 }

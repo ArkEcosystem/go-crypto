@@ -80,7 +80,7 @@ func (publicKey *PublicKey) Serialize() []byte {
 
 func (publicKey *PublicKey) AddressBytes() []byte {
 	hash := ripemd160.New()
-	hash.Write(publicKey.Serialize())
+	_, _ = hash.Write(publicKey.Serialize())
 
 	return hash.Sum(nil)
 }
