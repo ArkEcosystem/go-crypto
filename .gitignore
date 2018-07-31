@@ -14,5 +14,8 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Microsoft Visual Studio
+.vs
+
 # Visual Studio Code
 .vscode
