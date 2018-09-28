@@ -32,6 +32,9 @@ func TestDeserializeTransferWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeTransferWithSecondPassphrase(t *testing.T) {
@@ -52,6 +55,9 @@ func TestDeserializeTransferWithSecondPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeSecondSignatureRegistrationWithPassphrase(t *testing.T) {
@@ -72,6 +78,9 @@ func TestDeserializeSecondSignatureRegistrationWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 
 	// special case as the type 1 transaction itself has no recipientId
 	publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
@@ -96,6 +105,9 @@ func TestDeserializeDelegateRegistrationWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeDelegateSecondRegistrationWithSecondPassphrase(t *testing.T) {
@@ -116,6 +128,9 @@ func TestDeserializeDelegateSecondRegistrationWithSecondPassphrase(t *testing.T)
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeVoteWithPassphrase(t *testing.T) {
@@ -137,6 +152,9 @@ func TestDeserializeVoteWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeVoteWithSecondPassphrase(t *testing.T) {
@@ -158,6 +176,9 @@ func TestDeserializeVoteWithSecondPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(30), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
@@ -185,6 +206,9 @@ func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T)
 	assert.Equal(fixture.Data.Type, transaction.Type)
 	assert.Equal(uint8(23), transaction.Network)
 	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
 }
 
 func TestDeserializeIpfs(t *testing.T) {

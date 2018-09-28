@@ -107,22 +107,15 @@ func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 		transaction.VendorField = string(HexDecode(Hex2Byte(transaction.VendorFieldHex)))
 	}
 
+	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration || transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
+		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
+		publicKey.Network.Version = transaction.Network
+
+		transaction.RecipientId = publicKey.ToAddress()
+	}
+
 	if transaction.Id == "" {
 		transaction.Id = transaction.GetId()
-	}
-
-	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration {
-		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.Network.Version = transaction.Network
-
-		transaction.RecipientId = publicKey.ToAddress()
-	}
-
-	if transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
-		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.Network.Version = transaction.Network
-
-		transaction.RecipientId = publicKey.ToAddress()
 	}
 
 	return transaction
