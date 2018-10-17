@@ -6,7 +6,7 @@
 
 > A simple Cryptography Implementation in Go for the Ark Blockchain.
 
-[![Build Status](https://badgen.now.sh/travis/ArkEcosystem/go-crypto)](https://travis-ci.org/ArkEcosystem/go-crypto)
+[![Build Status](https://badgen.now.sh/circleci/github/ArkEcosystem/go-crypto)](https://circleci.com/gh/ArkEcosystem/go-crypto)
 [![Codecov](https://badgen.now.sh/codecov/c/github/arkecosystem/go-crypto)](https://codecov.io/gh/arkecosystem/go-crypto)
 [![Latest Version](https://badgen.now.sh/github/release/ArkEcosystem/go-crypto)](https://github.com/ArkEcosystem/go-crypto/releases)
 [![License: MIT](https://badgen.now.sh/badge/license/MIT/green)](https://opensource.org/licenses/MIT)
