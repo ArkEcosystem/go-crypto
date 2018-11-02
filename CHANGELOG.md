@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Fixed
+- Set transaction timestamp type as int32 instead of uint32, to cater for possible old transactions that have a negative timestamp.
+
 ## 0.2.1
 
 ### Fixed
