@@ -9,11 +9,11 @@ package crypto
 
 import "time"
 
-func GetTime() uint32 {
+func GetTime() int32 {
 	now := time.Now()
 	diff := now.Sub(GetNetwork().Epoch)
 
-	return uint32(diff.Seconds())
+	return int32(diff.Seconds())
 }
 
 func GetEpoch() uint32 {
