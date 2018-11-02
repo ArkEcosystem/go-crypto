@@ -36,7 +36,7 @@ func deserializeHeader(bytes []byte, transaction *Transaction) (int, *Transactio
 	transaction.Version = bytes[1:2][0]
 	transaction.Network = bytes[2:3][0]
 	transaction.Type = bytes[3:4][0]
-	transaction.Timestamp = binary.LittleEndian.Uint32(bytes[4:8])
+	transaction.Timestamp = int32(binary.LittleEndian.Uint32(bytes[4:8]))
 	transaction.SenderPublicKey = HexEncode(bytes[8:41])
 	transaction.Fee = binary.LittleEndian.Uint64(bytes[41:49])
 

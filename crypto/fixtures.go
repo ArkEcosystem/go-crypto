@@ -47,7 +47,7 @@ type TestingTransferFixture struct {
 		Amount          uint64 `json:"amount,omitempty"`
 		Fee             uint64 `json:"fee,omitempty"`
 		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       uint32 `json:"timestamp,omitempty"`
+		Timestamp       int32  `json:"timestamp,omitempty"`
 		SenderPublicKey string `json:"senderPublicKey,omitempty"`
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
@@ -62,7 +62,7 @@ type TestingSecondSignatureRegistrationFixture struct {
 		Amount          uint64 `json:"amount,omitempty"`
 		Fee             uint64 `json:"fee,omitempty"`
 		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       uint32 `json:"timestamp,omitempty"`
+		Timestamp       int32  `json:"timestamp,omitempty"`
 		SenderPublicKey string `json:"senderPublicKey,omitempty"`
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
@@ -79,7 +79,7 @@ type TestingDelegateRegistrationFixture struct {
 		Amount          uint64 `json:"amount,omitempty"`
 		Fee             uint64 `json:"fee,omitempty"`
 		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       uint32 `json:"timestamp,omitempty"`
+		Timestamp       int32  `json:"timestamp,omitempty"`
 		SenderPublicKey string `json:"senderPublicKey,omitempty"`
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
@@ -96,7 +96,7 @@ type TestingVoteFixture struct {
 		Amount          uint64 `json:"amount,omitempty"`
 		Fee             uint64 `json:"fee,omitempty"`
 		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       uint32 `json:"timestamp,omitempty"`
+		Timestamp       int32  `json:"timestamp,omitempty"`
 		SenderPublicKey string `json:"senderPublicKey,omitempty"`
 		Signature       string `json:"signature,omitempty"`
 		Id              string `json:"id,omitempty"`
@@ -113,7 +113,7 @@ type TestingMultiSignatureRegistrationFixture struct {
 		Amount          uint64   `json:"amount,omitempty"`
 		Fee             uint64   `json:"fee,omitempty"`
 		RecipientId     string   `json:"recipientId,omitempty"`
-		Timestamp       uint32   `json:"timestamp,omitempty"`
+		Timestamp       int32    `json:"timestamp,omitempty"`
 		SenderPublicKey string   `json:"senderPublicKey,omitempty"`
 		Signature       string   `json:"signature,omitempty"`
 		SignSignature   string   `json:"signSignature,omitempty"`
