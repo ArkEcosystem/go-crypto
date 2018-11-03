@@ -95,7 +95,7 @@ type Transaction struct {
 	Timestamp             int32             `json:"timestamp,omitempty"`
 	Type                  byte              `json:"type"`
 	VendorField           string            `json:"vendorField,omitempty"`
-	VendorFieldHex        []byte            `json:"vendorFieldHex,omitempty"`
+	VendorFieldHex        string            `json:"vendorFieldHex,omitempty"`
 	Version               byte              `json:"version,omitempty"`
 }
 

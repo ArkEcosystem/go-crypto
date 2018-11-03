@@ -44,7 +44,7 @@ func deserializeHeader(bytes []byte, transaction *Transaction) (int, *Transactio
 
 	if vendorFieldLength > 0 {
 		vendorFieldOffset := 50 + vendorFieldLength
-		transaction.VendorFieldHex = bytes[50:vendorFieldOffset]
+		transaction.VendorFieldHex = Hex2Byte(bytes[50:vendorFieldOffset])
 	}
 
 	assetOffset := 50*2 + int(vendorFieldLength)*2
@@ -104,7 +104,7 @@ func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 	}
 
 	if len(transaction.VendorFieldHex) > 0 {
-		transaction.VendorField = string(HexDecode(Hex2Byte(transaction.VendorFieldHex)))
+		transaction.VendorField = string(HexDecode(transaction.VendorFieldHex))
 	}
 
 	if transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration || transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
