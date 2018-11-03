@@ -16,7 +16,7 @@ import (
 func TestBuildTransferWithPassphrase(t *testing.T) {
 	transaction := BuildTransfer(
 		"AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-		uint64(133380000000),
+		FlexToshi(133380000000),
 		"This is a transaction from Go",
 		"This is a top secret passphrase",
 		"",
@@ -29,7 +29,7 @@ func TestBuildTransferWithPassphrase(t *testing.T) {
 func TestBuildTransferWithSecondPassphrase(t *testing.T) {
 	transaction := BuildTransfer(
 		"AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-		uint64(133380000000),
+		FlexToshi(133380000000),
 		"This is a transaction from Go",
 		"This is a top secret passphrase",
 		"this is a top secret second passphrase",

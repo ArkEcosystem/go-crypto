@@ -8,10 +8,14 @@
 package crypto
 
 import (
+	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/btcsuite/btcd/btcec"
 )
+
+type FlexToshi uint64
 
 type Network struct {
 	Epoch   time.Time
@@ -43,22 +47,39 @@ type TransactionTypes struct {
 }
 
 type TransactionFees struct {
-	Transfer                    uint64
-	SecondSignatureRegistration uint64
-	DelegateRegistration        uint64
-	Vote                        uint64
-	MultiSignatureRegistration  uint64
-	Ipfs                        uint64
-	TimelockTransfer            uint64
-	MultiPayment                uint64
-	DelegateResignation         uint64
+	Transfer                    FlexToshi
+	SecondSignatureRegistration FlexToshi
+	DelegateRegistration        FlexToshi
+	Vote                        FlexToshi
+	MultiSignatureRegistration  FlexToshi
+	Ipfs                        FlexToshi
+	TimelockTransfer            FlexToshi
+	MultiPayment                FlexToshi
+	DelegateResignation         FlexToshi
+}
+
+func (fi *FlexToshi) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		return json.Unmarshal(b, (*uint64)(fi))
+	}
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return err
+	}
+	*fi = FlexToshi(i)
+
+	return nil
 }
 
 type Transaction struct {
-	Amount                uint64            `json:"amount,omitempty"`
+	Amount                FlexToshi         `json:"amount,omitempty"`
 	Asset                 *TransactionAsset `json:"asset,omitempty"`
 	Expiration            uint32            `json:"expiration,omitempty"`
-	Fee                   uint64            `json:"fee,omitempty"`
+	Fee                   FlexToshi         `json:"fee,omitempty"`
 	Id                    string            `json:"id,omitempty"`
 	Network               byte              `json:"network,omitempty"`
 	RecipientId           string            `json:"recipientId,omitempty"`
@@ -117,6 +138,6 @@ type IpfsAsset struct {
 }
 
 type MultiPaymentAsset struct {
-	Amount      uint64 `json:"amount,omitempty"`
-	RecipientId string `json:"recipientId,omitempty"`
+	Amount      FlexToshi `json:"amount,omitempty"`
+	RecipientId string    `json:"recipientId,omitempty"`
 }

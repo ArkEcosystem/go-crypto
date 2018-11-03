@@ -43,14 +43,14 @@ func GetMessageFixture() TestingMessageFixture {
 
 type TestingTransferFixture struct {
 	Data struct {
-		Type            uint8  `json:"type,omitempty"`
-		Amount          uint64 `json:"amount,omitempty"`
-		Fee             uint64 `json:"fee,omitempty"`
-		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       int32  `json:"timestamp,omitempty"`
-		SenderPublicKey string `json:"senderPublicKey,omitempty"`
-		Signature       string `json:"signature,omitempty"`
-		Id              string `json:"id,omitempty"`
+		Type            uint8     `json:"type,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Id              string    `json:"id,omitempty"`
 		// Asset {} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
@@ -58,14 +58,14 @@ type TestingTransferFixture struct {
 
 type TestingSecondSignatureRegistrationFixture struct {
 	Data struct {
-		Type            uint8  `json:"type,omitempty"`
-		Amount          uint64 `json:"amount,omitempty"`
-		Fee             uint64 `json:"fee,omitempty"`
-		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       int32  `json:"timestamp,omitempty"`
-		SenderPublicKey string `json:"senderPublicKey,omitempty"`
-		Signature       string `json:"signature,omitempty"`
-		Id              string `json:"id,omitempty"`
+		Type            uint8     `json:"type,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Id              string    `json:"id,omitempty"`
 		Asset           struct {
 			Signature SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 		} `json:"asset,omitempty"`
@@ -75,14 +75,14 @@ type TestingSecondSignatureRegistrationFixture struct {
 
 type TestingDelegateRegistrationFixture struct {
 	Data struct {
-		Type            uint8  `json:"type,omitempty"`
-		Amount          uint64 `json:"amount,omitempty"`
-		Fee             uint64 `json:"fee,omitempty"`
-		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       int32  `json:"timestamp,omitempty"`
-		SenderPublicKey string `json:"senderPublicKey,omitempty"`
-		Signature       string `json:"signature,omitempty"`
-		Id              string `json:"id,omitempty"`
+		Type            uint8     `json:"type,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Id              string    `json:"id,omitempty"`
 		Asset           struct {
 			Delegate DelegateAsset `json:"delegate,omitempty"`
 		} `json:"asset,omitempty"`
@@ -92,14 +92,14 @@ type TestingDelegateRegistrationFixture struct {
 
 type TestingVoteFixture struct {
 	Data struct {
-		Type            uint8  `json:"type,omitempty"`
-		Amount          uint64 `json:"amount,omitempty"`
-		Fee             uint64 `json:"fee,omitempty"`
-		RecipientId     string `json:"recipientId,omitempty"`
-		Timestamp       int32  `json:"timestamp,omitempty"`
-		SenderPublicKey string `json:"senderPublicKey,omitempty"`
-		Signature       string `json:"signature,omitempty"`
-		Id              string `json:"id,omitempty"`
+		Type            uint8     `json:"type,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Id              string    `json:"id,omitempty"`
 		Asset           struct {
 			Votes []string `json:"votes,omitempty"`
 		} `json:"asset,omitempty"`
@@ -109,16 +109,16 @@ type TestingVoteFixture struct {
 
 type TestingMultiSignatureRegistrationFixture struct {
 	Data struct {
-		Type            uint8    `json:"type,omitempty"`
-		Amount          uint64   `json:"amount,omitempty"`
-		Fee             uint64   `json:"fee,omitempty"`
-		RecipientId     string   `json:"recipientId,omitempty"`
-		Timestamp       int32    `json:"timestamp,omitempty"`
-		SenderPublicKey string   `json:"senderPublicKey,omitempty"`
-		Signature       string   `json:"signature,omitempty"`
-		SignSignature   string   `json:"signSignature,omitempty"`
-		Id              string   `json:"id,omitempty"`
-		Signatures      []string `json:"signatures,omitempty"`
+		Type            uint8     `json:"type,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		SignSignature   string    `json:"signSignature,omitempty"`
+		Id              string    `json:"id,omitempty"`
+		Signatures      []string  `json:"signatures,omitempty"`
 		Asset           struct {
 			MultiSignature MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
 		} `json:"asset,omitempty"`

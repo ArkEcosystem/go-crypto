@@ -38,7 +38,7 @@ func deserializeHeader(bytes []byte, transaction *Transaction) (int, *Transactio
 	transaction.Type = bytes[3:4][0]
 	transaction.Timestamp = int32(binary.LittleEndian.Uint32(bytes[4:8]))
 	transaction.SenderPublicKey = HexEncode(bytes[8:41])
-	transaction.Fee = binary.LittleEndian.Uint64(bytes[41:49])
+	transaction.Fee = FlexToshi(binary.LittleEndian.Uint64(bytes[41:49]))
 
 	vendorFieldLength := bytes[49:50][0]
 
@@ -128,7 +128,7 @@ func deserializeVersionOne(bytes []byte, transaction *Transaction) *Transaction 
 func deserializeTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
-	transaction.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(bytes[offset:(offset + 8)]))
 	transaction.Expiration = binary.LittleEndian.Uint32(bytes[(offset + 8):(offset + 16)])
 
 	recipientOffset := offset + 12
@@ -221,7 +221,7 @@ func deserializeIpfs(assetOffset int, bytes []byte, transaction *Transaction) *T
 func deserializeTimelockTransfer(assetOffset int, bytes []byte, transaction *Transaction) *Transaction {
 	offset := assetOffset / 2
 
-	transaction.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(bytes[offset:(offset + 8)]))
 	transaction.Expiration = binary.LittleEndian.Uint32(bytes[(offset + 8):(offset + 16)])
 
 	recipientOffset := offset + 13
@@ -240,7 +240,7 @@ func deserializeMultiPayment(assetOffset int, bytes []byte, transaction *Transac
 
 	for i := 0; i < total; i++ {
 		payment := &MultiPaymentAsset{}
-		payment.Amount = binary.LittleEndian.Uint64(bytes[offset:(offset + 8)])
+		payment.Amount = FlexToshi(binary.LittleEndian.Uint64(bytes[offset:(offset + 8)]))
 		recipientOffset := offset + 1
 		payment.RecipientId = base58.Encode(bytes[recipientOffset:(recipientOffset + 21)])
 
