@@ -60,9 +60,7 @@ func serializeVendorField(buffer *bytes.Buffer, transaction *Transaction) *bytes
 		_ = binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldLength))
 		_ = binary.Write(buffer, binary.LittleEndian, []byte(transaction.VendorField))
 	} else if len(transaction.VendorFieldHex) > 0 {
-		vendorFieldHexLength := len(transaction.VendorFieldHex)
-
-		_ = binary.Write(buffer, binary.LittleEndian, uint8(vendorFieldHexLength))
+		_ = binary.Write(buffer, binary.LittleEndian, uint8(len(transaction.VendorFieldHex)/2))
 		_ = binary.Write(buffer, binary.LittleEndian, HexDecode(transaction.VendorFieldHex))
 	} else {
 		_ = binary.Write(buffer, binary.LittleEndian, HexDecode("00")[0])
