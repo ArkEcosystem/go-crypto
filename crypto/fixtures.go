@@ -51,6 +51,7 @@ type TestingTransferFixture struct {
 		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
 		Signature       string    `json:"signature,omitempty"`
 		Id              string    `json:"id,omitempty"`
+		VendorFieldHex  string    `json:"vendorFieldHex,omitempty"`
 		// Asset {} `json:"asset,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
