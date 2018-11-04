@@ -44,6 +44,8 @@ func GetMessageFixture() TestingMessageFixture {
 type TestingTransferFixture struct {
 	Data struct {
 		Type            uint8     `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
 		Fee             FlexToshi `json:"fee,omitempty"`
 		RecipientId     string    `json:"recipientId,omitempty"`
@@ -60,6 +62,8 @@ type TestingTransferFixture struct {
 type TestingSecondSignatureRegistrationFixture struct {
 	Data struct {
 		Type            uint8     `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
 		Fee             FlexToshi `json:"fee,omitempty"`
 		RecipientId     string    `json:"recipientId,omitempty"`
@@ -77,6 +81,8 @@ type TestingSecondSignatureRegistrationFixture struct {
 type TestingDelegateRegistrationFixture struct {
 	Data struct {
 		Type            uint8     `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
 		Fee             FlexToshi `json:"fee,omitempty"`
 		RecipientId     string    `json:"recipientId,omitempty"`
@@ -94,6 +100,8 @@ type TestingDelegateRegistrationFixture struct {
 type TestingVoteFixture struct {
 	Data struct {
 		Type            uint8     `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
 		Fee             FlexToshi `json:"fee,omitempty"`
 		RecipientId     string    `json:"recipientId,omitempty"`
@@ -111,6 +119,8 @@ type TestingVoteFixture struct {
 type TestingMultiSignatureRegistrationFixture struct {
 	Data struct {
 		Type            uint8     `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
 		Fee             FlexToshi `json:"fee,omitempty"`
 		RecipientId     string    `json:"recipientId,omitempty"`

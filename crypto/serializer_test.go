@@ -173,11 +173,18 @@ func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
 func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
 	fixtureContents := GetTransactionFixture("multi_signature_registration", "second-passphrase")
 	var fixture TestingMultiSignatureRegistrationFixture
+	var transactionObject Transaction
 	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
+	var fixtureContentsData []byte
+	fixtureContentsData, _ = json.Marshal(fixture.Data)
+	_ = json.Unmarshal(fixtureContentsData, &transactionObject)
 
 	transaction := DeserializeTransaction(fixture.Serialized)
+	transactionBytes := SerialiseTransaction(&transactionObject)
 
 	assert := assert.New(t)
+	assert.Equal(fixture.Serialized, HexEncode(transactionBytes))
+
 	verified, _ := transaction.Verify()
 	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
 	assert.Equal(verified, true)
