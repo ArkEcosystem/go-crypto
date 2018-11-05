@@ -160,11 +160,16 @@ func (transaction *Transaction) ToBytes(skipSignature, skipSecondSignature bool)
 		_ = binary.Write(buffer, binary.LittleEndian, make([]byte, 21))
 	}
 
-	if transaction.VendorField != "" {
-		vendorBytes := []byte(transaction.VendorField)
-		if len(vendorBytes) < 65 {
-			_ = binary.Write(buffer, binary.LittleEndian, vendorBytes)
+	var vendorBytes []byte
+	if transaction.VendorFieldHex != "" {
+		vendorBytes = HexDecode(transaction.VendorFieldHex)
+	} else if transaction.VendorField != "" {
+		vendorBytes = []byte(transaction.VendorField)
+	}
+	if len(vendorBytes) > 0 {
+		_ = binary.Write(buffer, binary.LittleEndian, vendorBytes)
 
+		if 64-len(vendorBytes) > 0 {
 			bs := make([]byte, 64-len(vendorBytes))
 			_ = binary.Write(buffer, binary.LittleEndian, bs)
 		}
