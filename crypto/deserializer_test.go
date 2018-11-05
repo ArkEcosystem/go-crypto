@@ -37,6 +37,30 @@ func TestDeserializeTransferWithPassphrase(t *testing.T) {
 	assert.Equal(success, true)
 }
 
+func TestDeserialiseTransferWithPassphraseAndVendorFieldHex(t *testing.T) {
+	fixtureContents := GetTransactionFixture("transfer", "passphrase-with-vendor-field-hex-2")
+	var fixture TestingTransferFixture
+	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
+
+	transaction := DeserializeTransaction(fixture.Serialized)
+
+	assert := assert.New(t)
+	assert.Equal(fixture.Data.Amount, transaction.Amount)
+	assert.Equal(fixture.Data.Fee, transaction.Fee)
+	assert.Equal(fixture.Data.Id, transaction.Id)
+	assert.Equal(fixture.Data.RecipientId, transaction.RecipientId)
+	assert.Equal(fixture.Data.SenderPublicKey, transaction.SenderPublicKey)
+	assert.Equal(fixture.Data.Signature, transaction.Signature)
+	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
+	assert.Equal(fixture.Data.Type, transaction.Type)
+	assert.Equal(fixture.Data.VendorFieldHex, transaction.VendorFieldHex)
+	assert.Equal(uint8(30), transaction.Network)
+	assert.Equal(uint8(1), transaction.Version)
+
+	success, _ := transaction.Verify()
+	assert.Equal(success, true)
+}
+
 func TestDeserializeTransferWithSecondPassphrase(t *testing.T) {
 	fixtureContents := GetTransactionFixture("transfer", "second-passphrase")
 	var fixture TestingTransferFixture

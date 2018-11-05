@@ -20,7 +20,7 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 	return transaction
 }
 
-func BuildTransfer(recipient string, amount uint64, vendorField string, passphrase string, secondPassphrase string) *Transaction {
+func BuildTransfer(recipient string, amount FlexToshi, vendorField string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
 		Type:        TRANSACTION_TYPES.Transfer,
 		Fee:         GetFee(TRANSACTION_TYPES.Transfer),
@@ -88,7 +88,7 @@ func BuildMultiSignatureRegistration(min byte, lifetime byte, keysgroup []string
 		Lifetime:  lifetime,
 	}
 
-	transaction.Fee = uint64(len(keysgroup)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
+	transaction.Fee = FlexToshi(len(keysgroup)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }

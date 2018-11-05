@@ -9,7 +9,7 @@ package crypto
 
 var (
 	CONFIG_NETWORK = &Network{}
-	CONFIG_FEES    = []uint64{
+	CONFIG_FEES    = []FlexToshi{
 		TRANSACTION_FEES.Transfer,
 		TRANSACTION_FEES.SecondSignatureRegistration,
 		TRANSACTION_FEES.DelegateRegistration,
@@ -34,10 +34,10 @@ func SetNetwork(network *Network) {
 	CONFIG_NETWORK = network
 }
 
-func GetFee(transactionType byte) uint64 {
+func GetFee(transactionType byte) FlexToshi {
 	return CONFIG_FEES[transactionType]
 }
 
-func SetFee(transactionType byte, value uint64) {
+func SetFee(transactionType byte, value FlexToshi) {
 	CONFIG_FEES[transactionType] = value
 }
