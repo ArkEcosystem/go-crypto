@@ -8,8 +8,7 @@ on:
         types: [opened]
 
 jobs:
-
-  build:
+  unit:
     name: Build
     
     runs-on: ubuntu-latest
@@ -32,4 +31,6 @@ jobs:
     - name: Build
       run: go build ./...
     - name: Test
-      run: go test ./...
+      run: go test ./... -race -coverprofile=profile.out -covermode=atomic
+    - name: Codecov
+      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
