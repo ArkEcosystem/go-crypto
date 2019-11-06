@@ -1,6 +1,6 @@
 {
     "data": {
-        "version": 1,
+        "version": 2,
         "network": 23,
         "id": "cbd6862966bb1b03ba742397b7e5a88d6eefb393a362ead0d605723b840db2af",
         "blockid": "1844069042066945391",
@@ -20,12 +20,11 @@
         "asset": {
             "multisignature": {
                 "min": 2,
-                "keysgroup": [
-                    "+03543c6cc3545be6bac09c82721973a052c690658283472e88f24d14739f75acc8",
-                    "+0276dc5b8706a85ca9fdc46e571ac84e52fbb48e13ec7a165a80731b44ae89f1fc",
-                    "+02e8d5d17eb17bbc8d7bf1001d29a2d25d1249b7bb7a5b7ad8b7422063091f4b31"
-                ],
-                "lifetime": 24
+                "publickeys": [
+                    "03543c6cc3545be6bac09c82721973a052c690658283472e88f24d14739f75acc8",
+                    "0276dc5b8706a85ca9fdc46e571ac84e52fbb48e13ec7a165a80731b44ae89f1fc",
+                    "02e8d5d17eb17bbc8d7bf1001d29a2d25d1249b7bb7a5b7ad8b7422063091f4b31"
+                ]
             }
         }
     },

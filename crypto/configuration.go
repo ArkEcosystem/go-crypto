@@ -16,9 +16,11 @@ var (
 		TRANSACTION_FEES.Vote,
 		TRANSACTION_FEES.MultiSignatureRegistration,
 		TRANSACTION_FEES.Ipfs,
-		TRANSACTION_FEES.TimelockTransfer,
 		TRANSACTION_FEES.MultiPayment,
 		TRANSACTION_FEES.DelegateResignation,
+		TRANSACTION_FEES.HtlcLock,
+		TRANSACTION_FEES.HtlcClaim,
+		TRANSACTION_FEES.HtlcRefund,
 	}
 )
 
@@ -34,10 +36,10 @@ func SetNetwork(network *Network) {
 	CONFIG_NETWORK = network
 }
 
-func GetFee(transactionType byte) FlexToshi {
+func GetFee(transactionType uint16) FlexToshi {
 	return CONFIG_FEES[transactionType]
 }
 
-func SetFee(transactionType byte, value FlexToshi) {
+func SetFee(transactionType uint16, value FlexToshi) {
 	CONFIG_FEES[transactionType] = value
 }

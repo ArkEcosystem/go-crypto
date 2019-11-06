@@ -7,6 +7,10 @@
 
 package crypto
 
+import (
+	"log"
+)
+
 func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	transaction.Timestamp = GetTime()
 	transaction.Sign(passphrase)
@@ -22,12 +26,13 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 
 func BuildTransfer(recipient string, amount FlexToshi, vendorField string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
-		Type:        TRANSACTION_TYPES.Transfer,
-		Fee:         GetFee(TRANSACTION_TYPES.Transfer),
+		Type: TRANSACTION_TYPES.Transfer,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
+		Fee: GetFee(TRANSACTION_TYPES.Transfer),
+		Amount: amount,
 		RecipientId: recipient,
-		Amount:      amount,
 		VendorField: vendorField,
-		Asset:       &TransactionAsset{},
+		Asset: &TransactionAsset{},
 	}
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
@@ -35,8 +40,9 @@ func BuildTransfer(recipient string, amount FlexToshi, vendorField string, passp
 
 func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
-		Type:  TRANSACTION_TYPES.SecondSignatureRegistration,
-		Fee:   GetFee(TRANSACTION_TYPES.SecondSignatureRegistration),
+		Type: TRANSACTION_TYPES.SecondSignatureRegistration,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
+		Fee: GetFee(TRANSACTION_TYPES.SecondSignatureRegistration),
 		Asset: &TransactionAsset{},
 	}
 
@@ -51,8 +57,9 @@ func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string
 
 func BuildDelegateRegistration(username string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
-		Type:  TRANSACTION_TYPES.DelegateRegistration,
-		Fee:   GetFee(TRANSACTION_TYPES.DelegateRegistration),
+		Type: TRANSACTION_TYPES.DelegateRegistration,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
+		Fee: GetFee(TRANSACTION_TYPES.DelegateRegistration),
 		Asset: &TransactionAsset{},
 	}
 
@@ -65,8 +72,9 @@ func BuildDelegateRegistration(username string, passphrase string, secondPassphr
 
 func BuildVote(vote, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
-		Type:  TRANSACTION_TYPES.Vote,
-		Fee:   GetFee(TRANSACTION_TYPES.Vote),
+		Type: TRANSACTION_TYPES.Vote,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
+		Fee: GetFee(TRANSACTION_TYPES.Vote),
 		Asset: &TransactionAsset{},
 	}
 
@@ -76,19 +84,63 @@ func BuildVote(vote, passphrase string, secondPassphrase string) *Transaction {
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildMultiSignatureRegistration(min byte, lifetime byte, keysgroup []string, passphrase string, secondPassphrase string) *Transaction {
+func BuildMultiSignatureRegistration(min byte, lifetime byte, publickeys []string, passphrase string, secondPassphrase string) *Transaction {
 	transaction := &Transaction{
-		Type:  TRANSACTION_TYPES.MultiSignatureRegistration,
+		Type: TRANSACTION_TYPES.MultiSignatureRegistration,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
 		Asset: &TransactionAsset{},
 	}
 
 	transaction.Asset.MultiSignature = &MultiSignatureRegistrationAsset{
-		Min:       min,
-		Keysgroup: keysgroup,
-		Lifetime:  lifetime,
+		Min: min,
+		PublicKeys: publickeys,
 	}
 
-	transaction.Fee = FlexToshi(len(keysgroup)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
+	transaction.Fee = FlexToshi(len(publickeys)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
 
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildIpfs(amount FlexToshi, ipfsId string, passphrase string, secondPassphrase string) *Transaction {
+	transaction := &Transaction{
+		Type: TRANSACTION_TYPES.Transfer,
+		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
+		Fee: GetFee(TRANSACTION_TYPES.Transfer),
+		Amount: amount,
+		Asset: &TransactionAsset{
+			Ipfs: ipfsId,
+		},
+	}
+
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildMultiPayment(passphrase string, secondPassphrase string) *Transaction {
+	log.Fatal("Not implemented: BuildMultiPayment()")
+	transaction := &Transaction{}
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildDelegateResignation(passphrase string, secondPassphrase string) *Transaction {
+	log.Fatal("Not implemented: BuildDelegateResignation()")
+	transaction := &Transaction{}
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildHtlcLock(passphrase string, secondPassphrase string) *Transaction {
+	log.Fatal("Not implemented: BuildHtlcLock()")
+	transaction := &Transaction{}
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildHtlcClaim(passphrase string, secondPassphrase string) *Transaction {
+	log.Fatal("Not implemented: BuildHtlcClaim()")
+	transaction := &Transaction{}
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+func BuildHtlcRefund(passphrase string, secondPassphrase string) *Transaction {
+	log.Fatal("Not implemented: BuildHtlcRefund()")
+	transaction := &Transaction{}
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }

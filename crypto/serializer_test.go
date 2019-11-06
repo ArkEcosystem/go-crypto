@@ -23,8 +23,8 @@ func TestSerialiseTransferWithPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
-	assert.Equal(verified, true)
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
+	assert.Equal(true, verified)
 }
 
 func TestSerialiseTransferWithSecondPassphrase(t *testing.T) {
@@ -36,8 +36,8 @@ func TestSerialiseTransferWithSecondPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
-	assert.Equal(verified, true)
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
+	assert.Equal(true, verified)
 }
 
 func TestSerialiseTransferWithPassphraseAndVendorField(t *testing.T) {
@@ -49,7 +49,7 @@ func TestSerialiseTransferWithPassphraseAndVendorField(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -62,7 +62,7 @@ func TestSerialiseTransferWithSecondPassphraseAndVendorField(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -75,7 +75,7 @@ func TestSerialiseTransferWithPassphraseAndVendorFieldHex(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -88,7 +88,7 @@ func TestSerialiseTransferWithPassphraseAndVendorFieldHex2(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(HexEncode(SerialiseTransaction(transaction)), fixture.Serialized)
+	assert.Equal(HexEncode(transaction.serialize(true, true)), fixture.Serialized)
 	assert.Equal(verified, true)
 }
 
@@ -101,7 +101,7 @@ func TestSerialiseTransferWithSecondPassphraseAndVendorFieldHex(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -114,7 +114,7 @@ func TestSerialiseSecondSignatureRegistrationWithPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -127,7 +127,7 @@ func TestSerialiseDelegateRegistrationWithPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -140,7 +140,7 @@ func TestSerialiseDelegateRegistrationWithSecondPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -153,7 +153,7 @@ func TestSerialiseVoteWithPassphraseWithPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -166,7 +166,7 @@ func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 
@@ -180,13 +180,13 @@ func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
 	_ = json.Unmarshal(fixtureContentsData, &transactionObject)
 
 	transaction := DeserializeTransaction(fixture.Serialized)
-	transactionBytes := SerialiseTransaction(&transactionObject)
+	transactionBytes := transactionObject.serialize(true, true)
 
 	assert := assert.New(t)
 	assert.Equal(fixture.Serialized, HexEncode(transactionBytes))
 
 	verified, _ := transaction.Verify()
-	assert.Equal(fixture.Serialized, HexEncode(SerialiseTransaction(transaction)))
+	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.Equal(verified, true)
 }
 

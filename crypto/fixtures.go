@@ -42,20 +42,7 @@ func GetMessageFixture() TestingMessageFixture {
 }
 
 type TestingTransferFixture struct {
-	Data struct {
-		Type            uint8     `json:"type,omitempty"`
-		Network         uint8     `json:"network,omitempty"`
-		Version         uint8     `json:"version,omitempty"`
-		Amount          FlexToshi `json:"amount,omitempty"`
-		Fee             FlexToshi `json:"fee,omitempty"`
-		RecipientId     string    `json:"recipientId,omitempty"`
-		Timestamp       int32     `json:"timestamp,omitempty"`
-		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
-		Signature       string    `json:"signature,omitempty"`
-		Id              string    `json:"id,omitempty"`
-		VendorFieldHex  string    `json:"vendorFieldHex,omitempty"`
-		// Asset {} `json:"asset,omitempty"`
-	} `json:"data,omitempty"`
+	Data Transaction `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
 }
 
@@ -127,7 +114,6 @@ type TestingMultiSignatureRegistrationFixture struct {
 		Timestamp       int32     `json:"timestamp,omitempty"`
 		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
 		Signature       string    `json:"signature,omitempty"`
-		SignSignature   string    `json:"signSignature,omitempty"`
 		Id              string    `json:"id,omitempty"`
 		Signatures      []string  `json:"signatures,omitempty"`
 		Asset           struct {
