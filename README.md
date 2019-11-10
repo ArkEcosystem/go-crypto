@@ -23,7 +23,7 @@ If you discover a security vulnerability within this package, please send an e-m
 
 ## Credits
 
-This project exists thanks to all the people who [contribute](./graphs/contributors).
+This project exists thanks to all the people who [contribute](../../contributors).
 
 ## License
 
