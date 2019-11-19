@@ -141,11 +141,10 @@ func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
 	_ = json.Unmarshal(fixtureContentsData, &transactionObject)
 
 	transaction := DeserializeTransaction(fixture.Serialized)
-	transactionBytes := transactionObject.serialize(true, true)
 
 	assert := assert.New(t)
 
-	assert.Equal(fixture.Serialized, HexEncode(transactionBytes))
+	assert.Equal(fixture.Serialized, HexEncode(transactionObject.serialize(true, true)))
 	assert.Equal(fixture.Serialized, HexEncode(transaction.serialize(true, true)))
 	assert.True(transaction.Verify())
 }
