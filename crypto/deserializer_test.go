@@ -77,8 +77,8 @@ func TestDeserializeSecondSignatureRegistrationWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	assert.True(transaction.Verify())
 
@@ -104,8 +104,8 @@ func TestDeserializeDelegateRegistrationWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	assert.True(transaction.Verify())
 }
@@ -127,8 +127,8 @@ func TestDeserializeDelegateSecondRegistrationWithSecondPassphrase(t *testing.T)
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	assert.True(transaction.Verify())
 }
@@ -151,8 +151,8 @@ func TestDeserializeVoteWithPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	assert.True(transaction.Verify())
 }
@@ -175,8 +175,8 @@ func TestDeserializeVoteWithSecondPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	assert.True(transaction.Verify())
 }
