@@ -12,7 +12,10 @@ import (
 )
 
 func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	transaction.Timestamp = GetTime()
+	if transaction.Timestamp == 0 {
+		transaction.Timestamp = GetTime()
+	}
+
 	transaction.Sign(passphrase)
 
 	if len(secondPassphrase) > 0 {
