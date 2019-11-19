@@ -104,8 +104,6 @@ type Transaction struct {
 	Type                  uint16            `json:"type"`
 	TypeGroup             uint32            `json:"typeGroup"`
 	VendorField           string            `json:"vendorField,omitempty"`
-	// XXX remove this
-	VendorFieldHex        string            `json:"vendorFieldHex,omitempty"`
 	Version               byte              `json:"version,omitempty"`
 }
 
