@@ -28,7 +28,7 @@ func TestSerialiseTransferWithPassphrase(t *testing.T) {
 }
 
 func TestSerialiseTransferWithSecondPassphrase(t *testing.T) {
-	fixtureContents := GetTransactionFixture("transfer", "second-passphrase")
+	fixtureContents := GetTransactionFixture("transfer", "second-passphrase-no-vendor-field")
 	var fixture TestingTransferFixture
 	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
 
@@ -132,7 +132,7 @@ func TestSerialiseDelegateRegistrationWithPassphrase(t *testing.T) {
 }
 
 func TestSerialiseDelegateRegistrationWithSecondPassphrase(t *testing.T) {
-	fixtureContents := GetTransactionFixture("delegate_registration", "second-passphrase")
+	fixtureContents := GetTransactionFixture("delegate_registration", "second-passphrase-no-vendor-field")
 	var fixture TestingDelegateRegistrationFixture
 	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
 
@@ -158,7 +158,7 @@ func TestSerialiseVoteWithPassphraseWithPassphrase(t *testing.T) {
 }
 
 func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
-	fixtureContents := GetTransactionFixture("vote", "second-passphrase")
+	fixtureContents := GetTransactionFixture("vote", "second-passphrase-no-vendor-field")
 	var fixture TestingVoteFixture
 	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
 
@@ -171,7 +171,7 @@ func TestSerialiseVoteWithPassphraseWithSecondPassphrase(t *testing.T) {
 }
 
 func TestSerialiseMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
-	fixtureContents := GetTransactionFixture("multi_signature_registration", "second-passphrase")
+	fixtureContents := GetTransactionFixture("multi_signature_registration", "second-passphrase-no-vendor-field")
 	var fixture TestingMultiSignatureRegistrationFixture
 	var transactionObject Transaction
 	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
