@@ -53,8 +53,8 @@ func TestDeserializeTransferWithSecondPassphrase(t *testing.T) {
 	assert.Equal(fixture.Data.Signature, transaction.Signature)
 	assert.Equal(fixture.Data.Timestamp, transaction.Timestamp)
 	assert.Equal(fixture.Data.Type, transaction.Type)
-	assert.Equal(uint8(30), transaction.Network)
-	assert.Equal(uint8(1), transaction.Version)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
 
 	success, _ := transaction.Verify()
 	assert.Equal(success, true)
