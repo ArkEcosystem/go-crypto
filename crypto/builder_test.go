@@ -15,30 +15,38 @@ import (
 
 func TestBuildTransferWithPassphrase(t *testing.T) {
 	transaction := BuildTransfer(
-		"AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-		FlexToshi(133380000000),
-		"This is a transaction from Go",
+		&Transaction{
+			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
+			Amount: FlexToshi(133380000000),
+			VendorField: "This is a transaction from Go",
+		},
 		"This is a top secret passphrase",
 		"",
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 }
 
 func TestBuildTransferWithSecondPassphrase(t *testing.T) {
+	secondPassPhrase := "This is a top secret second passphrase"
+
 	transaction := BuildTransfer(
-		"AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-		FlexToshi(133380000000),
-		"This is a transaction from Go",
+		&Transaction{
+			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
+			Amount: FlexToshi(133380000000),
+			VendorField: "This is a transaction from Go",
+		},
 		"This is a top secret passphrase",
-		"this is a top secret second passphrase",
+		secondPassPhrase,
 	)
 
-	assert := assert.New(t)
-	assert.True(transaction.Verify())
+	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
+	assert := assert.New(t)
+
+	assert.True(transaction.Verify())
 	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 
