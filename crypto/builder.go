@@ -28,26 +28,15 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 }
 
 /** Set all fields and sign a TransactionTypes.Transfer transaction.
- * Members of the supplied transaction object:
- *   Amount - must be set when calling this function
- *   Asset - will be set by this function
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Amount
  *   Expiration - optional, could be 0 to designate no expiration
  *   Fee - optional, if 0, then it will be set to a default fee
- *   Id - will be overwritten by this function
- *   Network - optional, if 0, then it will be set to ARK devnet
- *   Nonce - must be set when calling this function
- *   RecipientId - must be set when calling this function
- *   SecondSenderPublicKey - will be set to "" by this function
- *   SecondSignature - will be set to "" by this function
- *   SenderPublicKey - will be set by this function
- *   Serialized - will be set by this function
- *   Signature - will be set by this function
- *   Signatures - will be set by this function
- *   Timestamp - optional, if nil, then it will be set to the present time by this function
- *   Type - will be set by this function
- *   TypeGroup - will be set by this function
- *   VendorField - optional
- *   Version - will be set by this function */
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   RecipientId
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
 func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	transaction.Asset = &TransactionAsset{}
 
