@@ -131,16 +131,20 @@ func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction 
 	return transaction.ParseSignatures(typeSpecificOffset + 33)
 }
 
-func deserializeDelegateRegistration(assetOffset int, transaction *Transaction) *Transaction {
-	offset := assetOffset / 2
+func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
 
-	usernameLength := transaction.Serialized[offset:(offset + 1)][0]
+	usernameLen := int(transaction.Serialized[o])
+	o++
 
-	transaction.Asset = &TransactionAsset{}
-	transaction.Asset.Delegate = &DelegateAsset{}
-	transaction.Asset.Delegate.Username = string(transaction.Serialized[(offset + 1):((offset + 1) + int(usernameLength))])
+	transaction.Asset = &TransactionAsset{
+		Delegate: &DelegateAsset{
+			Username: string(transaction.Serialized[o:o + usernameLen]),
+		},
+	}
+	o += usernameLen
 
-	return transaction.ParseSignatures(assetOffset + (int(usernameLength)+1)*2)
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeVote(assetOffset int, transaction *Transaction) *Transaction {
