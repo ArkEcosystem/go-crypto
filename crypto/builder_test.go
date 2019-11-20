@@ -16,8 +16,9 @@ import (
 func TestBuildTransferWithPassphrase(t *testing.T) {
 	transaction := BuildTransfer(
 		&Transaction{
-			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
 			Amount: FlexToshi(133380000000),
+			Nonce: 5,
+			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
 			VendorField: "This is a transaction from Go",
 		},
 		"This is a top secret passphrase",
@@ -34,8 +35,9 @@ func TestBuildTransferWithSecondPassphrase(t *testing.T) {
 
 	transaction := BuildTransfer(
 		&Transaction{
-			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
 			Amount: FlexToshi(133380000000),
+			Nonce: 5,
+			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
 			VendorField: "This is a transaction from Go",
 		},
 		"This is a top secret passphrase",
