@@ -146,7 +146,7 @@ func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
 func (transaction *Transaction) serializeMultiSignatureRegistration(ser *bytes.Buffer) {
 	publicKeys := transaction.Asset.MultiSignature.PublicKeys
 
-	writeNumberAsByte(ser, transaction.Asset.MultiSignature.Min, "minimum signatures in multisig")
+	ser.WriteByte(transaction.Asset.MultiSignature.Min)
 	writeNumberAsByte(ser, len(publicKeys), "number of public keys in multisig")
 	ser.Write(HexDecode(strings.Join(publicKeys, "")))
 }

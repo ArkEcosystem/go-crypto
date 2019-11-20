@@ -150,20 +150,25 @@ func TestBuildVoteWithSecondPassphrase(t *testing.T) {
 }
 
 func TestBuildMultiSignatureRegistrationWithPassphrase(t *testing.T) {
-	keysgroup := []string{
-		"03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-		"13a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-		"23a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-	}
-
 	transaction := BuildMultiSignatureRegistration(
-		2,
-		255,
-		keysgroup,
+		&Transaction{
+			Asset: &TransactionAsset{
+				MultiSignature: &MultiSignatureRegistrationAsset{
+					Min: 2,
+					PublicKeys: []string{
+						"03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+						"03b02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+						"03c02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
+					},
+				},
+			},
+			Nonce: 5,
+		},
 		"This is a top secret passphrase",
 		"",
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 }

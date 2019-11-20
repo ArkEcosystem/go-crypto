@@ -27,9 +27,9 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 	return transaction
 }
 
-func setCommonFields(transaction *Transaction) {
+func setCommonFields(transaction *Transaction, transactionType uint16) {
 	if transaction.Fee == 0 {
-		transaction.Fee = GetFee(TRANSACTION_TYPES.Transfer)
+		transaction.Fee = GetFee(transactionType)
 	}
 
 	if transaction.Network == 0 {
@@ -39,6 +39,7 @@ func setCommonFields(transaction *Transaction) {
 	transaction.SecondSenderPublicKey = ""
 	transaction.SecondSignature = ""
 	transaction.Signatures = nil
+	transaction.Type = transactionType
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
 	transaction.Version = 2
 }
@@ -54,10 +55,9 @@ func setCommonFields(transaction *Transaction) {
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
 func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction)
+	setCommonFields(transaction, TRANSACTION_TYPES.Transfer)
 
 	transaction.Asset = &TransactionAsset{}
-	transaction.Type = TRANSACTION_TYPES.Transfer
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
@@ -71,7 +71,7 @@ func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
 func BuildSecondSignatureRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction)
+	setCommonFields(transaction, TRANSACTION_TYPES.SecondSignatureRegistration)
 
 	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassphrase)
 
@@ -81,8 +81,6 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
 			PublicKey: HexEncode(secondPublicKey.Serialize()),
 		},
 	}
-
-	transaction.Type = TRANSACTION_TYPES.SecondSignatureRegistration
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
@@ -97,9 +95,7 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
 func BuildDelegateRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction)
-
-	transaction.Type = TRANSACTION_TYPES.DelegateRegistration
+	setCommonFields(transaction, TRANSACTION_TYPES.DelegateRegistration)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
@@ -114,27 +110,24 @@ func BuildDelegateRegistration(transaction *Transaction, passphrase string, seco
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
 func BuildVote(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction)
+	setCommonFields(transaction, TRANSACTION_TYPES.Vote)
 
 	transaction.RecipientId, _ = AddressFromPassphrase(passphrase)
-	transaction.Type = TRANSACTION_TYPES.Vote
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildMultiSignatureRegistration(min byte, lifetime byte, publickeys []string, passphrase string, secondPassphrase string) *Transaction {
-	transaction := &Transaction{
-		Type: TRANSACTION_TYPES.MultiSignatureRegistration,
-		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
-		Asset: &TransactionAsset{},
-	}
-
-	transaction.Asset.MultiSignature = &MultiSignatureRegistrationAsset{
-		Min: min,
-		PublicKeys: publickeys,
-	}
-
-	transaction.Fee = FlexToshi(len(publickeys)+1) + GetFee(TRANSACTION_TYPES.MultiSignatureRegistration)
+/** Set all fields and sign a TransactionTypes.MultiSignatureRegistration transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.MultiSignature
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildMultiSignatureRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.MultiSignatureRegistration)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
