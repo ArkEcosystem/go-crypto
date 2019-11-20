@@ -54,11 +54,15 @@ func TestBuildTransferWithSecondPassphrase(t *testing.T) {
 
 func TestBuildSecondSignatureRegistration(t *testing.T) {
 	transaction := BuildSecondSignatureRegistration(
+		&Transaction{
+			Nonce: 5,
+		},
 		"This is a top secret passphrase",
-		"this is a top secret second passphrase",
+		"This is a top secret second passphrase",
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 }
 

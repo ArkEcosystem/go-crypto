@@ -58,19 +58,39 @@ func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildSecondSignatureRegistration(passphrase string, secondPassphrase string) *Transaction {
-	transaction := &Transaction{
-		Type: TRANSACTION_TYPES.SecondSignatureRegistration,
-		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
-		Fee: GetFee(TRANSACTION_TYPES.SecondSignatureRegistration),
-		Asset: &TransactionAsset{},
+/** Set all fields and sign a TransactionTypes.SecondSignatureRegistration transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildSecondSignatureRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+
+	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassphrase)
+
+	transaction.Amount = 0
+	transaction.Asset = &TransactionAsset{
+		Signature: &SecondSignatureRegistrationAsset{
+			PublicKey: HexEncode(secondPublicKey.Serialize()),
+		},
 	}
 
-	publicKey, _ := PublicKeyFromPassphrase(passphrase)
-
-	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{
-		PublicKey: HexEncode(publicKey.Serialize()),
+	if transaction.Fee == 0 {
+		transaction.Fee = GetFee(TRANSACTION_TYPES.SecondSignatureRegistration)
 	}
+
+	if transaction.Network == 0 {
+		transaction.Network = GetNetwork().Version
+	}
+
+	transaction.SecondSenderPublicKey = ""
+	transaction.SecondSignature = ""
+	transaction.Signatures = nil
+	transaction.Type = TRANSACTION_TYPES.SecondSignatureRegistration
+	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
+	transaction.Version = 2
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
