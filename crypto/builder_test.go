@@ -68,26 +68,44 @@ func TestBuildSecondSignatureRegistration(t *testing.T) {
 
 func TestBuildDelegateRegistrationWithPassphrase(t *testing.T) {
 	transaction := BuildDelegateRegistration(
-		"polopolo",
+		&Transaction{
+			Asset: &TransactionAsset{
+				Delegate: &DelegateAsset{
+					Username: "polopolo",
+				},
+			},
+			Nonce: 5,
+		},
 		"lumber desk thought industry island man slow vendor pact fragile enact season",
 		"",
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 }
 
 func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
+	secondPassPhrase := "This is a top secret second passphrase"
+
 	transaction := BuildDelegateRegistration(
-		"polopolo",
+		&Transaction{
+			Asset: &TransactionAsset{
+				Delegate: &DelegateAsset{
+					Username: "polopolo",
+				},
+			},
+			Nonce: 5,
+		},
 		"This is a top secret passphrase",
-		"this is a top secret second passphrase",
+		secondPassPhrase,
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
+	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
 	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 

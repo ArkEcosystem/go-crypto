@@ -27,19 +27,7 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 	return transaction
 }
 
-/** Set all fields and sign a TransactionTypes.Transfer transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Amount
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   RecipientId
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	transaction.Asset = &TransactionAsset{}
-
+func setCommonFields(transaction *Transaction) {
 	if transaction.Fee == 0 {
 		transaction.Fee = GetFee(TRANSACTION_TYPES.Transfer)
 	}
@@ -51,9 +39,25 @@ func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase
 	transaction.SecondSenderPublicKey = ""
 	transaction.SecondSignature = ""
 	transaction.Signatures = nil
-	transaction.Type = TRANSACTION_TYPES.Transfer
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
 	transaction.Version = 2
+}
+
+/** Set all fields and sign a TransactionTypes.Transfer transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Amount
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   RecipientId
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction)
+
+	transaction.Asset = &TransactionAsset{}
+	transaction.Type = TRANSACTION_TYPES.Transfer
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
@@ -67,6 +71,7 @@ func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
 func BuildSecondSignatureRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction)
 
 	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassphrase)
 
@@ -77,35 +82,15 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
 		},
 	}
 
-	if transaction.Fee == 0 {
-		transaction.Fee = GetFee(TRANSACTION_TYPES.SecondSignatureRegistration)
-	}
-
-	if transaction.Network == 0 {
-		transaction.Network = GetNetwork().Version
-	}
-
-	transaction.SecondSenderPublicKey = ""
-	transaction.SecondSignature = ""
-	transaction.Signatures = nil
 	transaction.Type = TRANSACTION_TYPES.SecondSignatureRegistration
-	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
-	transaction.Version = 2
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildDelegateRegistration(username string, passphrase string, secondPassphrase string) *Transaction {
-	transaction := &Transaction{
-		Type: TRANSACTION_TYPES.DelegateRegistration,
-		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
-		Fee: GetFee(TRANSACTION_TYPES.DelegateRegistration),
-		Asset: &TransactionAsset{},
-	}
+func BuildDelegateRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction)
 
-	transaction.Asset.Delegate = &DelegateAsset{
-		Username: username,
-	}
+	transaction.Type = TRANSACTION_TYPES.DelegateRegistration
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
