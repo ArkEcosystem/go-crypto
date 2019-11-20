@@ -121,12 +121,14 @@ func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Tran
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeSecondSignatureRegistration(assetOffset int, transaction *Transaction) *Transaction {
-	transaction.Asset = &TransactionAsset{}
-	transaction.Asset.Signature = &SecondSignatureRegistrationAsset{}
-	transaction.Asset.Signature.PublicKey = HexEncode(transaction.Serialized[assetOffset:(assetOffset + 66)])
+func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	transaction.Asset = &TransactionAsset{
+		Signature: &SecondSignatureRegistrationAsset{
+			PublicKey: HexEncode(transaction.Serialized[typeSpecificOffset:typeSpecificOffset + 33]),
+		},
+	}
 
-	return transaction.ParseSignatures(assetOffset + 66)
+	return transaction.ParseSignatures(typeSpecificOffset + 33)
 }
 
 func deserializeDelegateRegistration(assetOffset int, transaction *Transaction) *Transaction {

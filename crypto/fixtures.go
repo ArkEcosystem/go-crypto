@@ -55,19 +55,20 @@ type TestingTransferFixture struct {
 
 type TestingSecondSignatureRegistrationFixture struct {
 	Data struct {
-		Type            uint8     `json:"type,omitempty"`
-		Network         uint8     `json:"network,omitempty"`
-		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`
-		Fee             FlexToshi `json:"fee,omitempty"`
-		RecipientId     string    `json:"recipientId,omitempty"`
-		Timestamp       int32     `json:"timestamp,omitempty"`
-		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
-		Signature       string    `json:"signature,omitempty"`
-		Id              string    `json:"id,omitempty"`
 		Asset           struct {
 			Signature SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 		} `json:"asset,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		Id              string    `json:"id,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Nonce           uint64    `json:"nonce,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		Type            uint16    `json:"type,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
 	} `json:"data,omitempty"`
 	Serialized string `json:"serialized,omitempty"`
 }
