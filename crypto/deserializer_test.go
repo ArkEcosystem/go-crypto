@@ -82,7 +82,7 @@ func TestDeserializeSecondSignatureRegistrationWithPassphrase(t *testing.T) {
 
 	assert.True(transaction.Verify())
 
-	// special case as the type 1 transaction itself has no recipientId
+	// Special case as the SecondSignatureRegistration (type=1) transaction has no recipientId.
 	publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
 	assert.Equal(transaction.RecipientId, publicKey.ToAddress())
 }

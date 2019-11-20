@@ -11,10 +11,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 )
 
 func GetFixture(file string) string {
-	data, _ := ioutil.ReadFile(fmt.Sprintf("./fixtures/%s.json", file))
+	fileName := fmt.Sprintf("./fixtures/%s.json", file)
+
+	data, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		log.Fatal("Cannot read fixture: ", err)
+	}
 
 	return string(data)
 }
