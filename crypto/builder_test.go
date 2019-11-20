@@ -111,26 +111,41 @@ func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
 
 func TestBuildVoteWithPassphrase(t *testing.T) {
 	transaction := BuildVote(
-		"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
+		&Transaction{
+			Asset: &TransactionAsset{
+				Votes: []string{ "+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192" },
+			},
+			Nonce: 5,
+		},
 		"This is a top secret passphrase",
 		"",
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 }
 
 func TestBuildVoteWithSecondPassphrase(t *testing.T) {
+	secondPassPhrase := "This is a top secret second passphrase"
+
 	transaction := BuildVote(
-		"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
+		&Transaction{
+			Asset: &TransactionAsset{
+				Votes: []string{ "+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192" },
+			},
+			Nonce: 5,
+		},
 		"This is a top secret passphrase",
-		"this is a top secret second passphrase",
+		secondPassPhrase,
 	)
 
 	assert := assert.New(t)
+
 	assert.True(transaction.Verify())
 
-	secondPublicKey, _ := PublicKeyFromPassphrase("this is a top secret second passphrase")
+	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
+
 	assert.True(transaction.SecondVerify(secondPublicKey))
 }
 

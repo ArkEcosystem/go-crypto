@@ -87,6 +87,15 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
+/** Set all fields and sign a TransactionTypes.DelegateRegistration transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Delegate.Username
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
 func BuildDelegateRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	setCommonFields(transaction)
 
@@ -95,16 +104,20 @@ func BuildDelegateRegistration(transaction *Transaction, passphrase string, seco
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildVote(vote, passphrase string, secondPassphrase string) *Transaction {
-	transaction := &Transaction{
-		Type: TRANSACTION_TYPES.Vote,
-		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
-		Fee: GetFee(TRANSACTION_TYPES.Vote),
-		Asset: &TransactionAsset{},
-	}
+/** Set all fields and sign a TransactionTypes.Vote transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Votes
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildVote(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction)
 
 	transaction.RecipientId, _ = AddressFromPassphrase(passphrase)
-	transaction.Asset.Votes = append(transaction.Asset.Votes, vote)
+	transaction.Type = TRANSACTION_TYPES.Vote
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
