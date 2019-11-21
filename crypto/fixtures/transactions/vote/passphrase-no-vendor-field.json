@@ -1,5 +1,6 @@
 {
-    "data": {
+    "serializedHex": "ff021e01000000030006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33809698000000000000010102aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa304402202e48d71618e74c935400a7f0d31fdf230f63bb6ebc2d9e544445b9352464f6a802206879d8303c9b6be92e59973f2be36c74d2a6b8db60596f6d49a0a7f409630606",
+    "transaction": {
         "amount": "0",
         "asset": {
             "votes": [
@@ -10,12 +11,10 @@
         "id": "942ee12b7012914b9408f9b1d665d23965c53cd06a16540b1aa74dfa66294363",
         "network": 30,
         "nonce": "6",
-        "recipientId": "DCWDZzzTMoVF1xHJb1WGy7e2RuzpcCajau",
         "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
         "signature": "304402202e48d71618e74c935400a7f0d31fdf230f63bb6ebc2d9e544445b9352464f6a802206879d8303c9b6be92e59973f2be36c74d2a6b8db60596f6d49a0a7f409630606",
         "type": 3,
         "typeGroup": 1,
         "version": 2
-    },
-    "serialized": "ff021e01000000030006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33809698000000000000010102aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa304402202e48d71618e74c935400a7f0d31fdf230f63bb6ebc2d9e544445b9352464f6a802206879d8303c9b6be92e59973f2be36c74d2a6b8db60596f6d49a0a7f409630606"
+    }
 }

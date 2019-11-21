@@ -82,16 +82,6 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 }
 
 func deserializeCommon(transaction *Transaction) *Transaction {
-	if transaction.Type == TRANSACTION_TYPES.Vote ||
-		transaction.Type == TRANSACTION_TYPES.SecondSignatureRegistration ||
-		transaction.Type == TRANSACTION_TYPES.MultiSignatureRegistration {
-
-		publicKey, _ := PublicKeyFromHex(transaction.SenderPublicKey)
-		publicKey.Network.Version = transaction.Network
-
-		transaction.RecipientId = publicKey.ToAddress()
-	}
-
 	if transaction.Id == "" {
 		transaction.Id = transaction.GetId()
 	}

@@ -92,7 +92,7 @@ type Transaction struct {
 	Fee                   FlexToshi         `json:"fee,omitempty"`
 	Id                    string            `json:"id,omitempty"`
 	Network               byte              `json:"network,omitempty"`
-	Nonce                 uint64            `json:"nonce,omitempty"`
+	Nonce                 uint64            `json:"nonce,omitempty,string"`
 	RecipientId           string            `json:"recipientId,omitempty"`
 	SecondSenderPublicKey string            `json:"secondSenderPublicKey,omitempty"`
 	SecondSignature       string            `json:"secondSignature,omitempty"`
