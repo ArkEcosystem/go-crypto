@@ -15,6 +15,8 @@ import (
 	b58 "github.com/btcsuite/btcutil/base58"
 )
 
+var compactPubKeyLen = 33 // bytes
+
 func DeserializeTransaction(serialized string) *Transaction {
 	transaction := &Transaction{}
 	transaction.Serialized = HexDecode(serialized)
@@ -124,11 +126,11 @@ func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Tran
 func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	transaction.Asset = &TransactionAsset{
 		Signature: &SecondSignatureRegistrationAsset{
-			PublicKey: HexEncode(transaction.Serialized[typeSpecificOffset:typeSpecificOffset + 33]),
+			PublicKey: HexEncode(transaction.Serialized[typeSpecificOffset:typeSpecificOffset + compactPubKeyLen]),
 		},
 	}
 
-	return transaction.ParseSignatures(typeSpecificOffset + 33)
+	return transaction.ParseSignatures(typeSpecificOffset + compactPubKeyLen)
 }
 
 func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
@@ -160,8 +162,8 @@ func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transact
 		voteType := transaction.Serialized[o]
 		o++
 
-		delegatePublicKeyHex := HexEncode(transaction.Serialized[o:o + 33])
-		o += 33
+		delegatePublicKeyHex := HexEncode(transaction.Serialized[o:o + compactPubKeyLen])
+		o += compactPubKeyLen
 
 		pfx := "+"
 		if voteType == 0 {
