@@ -94,7 +94,7 @@ type TestingDelegateRegistrationFixture struct {
 
 type TestingVoteFixture struct {
 	Data struct {
-		Type            uint8     `json:"type,omitempty"`
+		Type            uint16    `json:"type,omitempty"`
 		Network         uint8     `json:"network,omitempty"`
 		Version         uint8     `json:"version,omitempty"`
 		Amount          FlexToshi `json:"amount,omitempty"`

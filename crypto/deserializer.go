@@ -147,28 +147,31 @@ func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transa
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeVote(assetOffset int, transaction *Transaction) *Transaction {
-	offset := assetOffset / 2
+func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
 
-	voteLength := transaction.Serialized[offset:(offset + 1)][0]
+	numVotes := int(transaction.Serialized[o])
+	o++
 
 	transaction.Asset = &TransactionAsset{}
 
-	for i := 0; i < int(voteLength); i++ {
-		offsetStart := assetOffset + 2 + i*2*34
-		offsetEnd := assetOffset + 2 + (i+1)*2*34
+	for i := 0; i < numVotes; i++ {
+		// 0 = unvote (-), 1 = vote (+)
+		voteType := transaction.Serialized[o]
+		o++
 
-		vote := transaction.Serialized[offsetStart:offsetEnd]
-		voteType := vote[0]
+		delegatePublicKeyHex := HexEncode(transaction.Serialized[o:o + 33])
+		o += 33
 
-		if voteType == 1 {
-			transaction.Asset.Votes = append(transaction.Asset.Votes, fmt.Sprintf("%s%s", "+", vote[1:]))
-		} else {
-			transaction.Asset.Votes = append(transaction.Asset.Votes, fmt.Sprintf("%s%s", "-", vote[1:]))
+		pfx := "+"
+		if voteType == 0 {
+			pfx = "-"
 		}
+
+		transaction.Asset.Votes = append(transaction.Asset.Votes, fmt.Sprintf("%s%s", pfx, delegatePublicKeyHex))
 	}
 
-	return transaction.ParseSignatures(assetOffset + 2 + (int(voteLength)*34)*2)
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeMultiSignatureRegistration(assetOffset int, transaction *Transaction) *Transaction {
