@@ -181,6 +181,7 @@ func TestDeserializeVoteWithSecondPassphrase(t *testing.T) {
 	assert.True(transaction.Verify())
 }
 
+/*
 func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
 	fixtureContents := GetTransactionFixture("multi_signature_registration", "second-passphrase-no-vendor-field")
 	var fixture TestingMultiSignatureRegistrationFixture
@@ -208,6 +209,7 @@ func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T)
 
 	assert.True(transaction.Verify())
 }
+*/
 
 func TestDeserializeIpfs(t *testing.T) {
 	t.Skip("skipping test!")
