@@ -131,6 +131,25 @@ type TestingMultiSignatureRegistrationFixture struct {
 	Serialized string `json:"serialized,omitempty"`
 }
 
+type TestingIpfsFixture struct {
+	Data struct {
+		Type            uint16    `json:"type,omitempty"`
+		Network         uint8     `json:"network,omitempty"`
+		Version         uint8     `json:"version,omitempty"`
+		Amount          FlexToshi `json:"amount,omitempty"`
+		Fee             FlexToshi `json:"fee,omitempty"`
+		RecipientId     string    `json:"recipientId,omitempty"`
+		Timestamp       int32     `json:"timestamp,omitempty"`
+		SenderPublicKey string    `json:"senderPublicKey,omitempty"`
+		Signature       string    `json:"signature,omitempty"`
+		Id              string    `json:"id,omitempty"`
+		Asset           struct {
+			Ipfs string `json:"ipfs,omitempty"`
+		} `json:"asset,omitempty"`
+	} `json:"data,omitempty"`
+	Serialized string `json:"serialized,omitempty"`
+}
+
 type TestingIdentityFixture struct {
 	Data struct {
 		PrivateKey string `json:"privateKey,omitempty"`

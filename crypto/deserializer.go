@@ -197,23 +197,24 @@ func deserializeMultiSignatureRegistration(assetOffset int, transaction *Transac
 	return transaction.ParseSignatures(assetOffset + 6 + count*66)
 }
 
-func deserializeIpfs(assetOffset int, transaction *Transaction) *Transaction {
-	offset := assetOffset / 2
-
+func deserializeIpfs(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	// ipfs hash:
 	// transaction.Serialized[offset + 0] - function
 	// transaction.Serialized[offset + 1] - length (L)
 	// transaction.Serialized[offset + 2 : offset + 2 + L] - data
 
-	length := int(transaction.Serialized[offset + 1])
+	o := typeSpecificOffset
 
-	ipfsHash := transaction.Serialized[offset : offset + 2 + length]
+	length := int(transaction.Serialized[o + 1])
+
+	ipfsHash := transaction.Serialized[o:o + 2 + length]
+	o += 2 + length
 
 	transaction.Asset = &TransactionAsset{
 		Ipfs: b58.Encode(ipfsHash),
 	}
 
-	return transaction.ParseSignatures(assetOffset + 2 * (offset + 2 + length))
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeMultiPayment(assetOffset int, transaction *Transaction) *Transaction {

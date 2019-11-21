@@ -212,16 +212,26 @@ func TestDeserializeMultiSignatureRegistrationWithSecondPassphrase(t *testing.T)
 */
 
 func TestDeserializeIpfs(t *testing.T) {
-	t.Skip("skipping test!")
+	fixtureContents := GetTransactionFixture("ipfs", "passphrase-no-vendor-field")
+	var fixture TestingIpfsFixture
+	_ = json.Unmarshal([]byte(fixtureContents), &fixture)
 
-	// transaction := DeserializeTransaction("...")
+	transaction := DeserializeTransaction(fixture.Serialized)
 
-	// assert := assert.New(t)
-	// assert.Equal(transaction.Id, id)
-	// assert.Equal(transaction.Version, version)
-	// assert.Equal(transaction.Network, network)
-	// assert.Equal(transaction.Type, type)
-	// assert.Equal(transaction.SenderPublicKey, senderPublicKey)
+	assert := assert.New(t)
+
+	assert.Equal(fixture.Data.Amount, transaction.Amount)
+	assert.Equal(fixture.Data.Asset.Ipfs, transaction.Asset.Ipfs)
+	assert.Equal(fixture.Data.Fee, transaction.Fee)
+	assert.Equal(fixture.Data.Id, transaction.Id)
+	assert.Equal(fixture.Data.RecipientId, transaction.RecipientId)
+	assert.Equal(fixture.Data.SenderPublicKey, transaction.SenderPublicKey)
+	assert.Equal(fixture.Data.Signature, transaction.Signature)
+	assert.Equal(fixture.Data.Type, transaction.Type)
+	assert.Equal(fixture.Data.Network, transaction.Network)
+	assert.Equal(fixture.Data.Version, transaction.Version)
+
+	assert.True(transaction.Verify())
 }
 
 func TestDeserializeTimelockTransfer(t *testing.T) {
