@@ -168,8 +168,12 @@ func (transaction *Transaction) serializeDelegateResignation(buffer *bytes.Buffe
 	// noop
 }
 
-func (transaction *Transaction) serializeHtlcLock(buffer *bytes.Buffer) {
-	log.Fatal("not implemented: serializeHtlcLock()")
+func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
+	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
+	ser.Write(HexDecode(transaction.Asset.Lock.SecretHash))
+	ser.WriteByte(transaction.Asset.Lock.Expiration.Type)
+	binary.Write(ser, binary.LittleEndian, transaction.Asset.Lock.Expiration.Value)
+	ser.Write(Base58Decode(transaction.RecipientId))
 }
 
 func (transaction *Transaction) serializeHtlcClaim(buffer *bytes.Buffer) {

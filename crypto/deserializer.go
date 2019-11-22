@@ -240,9 +240,34 @@ func deserializeDelegateResignation(typeSpecificOffset int, transaction *Transac
 	return transaction.ParseSignatures(typeSpecificOffset)
 }
 
-func deserializeHtlcLock(assetOffset int, transaction *Transaction) *Transaction {
-	log.Fatal("not implemented deserializeHtlcLock()")
-	return transaction
+func deserializeHtlcLock(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
+
+	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
+	o += 8
+
+	secretHash := HexEncode(transaction.Serialized[o:o + 32])
+	o += 32
+
+	expirationType := transaction.Serialized[o]
+	o++
+
+	expirationValue := binary.LittleEndian.Uint32(transaction.Serialized[o:o + 4])
+	o += 4
+
+	transaction.Asset = &TransactionAsset{
+		Lock: &HtlcLockAsset{
+			SecretHash: secretHash,
+			Expiration: &HtlcLockExpirationAsset{
+				Type: expirationType,
+				Value: expirationValue,
+			},
+		},
+	}
+
+	transaction.RecipientId, o = deserializeAddress(transaction.Serialized, o)
+
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeHtlcClaim(assetOffset int, transaction *Transaction) *Transaction {

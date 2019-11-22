@@ -124,9 +124,9 @@ type TransactionAsset struct {
 	MultiSignature *MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
 	Ipfs string `json:"ipfs,omitempty"`
 	Payments []*MultiPaymentAsset `json:"payments,omitempty"`
-	Lock *HtlcLockAsset `json:"htlclock,omitempty"`
-	Claim *HtlcClaimAsset `json:"htlcclaim,omitempty"`
-	Refund *HtlcRefundAsset `json:"htlcrefund,omitempty"`
+	Lock *HtlcLockAsset `json:"lock,omitempty"`
+	Claim *HtlcClaimAsset `json:"claim,omitempty"`
+	Refund *HtlcRefundAsset `json:"refund,omitempty"`
 }
 
 type SecondSignatureRegistrationAsset struct {
@@ -148,13 +148,13 @@ type MultiPaymentAsset struct {
 }
 
 type HtlcLockAsset struct {
-	SecretHash string `json:"secrethash,omitempty"`
+	SecretHash string `json:"secretHash,omitempty"`
 	Expiration *HtlcLockExpirationAsset `json:"expiration,omitempty"`
 }
 
 type HtlcLockExpirationAsset struct {
-	type_ uint8 `json:"type,omitempty"`
-	value uint32 `json:"value,omitempty"`
+	Type uint8 `json:"type,omitempty"`
+	Value uint32 `json:"value,omitempty"`
 }
 
 type HtlcClaimAsset struct {
