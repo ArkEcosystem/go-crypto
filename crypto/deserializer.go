@@ -10,7 +10,6 @@ package crypto
 import (
 	"encoding/binary"
 	"fmt"
-	"log"
 
 	b58 "github.com/btcsuite/btcutil/base58"
 )
@@ -289,7 +288,17 @@ func deserializeHtlcClaim(typeSpecificOffset int, transaction *Transaction) *Tra
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeHtlcRefund(assetOffset int, transaction *Transaction) *Transaction {
-	log.Fatal("not implemented deserializeHtlcRefund()")
-	return transaction
+func deserializeHtlcRefund(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
+
+	lockTransactionId := HexEncode(transaction.Serialized[o:o + 32])
+	o += 32
+
+	transaction.Asset = &TransactionAsset{
+		Refund: &HtlcRefundAsset{
+			LockTransactionId: lockTransactionId,
+		},
+	}
+
+	return transaction.ParseSignatures(o)
 }

@@ -163,5 +163,5 @@ type HtlcClaimAsset struct {
 }
 
 type HtlcRefundAsset struct {
-	lockTransactionId string `json:"locktransactionid,omitempty"`
+	LockTransactionId string `json:"lockTransactionId,omitempty"`
 }

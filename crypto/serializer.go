@@ -181,6 +181,6 @@ func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {
 	ser.Write([]byte(transaction.Asset.Claim.UnlockSecret))
 }
 
-func (transaction *Transaction) serializeHtlcRefund(buffer *bytes.Buffer) {
-	log.Fatal("not implemented: serializeHtlcRefund()")
+func (transaction *Transaction) serializeHtlcRefund(ser *bytes.Buffer) {
+	ser.Write(HexDecode(transaction.Asset.Refund.LockTransactionId))
 }

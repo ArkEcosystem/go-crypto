@@ -1,0 +1,20 @@
+{
+    "serializedHex": "ff021e010000000a0006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33000000000000000000d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9304402204758f554279c97b1a06c7c4aa69e3043e3f6539d53456f111c48e0177947135602201766ccac994fd6336e18af5f3f46fe076295b9e75fb45e47f7a5bd5857b62247",
+    "transaction": {
+        "amount": "0",
+        "asset": {
+            "refund": {
+                "lockTransactionId": "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9"
+            }
+        },
+        "fee": "0",
+        "id": "8bde0b81a118caf123cc0e15066a5029c4de16bf9e68e65e4d2af988d419439b",
+        "network": 30,
+        "nonce": "6",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "304402204758f554279c97b1a06c7c4aa69e3043e3f6539d53456f111c48e0177947135602201766ccac994fd6336e18af5f3f46fe076295b9e75fb45e47f7a5bd5857b62247",
+        "type": 10,
+        "typeGroup": 1,
+        "version": 2
+    }
+}
