@@ -87,5 +87,5 @@ func TestSerDeserMultiPayment(t *testing.T) {
 }
 
 func TestSerDeserDelegateResignation(t *testing.T) {
-	t.Skip("skipping test!")
+	commonSerDeserTest(t, "delegate_resignation", "passphrase-no-vendor-field")
 }

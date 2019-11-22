@@ -165,7 +165,7 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 }
 
 func (transaction *Transaction) serializeDelegateResignation(buffer *bytes.Buffer) {
-	log.Fatal("not implemented: serializeDelegateResignation()")
+	// noop
 }
 
 func (transaction *Transaction) serializeHtlcLock(buffer *bytes.Buffer) {

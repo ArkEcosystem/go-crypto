@@ -236,9 +236,8 @@ func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeDelegateResignation(assetOffset int, transaction *Transaction) *Transaction {
-	log.Fatal("not implemented deserializeDelegateResignation()")
-	return transaction
+func deserializeDelegateResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	return transaction.ParseSignatures(typeSpecificOffset)
 }
 
 func deserializeHtlcLock(assetOffset int, transaction *Transaction) *Transaction {
