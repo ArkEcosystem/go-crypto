@@ -176,8 +176,9 @@ func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
 	ser.Write(Base58Decode(transaction.RecipientId))
 }
 
-func (transaction *Transaction) serializeHtlcClaim(buffer *bytes.Buffer) {
-	log.Fatal("not implemented: serializeHtlcClaim()")
+func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {
+	ser.Write(HexDecode(transaction.Asset.Claim.LockTransactionId))
+	ser.Write([]byte(transaction.Asset.Claim.UnlockSecret))
 }
 
 func (transaction *Transaction) serializeHtlcRefund(buffer *bytes.Buffer) {

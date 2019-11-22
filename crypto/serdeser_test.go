@@ -93,3 +93,7 @@ func TestSerDeserDelegateResignation(t *testing.T) {
 func TestSerDeserHtlcLock(t *testing.T) {
 	commonSerDeserTest(t, "htlc_lock", "passphrase-no-vendor-field")
 }
+
+func TestSerDeserHtlcClaim(t *testing.T) {
+	commonSerDeserTest(t, "htlc_claim", "passphrase-no-vendor-field")
+}

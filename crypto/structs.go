@@ -158,8 +158,8 @@ type HtlcLockExpirationAsset struct {
 }
 
 type HtlcClaimAsset struct {
-	lockTransactionId string `json:"locktransactionid,omitempty"`
-	unlockSecret string `json:"unlocksecret,omitempty"`
+	LockTransactionId string `json:"lockTransactionId,omitempty"`
+	UnlockSecret string `json:"unlockSecret,omitempty"`
 }
 
 type HtlcRefundAsset struct {

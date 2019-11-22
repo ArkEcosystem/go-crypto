@@ -270,9 +270,23 @@ func deserializeHtlcLock(typeSpecificOffset int, transaction *Transaction) *Tran
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeHtlcClaim(assetOffset int, transaction *Transaction) *Transaction {
-	log.Fatal("not implemented deserializeHtlcClaim()")
-	return transaction
+func deserializeHtlcClaim(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
+
+	lockTransactionId := HexEncode(transaction.Serialized[o:o + 32])
+	o += 32
+
+	unlockSecret := string(transaction.Serialized[o:o + 32])
+	o += 32
+
+	transaction.Asset = &TransactionAsset{
+		Claim: &HtlcClaimAsset{
+			LockTransactionId: lockTransactionId,
+			UnlockSecret: unlockSecret,
+		},
+	}
+
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeHtlcRefund(assetOffset int, transaction *Transaction) *Transaction {
