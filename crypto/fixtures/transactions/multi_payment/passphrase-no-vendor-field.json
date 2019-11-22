@@ -1,0 +1,31 @@
+{
+    "serializedHex": "ff021e01000000060006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33809698000000000000030064000000000000001e85af65ad6aa3a1df5bc9a6f59b9f3d394f643a23c8000000000000001e4b1da1aaa9bcaec5aaf676047801070c4c1247c12c010000000000001e726cd0d3e02920bcc14f6d57a5f72f64d270cee3304402202bf0dce81b71cbfbcfe8b0d30a15779bb5e3baa12de77536bd88ce2f8ba0b4970220064d42ea48e6ddf08285ca3c9329f80a76dbc97b3dbb31944581386abf3dedf9",
+    "transaction": {
+        "amount": "0",
+        "asset": {
+            "payments": [
+                {
+                    "amount": "100",
+                    "recipientId": "DHKxXag9PjfjHBbPg3HQS5WCaQZdgDf6yi"
+                },
+                {
+                    "amount": "200",
+                    "recipientId": "DBzGiUk8UVjB2dKCfGRixknB7Ki3Zhqthp"
+                },
+                {
+                    "amount": "300",
+                    "recipientId": "DFa7vn1LvWAyTuVDrQUr5NKaM73cfjx2Cp"
+                }
+            ]
+        },
+        "fee": "10000000",
+        "id": "0760a9fd44392356f20a46f44d3e1f3fb60098ad17eceded0f38703e72749fd9",
+        "network": 30,
+        "nonce": "6",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "304402202bf0dce81b71cbfbcfe8b0d30a15779bb5e3baa12de77536bd88ce2f8ba0b4970220064d42ea48e6ddf08285ca3c9329f80a76dbc97b3dbb31944581386abf3dedf9",
+        "type": 6,
+        "typeGroup": 1,
+        "version": 2
+    }
+}

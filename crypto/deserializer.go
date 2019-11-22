@@ -15,7 +15,20 @@ import (
 	b58 "github.com/btcsuite/btcutil/base58"
 )
 
-var compactPubKeyLen = 33 // bytes
+const compactPubKeyLen = 33 // bytes
+const addressLen = 21 // bytes
+
+func deserializeAddress(serialized []byte, offset int) (address string, offsetAfter int) {
+	addressRaw := serialized[offset:offset + addressLen]
+
+	addressVersion := addressRaw[0]
+	addressHash := addressRaw[1:]
+
+	address = b58.CheckEncode(addressHash, addressVersion)
+	offsetAfter = offset + addressLen
+
+	return
+}
 
 func DeserializeTransaction(serialized string) *Transaction {
 	transaction := &Transaction{}
@@ -102,13 +115,7 @@ func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Tran
 	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o:o + 4])
 	o += 4
 
-	recipientVersion := transaction.Serialized[o]
-	o++
-
-	recipientRaw := transaction.Serialized[o:o + 20]
-	o += 20
-
-	transaction.RecipientId = b58.CheckEncode(recipientRaw, recipientVersion)
+	transaction.RecipientId, o = deserializeAddress(transaction.Serialized, o)
 
 	return transaction.ParseSignatures(o)
 }
@@ -207,30 +214,26 @@ func deserializeIpfs(typeSpecificOffset int, transaction *Transaction) *Transact
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeMultiPayment(assetOffset int, transaction *Transaction) *Transaction {
-	offset := assetOffset / 2
+func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
 
-	total := int(binary.LittleEndian.Uint16(transaction.Serialized[offset:(offset + 4)]))
-	offset = assetOffset/2 + 1
+	numRecipients := binary.LittleEndian.Uint16(transaction.Serialized[o:o + 2])
+	o += 2
 
 	transaction.Asset = &TransactionAsset{}
 
-	for i := 0; i < total; i++ {
+	for i := uint16(0); i < numRecipients; i++ {
 		payment := &MultiPaymentAsset{}
-		payment.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[offset:(offset + 8)]))
-		recipientOffset := offset + 1
-		payment.RecipientId = b58.CheckEncode(transaction.Serialized[recipientOffset + 1 : recipientOffset + 20], transaction.Serialized[recipientOffset])
+
+		payment.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
+		o += 8
+
+		payment.RecipientId, o = deserializeAddress(transaction.Serialized, o)
 
 		transaction.Asset.Payments = append(transaction.Asset.Payments, payment)
-
-		offset += 22
 	}
 
-	for i := 0; i < len(transaction.Asset.Payments); i++ {
-		transaction.Amount += transaction.Asset.Payments[i].Amount
-	}
-
-	return transaction.ParseSignatures(offset * 2)
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeDelegateResignation(assetOffset int, transaction *Transaction) *Transaction {

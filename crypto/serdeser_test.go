@@ -82,12 +82,8 @@ func TestSerDeserIpfs(t *testing.T) {
 	commonSerDeserTest(t, "vote", "passphrase-no-vendor-field")
 }
 
-func TestSerDeserTimelockTransfer(t *testing.T) {
-	t.Skip("skipping test!")
-}
-
 func TestSerDeserMultiPayment(t *testing.T) {
-	t.Skip("skipping test!")
+	commonSerDeserTest(t, "multi_payment", "passphrase-no-vendor-field")
 }
 
 func TestSerDeserDelegateResignation(t *testing.T) {
