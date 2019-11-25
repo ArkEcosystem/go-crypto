@@ -10,8 +10,8 @@ package crypto
 import (
 	"crypto/sha256"
 
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"github.com/btcsuite/btcd/btcec"
+	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 func PrivateKeyFromPassphrase(passphrase string) (*PrivateKey, error) {
@@ -61,11 +61,7 @@ func (privateKey *PrivateKey) ToWif() string {
 		p = append(p, 0x1)
 	}
 
-	p = append(p, 0x0)
-	copy(p[1:], p[:len(p)-1])
-	p[0] = privateKey.PublicKey.Network.Wif
-
-	return base58.Encode(p)
+	return b58.CheckEncode(p, privateKey.PublicKey.Network.Wif)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

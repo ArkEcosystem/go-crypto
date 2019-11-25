@@ -114,7 +114,7 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
 	binary.Write(ser, binary.LittleEndian, transaction.Expiration)
-	ser.Write(Base58Decode(transaction.RecipientId))
+	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
 }
 
 func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.Buffer) {
@@ -160,7 +160,7 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 
 	for _, element := range transaction.Asset.Payments {
 		binary.Write(ser, binary.LittleEndian, uint64(element.Amount))
-		ser.Write(Base58Decode(element.RecipientId))
+		ser.Write(Base58CheckDecodeFatal(element.RecipientId))
 	}
 }
 
@@ -173,7 +173,7 @@ func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Lock.SecretHash))
 	ser.WriteByte(transaction.Asset.Lock.Expiration.Type)
 	binary.Write(ser, binary.LittleEndian, transaction.Asset.Lock.Expiration.Value)
-	ser.Write(Base58Decode(transaction.RecipientId))
+	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
 }
 
 func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {

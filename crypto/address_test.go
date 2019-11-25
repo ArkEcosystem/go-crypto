@@ -26,5 +26,7 @@ func TestValidateAddress(t *testing.T) {
 	fixture := GetIdentityFixture()
 
 	assert := assert.New(t)
+
 	assert.True(ValidateAddress(fixture.Data.Address))
+	assert.False(ValidateAddress("_"))
 }
