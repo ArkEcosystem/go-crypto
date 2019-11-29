@@ -82,18 +82,8 @@ func beginningMultiSignature(signature []byte) bool {
 	return signature[0] == 0xFF
 }
 
-func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
-	signatures := transaction.Serialized[sigOffset:]
+func (transaction *Transaction) ParseSignaturesECDSA(signatures []byte) *Transaction {
 	signaturesLen := len(signatures)
-
-	if signaturesLen == 0 {
-		transaction.Signature = ""
-		return transaction
-	}
-
-	if isSchnorrSignature(signaturesLen) {
-		log.Fatal("Schnorr signatures not implemented")
-	}
 
 	firstSignatureLen := ECDSASignatureLen(signatures)
 
@@ -115,14 +105,73 @@ func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
 		return transaction
 	}
 
-	// XXX
-
 	if o != signaturesLen {
 		log.Fatal("All signatures parsed, but ", signaturesLen - o,
 			" bytes remain in the buffer: ", HexEncode(signatures))
 	}
 
 	return transaction
+}
+
+func (transaction *Transaction) ParseSignaturesSchnorr(signatures []byte) *Transaction {
+	const schnorrSignatureLen = 64
+
+	signaturesLen := len(signatures)
+	o := 0
+
+	canReadNonMultiSignature := func () bool {
+		remaining := signaturesLen - o
+		return remaining >= schnorrSignatureLen && remaining % 65 != 0
+	}
+
+	readSchnorrSignature := func () string {
+		sig := HexEncode(signatures[o:o + schnorrSignatureLen])
+		o += schnorrSignatureLen
+		return sig
+	}
+
+	if canReadNonMultiSignature() {
+		transaction.Signature = readSchnorrSignature()
+	}
+
+	if canReadNonMultiSignature() {
+		transaction.SecondSignature = readSchnorrSignature()
+	}
+
+	if signaturesLen - o == 0 {
+		return transaction
+	}
+
+	if (signaturesLen - o) % 65 != 0 {
+		log.Fatalf("Cannot parse Schnorr signatures: remaining bytes not multiple of 65: %d", signaturesLen - o)
+	}
+
+	count := (signaturesLen - o) / 65
+
+	for i := 0; i < count; i++ {
+		signaturePlusPrefix := HexEncode(signatures[o:o + 1 + schnorrSignatureLen])
+		o += 1 + schnorrSignatureLen
+
+		transaction.Signatures = append(transaction.Signatures, signaturePlusPrefix)
+	}
+
+	return transaction
+}
+
+func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
+	signatures := transaction.Serialized[sigOffset:]
+	signaturesLen := len(signatures)
+
+	if signaturesLen == 0 {
+		transaction.Signature = ""
+		return transaction
+	}
+
+	if isSchnorrSignature(signaturesLen) {
+		return transaction.ParseSignaturesSchnorr(signatures)
+	}
+
+	return transaction.ParseSignaturesECDSA(signatures)
 }
 
 func (transaction *Transaction) ToMap() map[string]interface{} {

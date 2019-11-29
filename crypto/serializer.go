@@ -106,7 +106,6 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 	}
 
 	if len(transaction.Signatures) > 0 {
-		ser.WriteByte(uint8(0xFF))
 		ser.Write(HexDecode(strings.Join(transaction.Signatures, "")))
 	}
 }
