@@ -39,3 +39,8 @@ var (
 		HtlcRefund: 0,
 	}
 )
+
+const (
+	SIGNATURE_TYPE_ECDSA = 0
+	SIGNATURE_TYPE_SCHNORR = 1
+)

@@ -8,29 +8,28 @@
 package crypto
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBuildTransferWithPassphrase(t *testing.T) {
-	transaction := BuildTransfer(
+func transferWithPassphrase(t *testing.T) *Transaction {
+	return BuildTransfer(
 		&Transaction{
-			Amount: FlexToshi(133380000000),
-			Nonce: 5,
-			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-			VendorField: "This is a transaction from Go",
+			Amount: FlexToshi(200000000),
+			Expiration: 4333222,
+			Fee: FlexToshi(10),
+			Network: 30,
+			Nonce: 6,
+			RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
 		},
-		"This is a top secret passphrase",
+		"LIq[ChitMOgz66RWvGP1eAY",
 		"",
 	)
-
-	assert := assert.New(t)
-
-	assert.True(transaction.Verify())
 }
 
-func TestBuildTransferWithSecondPassphrase(t *testing.T) {
+func transferWithSecondPassphrase(t *testing.T) *Transaction {
 	secondPassPhrase := "This is a top secret second passphrase"
 
 	transaction := BuildTransfer(
@@ -44,30 +43,26 @@ func TestBuildTransferWithSecondPassphrase(t *testing.T) {
 		secondPassPhrase,
 	)
 
-	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
-
 	assert := assert.New(t)
 
-	assert.True(transaction.Verify())
+	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
 	assert.True(transaction.SecondVerify(secondPublicKey))
+
+	return transaction
 }
 
-func TestBuildSecondSignatureRegistration(t *testing.T) {
-	transaction := BuildSecondSignatureRegistration(
+func secondSignatureRegistration(t *testing.T) *Transaction {
+	return BuildSecondSignatureRegistration(
 		&Transaction{
 			Nonce: 5,
 		},
 		"This is a top secret passphrase",
 		"This is a top secret second passphrase",
 	)
-
-	assert := assert.New(t)
-
-	assert.True(transaction.Verify())
 }
 
-func TestBuildDelegateRegistrationWithPassphrase(t *testing.T) {
-	transaction := BuildDelegateRegistration(
+func delegateRegistrationWithPassphrase(t *testing.T) *Transaction {
+	return BuildDelegateRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
 				Delegate: &DelegateAsset{
@@ -79,13 +74,9 @@ func TestBuildDelegateRegistrationWithPassphrase(t *testing.T) {
 		"lumber desk thought industry island man slow vendor pact fragile enact season",
 		"",
 	)
-
-	assert := assert.New(t)
-
-	assert.True(transaction.Verify())
 }
 
-func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
+func delegateRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
 	secondPassPhrase := "This is a top secret second passphrase"
 
 	transaction := BuildDelegateRegistration(
@@ -103,14 +94,14 @@ func TestBuildDelegateRegistrationWithSecondPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 
-	assert.True(transaction.Verify())
-
 	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
 	assert.True(transaction.SecondVerify(secondPublicKey))
+
+	return transaction
 }
 
-func TestBuildVoteWithPassphrase(t *testing.T) {
-	transaction := BuildVote(
+func voteWithPassphrase(t *testing.T) *Transaction {
+	return BuildVote(
 		&Transaction{
 			Asset: &TransactionAsset{
 				Votes: []string{ "+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192" },
@@ -120,13 +111,9 @@ func TestBuildVoteWithPassphrase(t *testing.T) {
 		"This is a top secret passphrase",
 		"",
 	)
-
-	assert := assert.New(t)
-
-	assert.True(transaction.Verify())
 }
 
-func TestBuildVoteWithSecondPassphrase(t *testing.T) {
+func voteWithSecondPassphrase(t *testing.T) *Transaction {
 	secondPassPhrase := "This is a top secret second passphrase"
 
 	transaction := BuildVote(
@@ -142,15 +129,14 @@ func TestBuildVoteWithSecondPassphrase(t *testing.T) {
 
 	assert := assert.New(t)
 
-	assert.True(transaction.Verify())
-
 	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
-
 	assert.True(transaction.SecondVerify(secondPublicKey))
+
+	return transaction
 }
 
-func TestBuildMultiSignatureRegistrationWithPassphrase(t *testing.T) {
-	transaction := BuildMultiSignatureRegistration(
+func multiSignatureRegistrationWithPassphrase(t *testing.T) *Transaction {
+	return BuildMultiSignatureRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
 				MultiSignature: &MultiSignatureRegistrationAsset{
@@ -167,8 +153,35 @@ func TestBuildMultiSignatureRegistrationWithPassphrase(t *testing.T) {
 		"This is a top secret passphrase",
 		"",
 	)
-
-	assert := assert.New(t)
-
-	assert.True(transaction.Verify())
 }
+
+func TestBuild(t *testing.T) {
+	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
+		"TransferWithPassphrase": transferWithPassphrase,
+		"TransferWithSecondPassphrase": transferWithSecondPassphrase,
+		"SecondSignatureRegistration": secondSignatureRegistration,
+		"DelegateRegistrationWithPassphrase": delegateRegistrationWithPassphrase,
+		"DelegateRegistrationWithSecondPassphrase": delegateRegistrationWithSecondPassphrase,
+		"VoteWithPassphrase": voteWithPassphrase,
+		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
+		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
+	} {
+		for signatureTypeString, signatureType := range map[string]int{
+			"ECDSA": SIGNATURE_TYPE_ECDSA,
+			"Schnorr": SIGNATURE_TYPE_SCHNORR,
+		} {
+			CONFIG_SIGNATURE_TYPE = signatureType
+
+			test := func (t *testing.T) {
+				transaction := buildTransaction(t)
+
+				assert := assert.New(t)
+
+				assert.True(transaction.Verify())
+			}
+
+			t.Run(fmt.Sprintf("%s-%s", builderName, signatureTypeString), test)
+		}
+	}
+}
+
