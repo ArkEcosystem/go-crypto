@@ -27,13 +27,13 @@ func writeNumberAsByte(ser *bytes.Buffer, num interface{}, name string) {
 	ser.WriteByte(uint8(numInt))
 }
 
-func (transaction *Transaction) serialize(includeSignature bool, includeSecondSignature bool) []byte {
+func (transaction *Transaction) serialize(includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) []byte {
 	ser := new(bytes.Buffer)
 
     transaction.serializeHeader(ser)
     transaction.serializeVendorField(ser)
     transaction.serializeTypeSpecific(ser)
-    transaction.serializeSignatures(ser, includeSignature, includeSecondSignature)
+    transaction.serializeSignatures(ser, includeSignature, includeSecondSignature, includeMultiSignatures)
 
     return ser.Bytes()
 }
@@ -96,7 +96,7 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 	}
 }
 
-func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSignature bool, includeSecondSignature bool) {
+func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) {
 	if includeSignature && transaction.Signature != "" {
 		ser.Write(HexDecode(transaction.Signature))
 	}
@@ -105,7 +105,7 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 		ser.Write(HexDecode(transaction.SecondSignature))
 	}
 
-	if len(transaction.Signatures) > 0 {
+	if includeMultiSignatures && len(transaction.Signatures) > 0 {
 		ser.Write(HexDecode(strings.Join(transaction.Signatures, "")))
 	}
 }

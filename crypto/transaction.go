@@ -17,7 +17,7 @@ import (
 )
 
 func (transaction *Transaction) GetId() string {
-	return fmt.Sprintf("%x", sha256.Sum256(transaction.serialize(true, true)))
+	return fmt.Sprintf("%x", sha256.Sum256(transaction.serialize(true, true, true)))
 }
 
 func (transaction *Transaction) Sign(passphrase string) {
@@ -25,7 +25,7 @@ func (transaction *Transaction) Sign(passphrase string) {
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 
-	hash := sha256.Sum256(transaction.serialize(true, true))
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
 
 	signature, err := privateKey.Sign(hash[:])
 	if err == nil {
@@ -36,7 +36,7 @@ func (transaction *Transaction) Sign(passphrase string) {
 func (transaction *Transaction) SecondSign(passphrase string) {
 	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
 
-	hash := sha256.Sum256(transaction.serialize(true, false))
+	hash := sha256.Sum256(transaction.serialize(true, false, false))
 
 	signature, err := privateKey.Sign(hash[:])
 	if err == nil {
@@ -44,20 +44,74 @@ func (transaction *Transaction) SecondSign(passphrase string) {
 	}
 }
 
-func (transaction *Transaction) Verify() (bool, error) {
+func (transaction *Transaction) VerifyMultiSignature(multiSignatureAsset *MultiSignatureRegistrationAsset) (bool, error) {
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
+
+	publicKeyIndexes := make(map[int]bool)
+	numVerified := 0
+
+	for i := 0; i < len(transaction.Signatures); i++ {
+		publicKeyIndex := int(HexDecode(transaction.Signatures[i][:2])[0])
+		signature := HexDecode(transaction.Signatures[i][2:])
+
+		if publicKeyIndexes[publicKeyIndex] {
+			return false, fmt.Errorf("VerifyMultiSignature: duplicate signer index: %d", publicKeyIndex)
+		}
+
+		if publicKeyIndex >= len(multiSignatureAsset.PublicKeys) {
+			return false, fmt.Errorf(
+				"VerifyMultiSignature: signer index too large: %d, total of %d " +
+				"signers have been registered",
+				publicKeyIndex, len(multiSignatureAsset.PublicKeys))
+		}
+
+		publicKeyIndexes[publicKeyIndex] = true
+
+		publicKey, err := PublicKeyFromBytes(HexDecode(multiSignatureAsset.PublicKeys[publicKeyIndex]))
+		if err != nil {
+			return false, err
+		}
+
+		verified, err := publicKey.Verify(signature, hash[:])
+
+		if verified && err == nil {
+			numVerified++
+		}
+
+		if numVerified >= int(multiSignatureAsset.Min) {
+			return true, nil
+		}
+
+		if len(transaction.Signatures) - (i + 1 - numVerified) < int(multiSignatureAsset.Min) {
+			return false, fmt.Errorf(
+				"VerifyMultiSignature: less than the minimum %d signatures verified successfully",
+				multiSignatureAsset.Min)
+		}
+	}
+
+	return false, fmt.Errorf(
+		"VerifyMultiSignature: less than the minimum %d signatures verified successfully (checked all)",
+		multiSignatureAsset.Min)
+}
+
+func (transaction *Transaction) Verify(multiSignatureAsset ...*MultiSignatureRegistrationAsset) (bool, error) {
+	if len(multiSignatureAsset) == 1 && multiSignatureAsset[0].Min > 0 {
+		return transaction.VerifyMultiSignature(multiSignatureAsset[0])
+	}
+
 	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SenderPublicKey))
 
 	if err != nil {
 		return false, err
 	}
 
-	hash := sha256.Sum256(transaction.serialize(false, false))
+	hash := sha256.Sum256(transaction.serialize(false, false, true))
 
 	return publicKey.Verify(HexDecode(transaction.Signature), hash[:])
 }
 
 func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
-	hash := sha256.Sum256(transaction.serialize(true, false))
+	hash := sha256.Sum256(transaction.serialize(true, false, false))
 
 	return secondPublicKey.Verify(HexDecode(transaction.SecondSignature), hash[:])
 }

@@ -47,6 +47,7 @@ func GetMessageFixture() TestingMessageFixture {
 }
 
 type TestingFixture struct {
+	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
 	Transaction Transaction `json:"transaction"`
 	SerializedHex string `json:"serializedHex"`
 }
