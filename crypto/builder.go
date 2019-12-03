@@ -189,9 +189,17 @@ func BuildMultiPayment(transaction *Transaction, passphrase string, secondPassph
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildDelegateResignation(passphrase string, secondPassphrase string) *Transaction {
-	log.Fatal("Not implemented: BuildDelegateResignation()")
-	transaction := &Transaction{}
+/** Set all fields and sign a TransactionTypes.DelegateResignation transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildDelegateResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.DelegateResignation)
+
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 

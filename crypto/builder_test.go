@@ -201,6 +201,17 @@ func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
+func delegateResignationWithPassphrase(t *testing.T) *Transaction {
+	return BuildDelegateResignation(
+		&Transaction{
+			Amount: FlexToshi(0),
+			Nonce: 5,
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase": transferWithPassphrase,
@@ -213,6 +224,7 @@ func TestBuild(t *testing.T) {
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
 		"IpfsWithPassphrase": ipfsWithPassphrase,
 		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
+		"DelegateResignationWithPassphrase": delegateResignationWithPassphrase,
 	} {
 		for signatureTypeString, signatureType := range map[string]int{
 			"ECDSA": SIGNATURE_TYPE_ECDSA,
