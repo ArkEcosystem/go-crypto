@@ -33,6 +33,20 @@ func (transaction *Transaction) Sign(passphrase string) {
 	}
 }
 
+func (transaction *Transaction) SignMulti(signerIndex int, passphrase string) {
+	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
+
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
+
+	signature, err := privateKey.Sign(hash[:])
+	if err == nil {
+		var signatureWithIndex []byte
+		signatureWithIndex = append(signatureWithIndex, byte(signerIndex))
+		signatureWithIndex = append(signatureWithIndex, signature...)
+		transaction.Signatures = append(transaction.Signatures, HexEncode(signatureWithIndex))
+	}
+}
+
 func (transaction *Transaction) SecondSign(passphrase string) {
 	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
 

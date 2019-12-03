@@ -51,6 +51,22 @@ func transferWithSecondPassphrase(t *testing.T) *Transaction {
 	return transaction
 }
 
+func transferMultiSignature(t *testing.T) *Transaction {
+	transaction := &Transaction{
+		Amount: FlexToshi(200000000),
+		Expiration: 4333222,
+		Fee: FlexToshi(10),
+		Network: 30,
+		Nonce: 6,
+		RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+	}
+
+	transaction = BuildTransferMultiSignature(transaction, 0, "multisig participant 1")
+	transaction = BuildTransferMultiSignature(transaction, 1, "multisig participant 2")
+
+	return transaction
+}
+
 func secondSignatureRegistration(t *testing.T) *Transaction {
 	return BuildSecondSignatureRegistration(
 		&Transaction{
@@ -183,5 +199,28 @@ func TestBuild(t *testing.T) {
 			t.Run(fmt.Sprintf("%s-%s", builderName, signatureTypeString), test)
 		}
 	}
+
+	// Test multisignature transfer separately
+
+	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
+
+	test := func (t *testing.T) {
+		transaction := transferMultiSignature(t)
+
+		assert := assert.New(t)
+
+		multiSignatureAsset := &MultiSignatureRegistrationAsset{
+			Min: 2,
+			PublicKeys: []string{
+				"037eaa8cb236c40a08fcb9d6220743ee6ae1b5c40e8a77a38f286516c3ff663901",
+				"0301fd417566397113ba8c55de2f093a572744ed1829b37b56a129058000ef7bce",
+				"0209d3c0f68994253cee24b23df3266ba1f0ca2f0666cd69a46544d63001cdf150",
+			},
+		}
+
+		assert.True(transaction.Verify(multiSignatureAsset))
+	}
+
+	t.Run("TransferMultiSignature-Schnorr", test)
 }
 

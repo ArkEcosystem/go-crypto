@@ -27,6 +27,14 @@ func buildSignedTransaction(transaction *Transaction, passphrase string, secondP
 	return transaction
 }
 
+func buildMultiSignedTransaction(transaction *Transaction, signerIndex int, passphrase string) *Transaction {
+	transaction.SignMulti(signerIndex, passphrase)
+
+	transaction.Id = transaction.GetId()
+
+	return transaction
+}
+
 func setCommonFields(transaction *Transaction, transactionType uint16) {
 	if transaction.Fee == 0 {
 		transaction.Fee = GetFee(transactionType)
@@ -38,7 +46,6 @@ func setCommonFields(transaction *Transaction, transactionType uint16) {
 
 	transaction.SecondSenderPublicKey = ""
 	transaction.SecondSignature = ""
-	transaction.Signatures = nil
 	transaction.Type = transactionType
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
 	transaction.Version = 2
@@ -60,6 +67,25 @@ func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase
 	transaction.Asset = &TransactionAsset{}
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+/** Set all fields and sign a multi signature TransactionTypes.Transfer transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Amount
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   RecipientId
+ *   Signatures - must be an array (could be empty); a new signature will be appended to it
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildTransferMultiSignature(transaction *Transaction, signerIndex int, passphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.Transfer)
+
+	transaction.Asset = &TransactionAsset{}
+
+	return buildMultiSignedTransaction(transaction, signerIndex, passphrase)
 }
 
 /** Set all fields and sign a TransactionTypes.SecondSignatureRegistration transaction.
