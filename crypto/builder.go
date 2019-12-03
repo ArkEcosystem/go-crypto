@@ -7,10 +7,6 @@
 
 package crypto
 
-import (
-	"log"
-)
-
 func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	transaction.Sign(passphrase)
 
@@ -233,8 +229,17 @@ func BuildHtlcClaim(transaction *Transaction, passphrase string, secondPassphras
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildHtlcRefund(passphrase string, secondPassphrase string) *Transaction {
-	log.Fatal("Not implemented: BuildHtlcRefund()")
-	transaction := &Transaction{}
+/** Set all fields and sign a TransactionTypes.HtlcRefund transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Refund
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildHtlcRefund(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.HtlcRefund)
+
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }

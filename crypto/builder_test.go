@@ -248,6 +248,21 @@ func htlcClaimWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
+func htlcRefundWithPassphrase(t *testing.T) *Transaction {
+	return BuildHtlcRefund(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Refund: &HtlcRefundAsset{
+					LockTransactionId: "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9",
+				},
+			},
+			Nonce: 5,
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase": transferWithPassphrase,
@@ -263,6 +278,7 @@ func TestBuild(t *testing.T) {
 		"DelegateResignationWithPassphrase": delegateResignationWithPassphrase,
 		"HtlcLockWithPassphrase": htlcLockWithPassphrase,
 		"HtlcClaimWithPassphrase": htlcClaimWithPassphrase,
+		"HtlcRefundWithPassphrase": htlcRefundWithPassphrase,
 	} {
 		for signatureTypeString, signatureType := range map[string]int{
 			"ECDSA": SIGNATURE_TYPE_ECDSA,
