@@ -212,6 +212,26 @@ func delegateResignationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
+func htlcLockWithPassphrase(t *testing.T) *Transaction {
+	return BuildHtlcLock(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Lock: &HtlcLockAsset{
+					SecretHash: "ca270216d522f0aa774edea7ad3c7440e8214f2625da0edbc948b28a0d3f5ead",
+					Expiration: &HtlcLockExpirationAsset{
+						Type: 2,
+						Value: 111222333,
+					},
+				},
+			},
+			Nonce: 5,
+			RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase": transferWithPassphrase,
@@ -225,6 +245,7 @@ func TestBuild(t *testing.T) {
 		"IpfsWithPassphrase": ipfsWithPassphrase,
 		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
 		"DelegateResignationWithPassphrase": delegateResignationWithPassphrase,
+		"HtlcLockWithPassphrase": htlcLockWithPassphrase,
 	} {
 		for signatureTypeString, signatureType := range map[string]int{
 			"ECDSA": SIGNATURE_TYPE_ECDSA,

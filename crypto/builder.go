@@ -203,9 +203,18 @@ func BuildDelegateResignation(transaction *Transaction, passphrase string, secon
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildHtlcLock(passphrase string, secondPassphrase string) *Transaction {
-	log.Fatal("Not implemented: BuildHtlcLock()")
-	transaction := &Transaction{}
+/** Set all fields and sign a TransactionTypes.HtlcLock transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Lock
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildHtlcLock(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.HtlcLock)
+
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
