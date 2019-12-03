@@ -174,9 +174,18 @@ func BuildIpfs(transaction *Transaction, passphrase string, secondPassphrase str
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildMultiPayment(passphrase string, secondPassphrase string) *Transaction {
-	log.Fatal("Not implemented: BuildMultiPayment()")
-	transaction := &Transaction{}
+/** Set all fields and sign a TransactionTypes.MultiPayment transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Payments
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildMultiPayment(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.MultiPayment)
+
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 

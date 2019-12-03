@@ -184,6 +184,23 @@ func ipfsWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
+func multiPaymentWithPassphrase(t *testing.T) *Transaction {
+	return BuildMultiPayment(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Payments: []*MultiPaymentAsset{
+					{ Amount: FlexToshi(111222), RecipientId: "DHKxXag9PjfjHBbPg3HQS5WCaQZdgDf6yi" },
+					{ Amount: FlexToshi(222333), RecipientId: "DBzGiUk8UVjB2dKCfGRixknB7Ki3Zhqthp" },
+					{ Amount: FlexToshi(333444), RecipientId: "DFa7vn1LvWAyTuVDrQUr5NKaM73cfjx2Cp" },
+				},
+			},
+			Nonce: 5,
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase": transferWithPassphrase,
@@ -195,6 +212,7 @@ func TestBuild(t *testing.T) {
 		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
 		"IpfsWithPassphrase": ipfsWithPassphrase,
+		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
 	} {
 		for signatureTypeString, signatureType := range map[string]int{
 			"ECDSA": SIGNATURE_TYPE_ECDSA,
