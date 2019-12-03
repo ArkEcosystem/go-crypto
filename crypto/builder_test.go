@@ -171,6 +171,19 @@ func multiSignatureRegistrationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
+func ipfsWithPassphrase(t *testing.T) *Transaction {
+	return BuildIpfs(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Ipfs: "QmYSK2JyM3RyDyB52caZCTKFR3HKniEcMnNJYdk8DQ6KKB",
+			},
+			Nonce: 5,
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase": transferWithPassphrase,
@@ -181,6 +194,7 @@ func TestBuild(t *testing.T) {
 		"VoteWithPassphrase": voteWithPassphrase,
 		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
+		"IpfsWithPassphrase": ipfsWithPassphrase,
 	} {
 		for signatureTypeString, signatureType := range map[string]int{
 			"ECDSA": SIGNATURE_TYPE_ECDSA,

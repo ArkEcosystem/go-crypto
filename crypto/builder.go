@@ -159,16 +159,17 @@ func BuildMultiSignatureRegistration(transaction *Transaction, passphrase string
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-func BuildIpfs(amount FlexToshi, ipfsId string, passphrase string, secondPassphrase string) *Transaction {
-	transaction := &Transaction{
-		Type: TRANSACTION_TYPES.Transfer,
-		TypeGroup: TRANSACTION_TYPE_GROUPS.Core,
-		Fee: GetFee(TRANSACTION_TYPES.Transfer),
-		Amount: amount,
-		Asset: &TransactionAsset{
-			Ipfs: ipfsId,
-		},
-	}
+/** Set all fields and sign a TransactionTypes.Ipfs transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Ipfs
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildIpfs(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.Ipfs)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
