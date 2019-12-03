@@ -12,10 +12,6 @@ import (
 )
 
 func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	if transaction.Timestamp == 0 {
-		transaction.Timestamp = GetTime()
-	}
-
 	transaction.Sign(passphrase)
 
 	if len(secondPassphrase) > 0 {
@@ -46,6 +42,11 @@ func setCommonFields(transaction *Transaction, transactionType uint16) {
 
 	transaction.SecondSenderPublicKey = ""
 	transaction.SecondSignature = ""
+
+	if transaction.Timestamp == 0 {
+		transaction.Timestamp = GetTime()
+	}
+
 	transaction.Type = transactionType
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
 	transaction.Version = 2
