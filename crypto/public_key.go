@@ -8,8 +8,8 @@
 package crypto
 
 import (
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
 	"github.com/btcsuite/btcd/btcec"
+	b58 "github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -62,12 +62,7 @@ func (publicKey *PublicKey) ToHex() string {
 }
 
 func (publicKey *PublicKey) ToAddress() string {
-	ripeHashedBytes := publicKey.AddressBytes()
-	ripeHashedBytes = append(ripeHashedBytes, 0x0)
-	copy(ripeHashedBytes[1:], ripeHashedBytes[:len(ripeHashedBytes)-1])
-	ripeHashedBytes[0] = publicKey.Network.Version
-
-	return base58.Encode(ripeHashedBytes)
+	return b58.CheckEncode(publicKey.AddressBytes(), publicKey.Network.Version)
 }
 
 func (publicKey *PublicKey) Serialize() []byte {

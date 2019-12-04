@@ -13,7 +13,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/ArkEcosystem/go-crypto/crypto/base58"
+	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 func Byte2Hex(data byte) string {
@@ -38,16 +38,12 @@ func HexDecode(data string) []byte {
 	return result
 }
 
-func Base58Encode(data []byte) string {
-	return base58.Encode(data)
-}
-
-func Base58Decode(data string) []byte {
-	result, err := base58.Decode(data)
+func Base58CheckDecodeFatal(data string) []byte {
+	decoded, version, err := b58.CheckDecode(data)
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	return result
+	return append([]byte{version}, decoded...)
 }
