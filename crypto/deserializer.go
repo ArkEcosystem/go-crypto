@@ -172,25 +172,28 @@ func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transact
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeMultiSignatureRegistration(assetOffset int, transaction *Transaction) *Transaction {
-	offset := assetOffset / 2
+func deserializeMultiSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
 
-	transaction.Asset = &TransactionAsset{}
-	transaction.Asset.MultiSignature = &MultiSignatureRegistrationAsset{}
+	transaction.Asset = &TransactionAsset{
+		MultiSignature: &MultiSignatureRegistrationAsset{
+			Min: transaction.Serialized[o],
+		},
+	}
+	o++
 
-	transaction.Asset.MultiSignature.Min = transaction.Serialized[offset]
+	count := int(transaction.Serialized[o])
+	o++
 
-	count := int(transaction.Serialized[offset+1])
 	for i := 0; i < count; i++ {
-		offsetStart := assetOffset + 4 + i*66
-		offsetEnd := assetOffset + 4 + (i+1)*66
+		keyHex := HexEncode(transaction.Serialized[o:o + compactPubKeyLen])
+		o += compactPubKeyLen
 
-		keyHex := HexEncode(transaction.Serialized[offsetStart:offsetEnd])
-
-		transaction.Asset.MultiSignature.PublicKeys = append(transaction.Asset.MultiSignature.PublicKeys, keyHex)
+		transaction.Asset.MultiSignature.PublicKeys =
+			append(transaction.Asset.MultiSignature.PublicKeys, keyHex)
 	}
 
-	return transaction.ParseSignatures(assetOffset + 6 + count*66)
+	return transaction.ParseSignatures(o)
 }
 
 func deserializeIpfs(typeSpecificOffset int, transaction *Transaction) *Transaction {

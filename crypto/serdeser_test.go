@@ -10,19 +10,20 @@ package crypto
 import (
 	"encoding/json"
 	"log"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func commonSerDeserTest(t *testing.T, transactionType string, file string) {
-	fixtureJson := []byte(GetTransactionFixture(transactionType, file))
+func commonSerDeserTest(t *testing.T, fixturePath string) {
+	fixtureJson := []byte(GetFile(fixturePath))
 
 	var fixture TestingFixture
 
 	err := json.Unmarshal(fixtureJson, &fixture)
 	if err != nil {
-		log.Fatal("Cannot parse fixture JSON ", transactionType, "/", file, ": ", err)
+		log.Fatalf("Cannot parse fixture JSON %s: %s", fixturePath, err)
 	}
 
 	fixture.Transaction.Serialized = HexDecode(fixture.SerializedHex)
@@ -32,72 +33,22 @@ func commonSerDeserTest(t *testing.T, transactionType string, file string) {
 	assert := assert.New(t)
 
 	assert.Equal(fixture.Transaction, *transaction)
-	assert.Equal(fixture.SerializedHex, HexEncode(transaction.serialize(true, true)))
-	assert.True(transaction.Verify())
+	assert.Equal(fixture.SerializedHex, HexEncode(transaction.serialize(true, true, true)))
+
+	assert.True(transaction.Verify(&fixture.MultiSignatureAsset))
 }
 
-func TestSerDeserTransferWithPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "transfer", "passphrase-no-vendor-field")
-}
+func TestSerDeser(t *testing.T) {
+	directory := "fixtures/transactions/"
+	files, _ := filepath.Glob(directory + "*/*.json")
 
-func TestSerDeserTransferWithSecondPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "transfer", "second-passphrase-no-vendor-field")
-}
+	for _, file := range files {
+		test := func (t *testing.T) {
+			commonSerDeserTest(t, file)
+		}
 
-func TestSerDeserTransferWithPassphraseAndVendorField(t *testing.T) {
-	commonSerDeserTest(t, "transfer", "passphrase-with-vendor-field")
-}
+		subTestName := file[len(directory):len(file) - len(".json")]
 
-func TestSerDeserTransferWithSecondPassphraseAndVendorField(t *testing.T) {
-	commonSerDeserTest(t, "transfer", "second-passphrase-with-vendor-field")
-}
-
-func TestSerDeserSecondSignatureRegistrationWithPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "second_signature_registration", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserDelegateRegistrationWithPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "delegate_registration", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserDelegateRegistrationWithSecondPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "delegate_registration", "second-passphrase-no-vendor-field")
-}
-
-func TestSerDeserVoteWithPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "vote", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserVoteWithSecondPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "vote", "second-passphrase-no-vendor-field")
-}
-
-/*
-func TestSerDeserMultiSignatureRegistrationWithSecondPassphrase(t *testing.T) {
-	commonSerDeserTest(t, "multi_signature_registration", "second-passphrase-no-vendor-field")
-}
-*/
-
-func TestSerDeserIpfs(t *testing.T) {
-	commonSerDeserTest(t, "vote", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserMultiPayment(t *testing.T) {
-	commonSerDeserTest(t, "multi_payment", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserDelegateResignation(t *testing.T) {
-	commonSerDeserTest(t, "delegate_resignation", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserHtlcLock(t *testing.T) {
-	commonSerDeserTest(t, "htlc_lock", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserHtlcClaim(t *testing.T) {
-	commonSerDeserTest(t, "htlc_claim", "passphrase-no-vendor-field")
-}
-
-func TestSerDeserHtlcRefund(t *testing.T) {
-	commonSerDeserTest(t, "htlc_refund", "passphrase-no-vendor-field")
+		t.Run(subTestName, test)
+	}
 }

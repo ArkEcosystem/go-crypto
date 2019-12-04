@@ -17,7 +17,7 @@ import (
 )
 
 func (transaction *Transaction) GetId() string {
-	return fmt.Sprintf("%x", sha256.Sum256(transaction.serialize(true, true)))
+	return fmt.Sprintf("%x", sha256.Sum256(transaction.serialize(true, true, true)))
 }
 
 func (transaction *Transaction) Sign(passphrase string) {
@@ -25,7 +25,7 @@ func (transaction *Transaction) Sign(passphrase string) {
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 
-	hash := sha256.Sum256(transaction.serialize(true, true))
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
 
 	signature, err := privateKey.Sign(hash[:])
 	if err == nil {
@@ -33,10 +33,24 @@ func (transaction *Transaction) Sign(passphrase string) {
 	}
 }
 
+func (transaction *Transaction) SignMulti(signerIndex int, passphrase string) {
+	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
+
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
+
+	signature, err := privateKey.Sign(hash[:])
+	if err == nil {
+		var signatureWithIndex []byte
+		signatureWithIndex = append(signatureWithIndex, byte(signerIndex))
+		signatureWithIndex = append(signatureWithIndex, signature...)
+		transaction.Signatures = append(transaction.Signatures, HexEncode(signatureWithIndex))
+	}
+}
+
 func (transaction *Transaction) SecondSign(passphrase string) {
 	privateKey, _ := PrivateKeyFromPassphrase(passphrase)
 
-	hash := sha256.Sum256(transaction.serialize(true, false))
+	hash := sha256.Sum256(transaction.serialize(true, false, false))
 
 	signature, err := privateKey.Sign(hash[:])
 	if err == nil {
@@ -44,20 +58,74 @@ func (transaction *Transaction) SecondSign(passphrase string) {
 	}
 }
 
-func (transaction *Transaction) Verify() (bool, error) {
+func (transaction *Transaction) VerifyMultiSignature(multiSignatureAsset *MultiSignatureRegistrationAsset) (bool, error) {
+	hash := sha256.Sum256(transaction.serialize(false, false, false))
+
+	publicKeyIndexes := make(map[int]bool)
+	numVerified := 0
+
+	for i := 0; i < len(transaction.Signatures); i++ {
+		publicKeyIndex := int(HexDecode(transaction.Signatures[i][:2])[0])
+		signature := HexDecode(transaction.Signatures[i][2:])
+
+		if publicKeyIndexes[publicKeyIndex] {
+			return false, fmt.Errorf("VerifyMultiSignature: duplicate signer index: %d", publicKeyIndex)
+		}
+
+		if publicKeyIndex >= len(multiSignatureAsset.PublicKeys) {
+			return false, fmt.Errorf(
+				"VerifyMultiSignature: signer index too large: %d, total of %d " +
+				"signers have been registered",
+				publicKeyIndex, len(multiSignatureAsset.PublicKeys))
+		}
+
+		publicKeyIndexes[publicKeyIndex] = true
+
+		publicKey, err := PublicKeyFromBytes(HexDecode(multiSignatureAsset.PublicKeys[publicKeyIndex]))
+		if err != nil {
+			return false, err
+		}
+
+		verified, err := publicKey.Verify(signature, hash[:])
+
+		if verified && err == nil {
+			numVerified++
+		}
+
+		if numVerified >= int(multiSignatureAsset.Min) {
+			return true, nil
+		}
+
+		if len(transaction.Signatures) - (i + 1 - numVerified) < int(multiSignatureAsset.Min) {
+			return false, fmt.Errorf(
+				"VerifyMultiSignature: less than the minimum %d signatures verified successfully",
+				multiSignatureAsset.Min)
+		}
+	}
+
+	return false, fmt.Errorf(
+		"VerifyMultiSignature: less than the minimum %d signatures verified successfully (checked all)",
+		multiSignatureAsset.Min)
+}
+
+func (transaction *Transaction) Verify(multiSignatureAsset ...*MultiSignatureRegistrationAsset) (bool, error) {
+	if len(multiSignatureAsset) == 1 && multiSignatureAsset[0].Min > 0 {
+		return transaction.VerifyMultiSignature(multiSignatureAsset[0])
+	}
+
 	publicKey, err := PublicKeyFromBytes(HexDecode(transaction.SenderPublicKey))
 
 	if err != nil {
 		return false, err
 	}
 
-	hash := sha256.Sum256(transaction.serialize(false, false))
+	hash := sha256.Sum256(transaction.serialize(false, false, true))
 
 	return publicKey.Verify(HexDecode(transaction.Signature), hash[:])
 }
 
 func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
-	hash := sha256.Sum256(transaction.serialize(true, false))
+	hash := sha256.Sum256(transaction.serialize(true, false, false))
 
 	return secondPublicKey.Verify(HexDecode(transaction.SecondSignature), hash[:])
 }
@@ -82,18 +150,8 @@ func beginningMultiSignature(signature []byte) bool {
 	return signature[0] == 0xFF
 }
 
-func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
-	signatures := transaction.Serialized[sigOffset:]
+func (transaction *Transaction) ParseSignaturesECDSA(signatures []byte) *Transaction {
 	signaturesLen := len(signatures)
-
-	if signaturesLen == 0 {
-		transaction.Signature = ""
-		return transaction
-	}
-
-	if isSchnorrSignature(signaturesLen) {
-		log.Fatal("Schnorr signatures not implemented")
-	}
 
 	firstSignatureLen := ECDSASignatureLen(signatures)
 
@@ -115,14 +173,73 @@ func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
 		return transaction
 	}
 
-	// XXX
-
 	if o != signaturesLen {
 		log.Fatal("All signatures parsed, but ", signaturesLen - o,
 			" bytes remain in the buffer: ", HexEncode(signatures))
 	}
 
 	return transaction
+}
+
+func (transaction *Transaction) ParseSignaturesSchnorr(signatures []byte) *Transaction {
+	const schnorrSignatureLen = 64
+
+	signaturesLen := len(signatures)
+	o := 0
+
+	canReadNonMultiSignature := func () bool {
+		remaining := signaturesLen - o
+		return remaining >= schnorrSignatureLen && remaining % 65 != 0
+	}
+
+	readSchnorrSignature := func () string {
+		sig := HexEncode(signatures[o:o + schnorrSignatureLen])
+		o += schnorrSignatureLen
+		return sig
+	}
+
+	if canReadNonMultiSignature() {
+		transaction.Signature = readSchnorrSignature()
+	}
+
+	if canReadNonMultiSignature() {
+		transaction.SecondSignature = readSchnorrSignature()
+	}
+
+	if signaturesLen - o == 0 {
+		return transaction
+	}
+
+	if (signaturesLen - o) % 65 != 0 {
+		log.Fatalf("Cannot parse Schnorr signatures: remaining bytes not multiple of 65: %d", signaturesLen - o)
+	}
+
+	count := (signaturesLen - o) / 65
+
+	for i := 0; i < count; i++ {
+		signaturePlusPrefix := HexEncode(signatures[o:o + 1 + schnorrSignatureLen])
+		o += 1 + schnorrSignatureLen
+
+		transaction.Signatures = append(transaction.Signatures, signaturePlusPrefix)
+	}
+
+	return transaction
+}
+
+func (transaction *Transaction) ParseSignatures(sigOffset int) *Transaction {
+	signatures := transaction.Serialized[sigOffset:]
+	signaturesLen := len(signatures)
+
+	if signaturesLen == 0 {
+		transaction.Signature = ""
+		return transaction
+	}
+
+	if isSchnorrSignature(signaturesLen) {
+		return transaction.ParseSignaturesSchnorr(signatures)
+	}
+
+	return transaction.ParseSignaturesECDSA(signatures)
 }
 
 func (transaction *Transaction) ToMap() map[string]interface{} {

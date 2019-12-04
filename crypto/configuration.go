@@ -22,6 +22,7 @@ var (
 		TRANSACTION_FEES.HtlcClaim,
 		TRANSACTION_FEES.HtlcRefund,
 	}
+	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
 )
 
 func GetNetwork() *Network {
