@@ -121,7 +121,7 @@ type TransactionAsset struct {
 	Votes []string `json:"votes,omitempty"`
 	Signature *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 	Delegate *DelegateAsset `json:"delegate,omitempty"`
-	MultiSignature *MultiSignatureRegistrationAsset `json:"multisignature,omitempty"`
+	MultiSignature *MultiSignatureRegistrationAsset `json:"multiSignature,omitempty"`
 	Ipfs string `json:"ipfs,omitempty"`
 	Payments []*MultiPaymentAsset `json:"payments,omitempty"`
 	Lock *HtlcLockAsset `json:"lock,omitempty"`
@@ -139,7 +139,7 @@ type DelegateAsset struct {
 
 type MultiSignatureRegistrationAsset struct {
 	Min byte `json:"min,omitempty"`
-	PublicKeys []string `json:"keysgroup,omitempty"`
+	PublicKeys []string `json:"publicKeys,omitempty"`
 }
 
 type MultiPaymentAsset struct {

@@ -14,6 +14,8 @@ import (
 )
 
 func TestSignMessage(t *testing.T) {
+	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_ECDSA
+
 	fixture := GetMessageFixture()
 
 	message, _ := SignMessage(fixture.Data.Message, fixture.Passphrase)

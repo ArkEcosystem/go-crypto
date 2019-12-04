@@ -14,20 +14,18 @@ import (
 	"log"
 )
 
-func GetFixture(file string) string {
-	fileName := fmt.Sprintf("./fixtures/%s.json", file)
-
-	data, err := ioutil.ReadFile(fileName)
+func GetFile(path string) string {
+	data, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		log.Fatal("Cannot read fixture: ", err)
+		log.Fatalf("Cannot read file %s: %s", path, err)
 	}
 
 	return string(data)
 }
 
-func GetTransactionFixture(transactionType string, file string) string {
-	return GetFixture(fmt.Sprintf("transactions/%s/%s", transactionType, file))
+func GetFixture(file string) string {
+	return GetFile(fmt.Sprintf("./fixtures/%s.json", file))
 }
 
 func GetIdentityFixture() TestingIdentityFixture {
@@ -49,6 +47,7 @@ func GetMessageFixture() TestingMessageFixture {
 }
 
 type TestingFixture struct {
+	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
 	Transaction Transaction `json:"transaction"`
 	SerializedHex string `json:"serializedHex"`
 }
