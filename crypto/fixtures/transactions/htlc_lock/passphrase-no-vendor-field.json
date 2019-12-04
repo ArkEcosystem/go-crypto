@@ -1,0 +1,25 @@
+{
+    "serializedHex": "ff021e01000000080006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f3380969800000000000000c2eb0b00000000ca270216d522f0aa774edea7ad3c7440e8214f2625da0edbc948b28a0d3f5ead023d1ea1061ec9b298b06c31962b78d1e6a7865a764f740cc9cb304502210083496bde28f06a785d49699ad810f777347781dc09f86f26d4b7a4e0d0bcb5c402200e15a6ea6705ed1e840f04bb74bbf1e6892bf5790029f08cd8f64e5c6b74f9a3",
+    "transaction": {
+        "amount": "200000000",
+        "asset": {
+            "lock": {
+                "secretHash": "ca270216d522f0aa774edea7ad3c7440e8214f2625da0edbc948b28a0d3f5ead",
+                "expiration": {
+                    "type": 2,
+                    "value": 111222333
+                }
+            }
+        },
+        "fee": "10000000",
+        "id": "ac88c45ce3e971494700c17f0aea3a1e807a8ace61cbc162c88d12bb119789bc",
+        "network": 30,
+        "nonce": "6",
+        "recipientId": "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "304502210083496bde28f06a785d49699ad810f777347781dc09f86f26d4b7a4e0d0bcb5c402200e15a6ea6705ed1e840f04bb74bbf1e6892bf5790029f08cd8f64e5c6b74f9a3",
+        "type": 8,
+        "typeGroup": 1,
+        "version": 2
+    }
+}

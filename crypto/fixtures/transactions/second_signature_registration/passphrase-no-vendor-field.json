@@ -1,0 +1,20 @@
+{
+    "serializedHex": "ff021e01000000010006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f3380969800000000000002877e4f35c76abaeb152b128670db0a7ae10b3999afcd28a42938b653fbf87ae93044022051c7a3c7e18240fb6038d3f8b4eb465c17393eccd08072043e74d92781be0c4302206fbeda14f599f23229805b42f7f77caa23590d4a798d9bf60ce33b5fa38a3b91",
+    "transaction": {
+        "asset": {
+            "signature": {
+                "publicKey": "02877e4f35c76abaeb152b128670db0a7ae10b3999afcd28a42938b653fbf87ae9"
+            }
+        },
+        "amount": "0",
+        "fee": "10000000",
+        "id": "e35e0d82b22e2a3188c61bb3a70653627b88fa552c43694664393e5d09ce5b88",
+        "network": 30,
+        "nonce": "6",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "3044022051c7a3c7e18240fb6038d3f8b4eb465c17393eccd08072043e74d92781be0c4302206fbeda14f599f23229805b42f7f77caa23590d4a798d9bf60ce33b5fa38a3b91",
+        "type": 1,
+        "typeGroup": 1,
+        "version": 2
+    }
+}

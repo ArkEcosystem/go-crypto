@@ -1,0 +1,18 @@
+{
+    "data": {
+        "amount": "0",
+        "asset": {
+            "ipfs": "QmYSK2JyM3RyDyB52caZCTKFR3HKniEcMnNJYdk8DQ6KKB"
+        },
+        "fee": "10000000",
+        "id": "d7a21dd4081c83754a481ec4e7fb790aa5bd4b5217a2fde045de12d03e62f8a1",
+        "network": 30,
+        "nonce": "6",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "3045022100b18e4cb783db58ec5d170eab125f77d0db3c52a4d3a67c7410e483ff1f98baf9022066d6ebe71b0c4312542b96222719b8e6d747e4f684e02ebae6b305b6495e60dc",
+        "type": 5,
+        "typeGroup": 1,
+        "version": 2
+    },
+    "serialized": "ff021e01000000050006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f3380969800000000000012209608184d6cee2b9af8e6c2a46fc9318adf73329aeb8a86cf8472829fff5bb89e3045022100b18e4cb783db58ec5d170eab125f77d0db3c52a4d3a67c7410e483ff1f98baf9022066d6ebe71b0c4312542b96222719b8e6d747e4f684e02ebae6b305b6495e60dc"
+}

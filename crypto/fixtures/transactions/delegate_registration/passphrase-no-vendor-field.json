@@ -1,0 +1,20 @@
+{
+    "serializedHex": "ff021e01000000020006000000000000000236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f338096980000000000001364656c65676174652e303233363137356163373045022100deef2f3f0bda7035c31827d2ddb5bd14b08300e46b066de1c9a4112b63cce3f3022068fd387f229e0c2c6c10c4ebec2d4a055e0cb455551cb6d88856c9d63378e091",
+    "transaction": {
+        "amount": "0",
+        "asset": {
+            "delegate": {
+                "username": "delegate.0236175ac7"
+            }
+        },
+        "fee": "10000000",
+        "id": "708ceec4fbb406d73443bb55d8bf0ea8f84dee38383354fcfe7d5feee7189656",
+        "network": 30,
+        "nonce": "6",
+        "senderPublicKey": "0236175ac7b308a2d8d60183021d063a5b2e397355d4014a91a2a6cc5c6ace9f33",
+        "signature": "3045022100deef2f3f0bda7035c31827d2ddb5bd14b08300e46b066de1c9a4112b63cce3f3022068fd387f229e0c2c6c10c4ebec2d4a055e0cb455551cb6d88856c9d63378e091",
+        "type": 2,
+        "typeGroup": 1,
+        "version": 2
+    }
+}

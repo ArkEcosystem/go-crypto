@@ -11,9 +11,11 @@
 [![Latest Version](https://badgen.now.sh/github/release/ArkEcosystem/go-crypto)](https://github.com/ArkEcosystem/go-crypto/releases)
 [![License: MIT](https://badgen.now.sh/badge/license/MIT/green)](https://opensource.org/licenses/MIT)
 
+> Lead Maintainer: [Brian Faust](https://github.com/faustbrian)
+
 ## Documentation
 
-You can find installation instructions and detailed instructions on how to use this package at the [dedicated documentation site](https://docs.ark.io/sdk/cryptography/go.html).
+You can find installation instructions and detailed instructions on how to use this package at the [documentation site](https://docs.ark.io/sdk/cryptography/usage.html).
 
 ## Security
 
@@ -21,9 +23,8 @@ If you discover a security vulnerability within this package, please send an e-m
 
 ## Credits
 
-- [Brian Faust](https://github.com/faustbrian)
-- [All Contributors](../../../../contributors)
+This project exists thanks to all the people who [contribute](../../contributors).
 
 ## License
 
-[MIT](LICENSE) © [ArkEcosystem](https://ark.io)
+[MIT](LICENSE) © [ARK Ecosystem](https://ark.io)
