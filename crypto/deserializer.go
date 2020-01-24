@@ -278,7 +278,7 @@ func deserializeHtlcClaim(typeSpecificOffset int, transaction *Transaction) *Tra
 	lockTransactionId := HexEncode(transaction.Serialized[o:o + 32])
 	o += 32
 
-	unlockSecret := string(transaction.Serialized[o:o + 32])
+	unlockSecret := HexEncode(transaction.Serialized[o:o + 32])
 	o += 32
 
 	transaction.Asset = &TransactionAsset{

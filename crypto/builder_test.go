@@ -238,7 +238,7 @@ func htlcClaimWithPassphrase(t *testing.T) *Transaction {
 			Asset: &TransactionAsset{
 				Claim: &HtlcClaimAsset{
 					LockTransactionId: "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9",
-					UnlockSecret: "z]dkm`NFnn9UTvt1`l]CJ[FohcRaqNhZ",
+					UnlockSecret: "7a5d646b6d604e466e6e395554767431606c5d434a5b466f68635261714e685a",
 				},
 			},
 			Nonce: 5,

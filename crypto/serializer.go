@@ -177,7 +177,7 @@ func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
 
 func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Claim.LockTransactionId))
-	ser.Write([]byte(transaction.Asset.Claim.UnlockSecret))
+	ser.Write(HexDecode(transaction.Asset.Claim.UnlockSecret))
 }
 
 func (transaction *Transaction) serializeHtlcRefund(ser *bytes.Buffer) {
