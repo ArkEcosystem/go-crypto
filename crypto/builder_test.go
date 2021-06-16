@@ -151,6 +151,22 @@ func voteWithSecondPassphrase(t *testing.T) *Transaction {
 	return transaction
 }
 
+func unvoteVoteWithPassphrase(t *testing.T) *Transaction {
+	return BuildVote(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Votes: []string{
+					"-034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
+					"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
+				},
+			},
+			Nonce: 5,
+		},
+		"This is a top secret passphrase",
+		"",
+	)
+}
+
 func multiSignatureRegistrationWithPassphrase(t *testing.T) *Transaction {
 	return BuildMultiSignatureRegistration(
 		&Transaction{
@@ -272,6 +288,7 @@ func TestBuild(t *testing.T) {
 		"DelegateRegistrationWithSecondPassphrase": delegateRegistrationWithSecondPassphrase,
 		"VoteWithPassphrase": voteWithPassphrase,
 		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
+		"UnvoteVoteWithPassphrase": unvoteVoteWithPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
 		"IpfsWithPassphrase": ipfsWithPassphrase,
 		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
