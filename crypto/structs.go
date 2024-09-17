@@ -80,12 +80,10 @@ func (fi *FlexToshi) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*fi = FlexToshi(i)
-
 	return nil
 }
 
 type Transaction struct {
-	// XXX check that all relevant fields are set in all Build*() methods
 	Amount                FlexToshi         `json:"amount,omitempty"`
 	Asset                 *TransactionAsset `json:"asset,omitempty"`
 	Expiration            uint32            `json:"expiration,omitempty"`
@@ -113,20 +111,16 @@ type Message struct {
 	Signature string `json:"signature"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// TRANSACTION ASSETS //////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 type TransactionAsset struct {
-	Votes []string `json:"votes,omitempty"`
-	Signature *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
-	Delegate *DelegateAsset `json:"delegate,omitempty"`
-	MultiSignature *MultiSignatureRegistrationAsset `json:"multiSignature,omitempty"`
-	Ipfs string `json:"ipfs,omitempty"`
-	Payments []*MultiPaymentAsset `json:"payments,omitempty"`
-	Lock *HtlcLockAsset `json:"lock,omitempty"`
-	Claim *HtlcClaimAsset `json:"claim,omitempty"`
-	Refund *HtlcRefundAsset `json:"refund,omitempty"`
+	Votes          []string                          `json:"votes,omitempty"`
+	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
+	Delegate       *DelegateAsset                    `json:"delegate,omitempty"`
+	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
+	Ipfs           string                            `json:"ipfs,omitempty"`
+	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
+	Lock           *HtlcLockAsset                    `json:"lock,omitempty"`
+	Claim          *HtlcClaimAsset                   `json:"claim,omitempty"`
+	Refund         *HtlcRefundAsset                  `json:"refund,omitempty"`
 }
 
 type SecondSignatureRegistrationAsset struct {
@@ -138,7 +132,7 @@ type DelegateAsset struct {
 }
 
 type MultiSignatureRegistrationAsset struct {
-	Min byte `json:"min,omitempty"`
+	Min        byte     `json:"min,omitempty"`
 	PublicKeys []string `json:"publicKeys,omitempty"`
 }
 
@@ -148,18 +142,18 @@ type MultiPaymentAsset struct {
 }
 
 type HtlcLockAsset struct {
-	SecretHash string `json:"secretHash,omitempty"`
+	SecretHash string                   `json:"secretHash,omitempty"`
 	Expiration *HtlcLockExpirationAsset `json:"expiration,omitempty"`
 }
 
 type HtlcLockExpirationAsset struct {
-	Type uint8 `json:"type,omitempty"`
+	Type  uint8  `json:"type,omitempty"`
 	Value uint32 `json:"value,omitempty"`
 }
 
 type HtlcClaimAsset struct {
 	LockTransactionId string `json:"lockTransactionId,omitempty"`
-	UnlockSecret string `json:"unlockSecret,omitempty"`
+	UnlockSecret      string `json:"unlockSecret,omitempty"`
 }
 
 type HtlcRefundAsset struct {
