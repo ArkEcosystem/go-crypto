@@ -70,8 +70,8 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 		transaction = deserializeTransfer(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
 		transaction = deserializeSecondSignatureRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.DelegateRegistration:
-		transaction = deserializeDelegateRegistration(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.ValidatorRegistration:
+		transaction = deserializeValidatorRegistration(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.Vote:
 		transaction = deserializeVote(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
@@ -80,8 +80,8 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 		transaction = deserializeIpfs(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction = deserializeMultiPayment(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.DelegateResignation:
-		transaction = deserializeDelegateResignation(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.ValidatorResignation:
+		transaction = deserializeValidatorResignation(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.HtlcLock:
 		transaction = deserializeHtlcLock(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.HtlcClaim:
@@ -129,7 +129,7 @@ func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction 
 	return transaction.ParseSignatures(typeSpecificOffset + compactPubKeyLen)
 }
 
-func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
 	usernameLen := int(transaction.Serialized[o])
@@ -238,7 +238,7 @@ func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeDelegateResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
+func deserializeValidatorResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	return transaction.ParseSignatures(typeSpecificOffset)
 }
 

@@ -77,8 +77,8 @@ func secondSignatureRegistration(t *testing.T) *Transaction {
 	)
 }
 
-func delegateRegistrationWithPassphrase(t *testing.T) *Transaction {
-	return BuildDelegateRegistration(
+func validatorRegistrationWithPassphrase(t *testing.T) *Transaction {
+	return BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
 				Delegate: &DelegateAsset{
@@ -92,10 +92,10 @@ func delegateRegistrationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func delegateRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
+func validatorRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
 	secondPassPhrase := "This is a top secret second passphrase"
 
-	transaction := BuildDelegateRegistration(
+	transaction := BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
 				Delegate: &DelegateAsset{
@@ -217,8 +217,8 @@ func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func delegateResignationWithPassphrase(t *testing.T) *Transaction {
-	return BuildDelegateResignation(
+func validatorResignationWithPassphrase(t *testing.T) *Transaction {
+	return BuildValidatorResignation(
 		&Transaction{
 			Amount: FlexToshi(0),
 			Nonce: 5,
@@ -284,15 +284,15 @@ func TestBuild(t *testing.T) {
 		"TransferWithPassphrase": transferWithPassphrase,
 		"TransferWithSecondPassphrase": transferWithSecondPassphrase,
 		"SecondSignatureRegistration": secondSignatureRegistration,
-		"DelegateRegistrationWithPassphrase": delegateRegistrationWithPassphrase,
-		"DelegateRegistrationWithSecondPassphrase": delegateRegistrationWithSecondPassphrase,
+		"ValidatorRegistrationWithPassphrase": validatorRegistrationWithPassphrase,
+		"ValidatorRegistrationWithSecondPassphrase": validatorRegistrationWithSecondPassphrase,
 		"VoteWithPassphrase": voteWithPassphrase,
 		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
 		"UnvoteVoteWithPassphrase": unvoteVoteWithPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
 		"IpfsWithPassphrase": ipfsWithPassphrase,
 		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
-		"DelegateResignationWithPassphrase": delegateResignationWithPassphrase,
+		"ValidatorResignationWithPassphrase": validatorResignationWithPassphrase,
 		"HtlcLockWithPassphrase": htlcLockWithPassphrase,
 		"HtlcClaimWithPassphrase": htlcClaimWithPassphrase,
 		"HtlcRefundWithPassphrase": htlcRefundWithPassphrase,

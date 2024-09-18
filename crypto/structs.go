@@ -37,12 +37,12 @@ type PublicKey struct {
 type TransactionTypes struct {
 	Transfer                    uint16
 	SecondSignatureRegistration uint16
-	DelegateRegistration        uint16
+	ValidatorRegistration        uint16
 	Vote                        uint16
 	MultiSignatureRegistration  uint16
 	Ipfs                        uint16
 	MultiPayment                uint16
-	DelegateResignation         uint16
+	ValidatorResignation         uint16
 	HtlcLock                    uint16
 	HtlcClaim                   uint16
 	HtlcRefund                  uint16
@@ -56,12 +56,12 @@ type TransactionTypeGroups struct {
 type TransactionFees struct {
 	Transfer                    FlexToshi
 	SecondSignatureRegistration FlexToshi
-	DelegateRegistration        FlexToshi
+	ValidatorRegistration        FlexToshi
 	Vote                        FlexToshi
 	MultiSignatureRegistration  FlexToshi
 	Ipfs                        FlexToshi
 	MultiPayment                FlexToshi
-	DelegateResignation         FlexToshi
+	ValidatorResignation         FlexToshi
 	HtlcLock                    FlexToshi
 	HtlcClaim                   FlexToshi
 	HtlcRefund                  FlexToshi

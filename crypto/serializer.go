@@ -75,8 +75,8 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 		transaction.serializeTransfer(ser)
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
 		transaction.serializeSecondSignatureRegistration(ser)
-	case TRANSACTION_TYPES.DelegateRegistration:
-		transaction.serializeDelegateRegistration(ser)
+	case TRANSACTION_TYPES.ValidatorRegistration:
+		transaction.serializeValidatorRegistration(ser)
 	case TRANSACTION_TYPES.Vote:
 		transaction.serializeVote(ser)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
@@ -85,8 +85,8 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 		transaction.serializeIpfs(ser)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction.serializeMultiPayment(ser)
-	case TRANSACTION_TYPES.DelegateResignation:
-		transaction.serializeDelegateResignation(ser)
+	case TRANSACTION_TYPES.ValidatorResignation:
+		transaction.serializeValidatorResignation(ser)
 	case TRANSACTION_TYPES.HtlcLock:
 		transaction.serializeHtlcLock(ser)
 	case TRANSACTION_TYPES.HtlcClaim:
@@ -120,7 +120,7 @@ func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.
 	ser.Write(HexDecode(transaction.Asset.Signature.PublicKey))
 }
 
-func (transaction *Transaction) serializeDelegateRegistration(ser *bytes.Buffer) {
+func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
 	delegateBytes := []byte(transaction.Asset.Delegate.Username)
 
 	writeNumberAsByte(ser, len(delegateBytes), "delegate username")
@@ -163,7 +163,7 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 	}
 }
 
-func (transaction *Transaction) serializeDelegateResignation(buffer *bytes.Buffer) {
+func (transaction *Transaction) serializeValidatorResignation(buffer *bytes.Buffer) {
 	// noop
 }
 
