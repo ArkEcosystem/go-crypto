@@ -45,7 +45,7 @@ func setCommonFields(transaction *Transaction, transactionType uint16) {
 
 	transaction.Type = transactionType
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
-	transaction.Version = 2
+	transaction.Version = 1
 }
 
 /** Set all fields and sign a TransactionTypes.Transfer transaction.

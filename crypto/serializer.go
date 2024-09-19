@@ -41,12 +41,8 @@ func (transaction *Transaction) serialize(includeSignature bool, includeSecondSi
 func (transaction *Transaction) serializeHeader(ser *bytes.Buffer) {
 	ser.WriteByte(uint8(0xFF))
 
-	if transaction.Version == 2 {
-		ser.WriteByte(transaction.Version)
-	} else {
-		log.Fatal("Serialization is only implemented for version 2 transactions")
-	}
-
+	ser.WriteByte(transaction.Version)
+	
 	if transaction.Network == 0 {
 		ser.WriteByte(GetNetwork().Version)
 	} else {
@@ -56,7 +52,9 @@ func (transaction *Transaction) serializeHeader(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, transaction.TypeGroup)
 	binary.Write(ser, binary.LittleEndian, transaction.Type)
 	binary.Write(ser, binary.LittleEndian, transaction.Nonce)
-	ser.Write(HexDecode(transaction.SenderPublicKey))
+	if transaction.SenderPublicKey != "" {
+		ser.Write(HexDecode(transaction.SenderPublicKey))
+	}
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Fee))
 }
 
