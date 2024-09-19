@@ -111,7 +111,15 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
 	binary.Write(ser, binary.LittleEndian, transaction.Expiration)
-	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
+	
+	address := transaction.RecipientId[2:]
+	if strings.HasPrefix(address, "0x") {
+		address = address[2:]
+	}
+	
+	recipientBytes := HexDecode(address)
+
+	ser.Write(recipientBytes)
 }
 
 func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.Buffer) {

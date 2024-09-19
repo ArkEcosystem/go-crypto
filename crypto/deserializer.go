@@ -15,17 +15,17 @@ import (
 )
 
 const compactPubKeyLen = 33 // bytes
-const addressLen = 21 // bytes
+const addressLen = 20 // bytes
 
 func deserializeAddress(serialized []byte, offset int) (address string, offsetAfter int) {
-	addressRaw := serialized[offset:offset + addressLen]
-
-	addressVersion := addressRaw[0]
-	addressHash := addressRaw[1:]
-
-	address = b58.CheckEncode(addressHash, addressVersion)
-	offsetAfter = offset + addressLen
-
+	if len(serialized[offset:]) >= addressLen {
+		addressBytes := serialized[offset : offset+addressLen]
+		address = "0x" + EIP55Checksum(HexEncode(addressBytes))
+		offsetAfter = offset + addressLen
+	} else {
+		address = ""
+		offsetAfter = offset
+	}
 	return
 }
 
@@ -107,14 +107,17 @@ func deserializeCommon(transaction *Transaction) *Transaction {
 
 func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
-
-	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
+	
+	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o : o+8]))
 	o += 8
-
-	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o:o + 4])
+	
+	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o : o+4])
 	o += 4
-
-	transaction.RecipientId, o = deserializeAddress(transaction.Serialized, o)
+	
+	address, newOffset := deserializeAddress(transaction.Serialized, o)
+	
+	transaction.RecipientId = address
+	o = newOffset
 
 	return transaction.ParseSignatures(o)
 }
