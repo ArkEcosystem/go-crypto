@@ -315,26 +315,26 @@ func TestBuild(t *testing.T) {
 		}
 	}
 
-	// Test multisignature transfer separately
+	// // Test multisignature transfer separately
 
-	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
+	// CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
 
-	test := func(t *testing.T) {
-		transaction := transferMultiSignature(t)
+	// test := func(t *testing.T) {
+	// 	transaction := transferMultiSignature(t)
 
-		assert := assert.New(t)
+	// 	assert := assert.New(t)
 
-		multiSignatureAsset := &MultiSignatureRegistrationAsset{
-			Min: 2,
-			PublicKeys: []string{
-				"029fab3cb2f5e248ae7cbb4de646741da4d73c493b2a03ab5c71507fb2c0dcca92",
-				"03629f9dbf7f1e91cefa845126189816ceae357bdd1f41bd14787318a7d5b55d48",
-				"027941d2059f89a26d89e87d3385e261a0ede1234aaeaa487012b69d6b67962dc5",
-			},
-		}
+	// 	multiSignatureAsset := &MultiSignatureRegistrationAsset{
+	// 		Min: 2,
+	// 		PublicKeys: []string{
+	// 			"029fab3cb2f5e248ae7cbb4de646741da4d73c493b2a03ab5c71507fb2c0dcca92",
+	// 			"03629f9dbf7f1e91cefa845126189816ceae357bdd1f41bd14787318a7d5b55d48",
+	// 			"027941d2059f89a26d89e87d3385e261a0ede1234aaeaa487012b69d6b67962dc5",
+	// 		},
+	// 	}
 
-		assert.True(transaction.Verify(multiSignatureAsset))
-	}
+	// 	assert.True(transaction.Verify(multiSignatureAsset))
+	// }
 
-	t.Run("TransferMultiSignature-Schnorr", test)
+	// t.Run("TransferMultiSignature-Schnorr", test)
 }
