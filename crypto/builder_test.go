@@ -22,7 +22,7 @@ func transferWithPassphrase(t *testing.T) *Transaction {
 			Fee:         FlexToshi(10),
 			Network:     30,
 			Nonce:       6,
-			RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+			RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 		},
 		"my super secret passphrase",
 		"",
@@ -36,7 +36,7 @@ func transferWithSecondPassphrase(t *testing.T) *Transaction {
 		&Transaction{
 			Amount:       FlexToshi(133380000000),
 			Nonce:        5,
-			RecipientId:  "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
+			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 			VendorField:  "This is a transaction from Go",
 		},
 		"This is a top secret passphrase",
@@ -58,7 +58,7 @@ func transferMultiSignature(t *testing.T) *Transaction {
 		Fee:          FlexToshi(10),
 		Network:      30,
 		Nonce:        6,
-		RecipientId:  "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+		RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 	}
 
 	transaction = BuildTransferMultiSignature(transaction, 0, "multisig participant 1")
@@ -327,9 +327,9 @@ func TestBuild(t *testing.T) {
 		multiSignatureAsset := &MultiSignatureRegistrationAsset{
 			Min: 2,
 			PublicKeys: []string{
-				"037eaa8cb236c40a08fcb9d6220743ee6ae1b5c40e8a77a38f286516c3ff663901",
-				"0301fd417566397113ba8c55de2f093a572744ed1829b37b56a129058000ef7bce",
-				"0209d3c0f68994253cee24b23df3266ba1f0ca2f0666cd69a46544d63001cdf150",
+				"029fab3cb2f5e248ae7cbb4de646741da4d73c493b2a03ab5c71507fb2c0dcca92",
+				"03629f9dbf7f1e91cefa845126189816ceae357bdd1f41bd14787318a7d5b55d48",
+				"027941d2059f89a26d89e87d3385e261a0ede1234aaeaa487012b69d6b67962dc5",
 			},
 		}
 
