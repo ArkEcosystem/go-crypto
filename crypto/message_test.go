@@ -41,7 +41,7 @@ func TestMessageToMap(t *testing.T) {
 	message, _ := SignMessage(fixture.Data.Message, fixture.Passphrase)
 
 	actual := message.ToMap()
-	expected := map[string]interface{}{"Message": "Hello World", "PublicKey": "034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192", "Signature": "304402200fb4adddd1f1d652b544ea6ab62828a0a65b712ed447e2538db0caebfa68929e02205ecb2e1c63b29879c2ecf1255db506d671c8b3fa6017f67cfd1bf07e6edd1cc8"}
+	expected := map[string]interface{}{"Message": "Hello World", "PublicKey": "034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192", "Signature": "cdc26c4d137dbbad22ec94fee0bb7d7c1864291aec69c5d30a2d585efb2aa5e349e5497bb94221d8394e56a04e9b39cf9960c73b8212f46d2f03597cd73ebd33"}
 
 	assert := assert.New(t)
 	assert.EqualValues(expected, actual)
@@ -53,7 +53,7 @@ func TestMessageToJson(t *testing.T) {
 	message, _ := SignMessage(fixture.Data.Message, fixture.Passphrase)
 
 	actual, _ := message.ToJson()
-	expected := "{\"message\":\"Hello World\",\"publickey\":\"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192\",\"signature\":\"304402200fb4adddd1f1d652b544ea6ab62828a0a65b712ed447e2538db0caebfa68929e02205ecb2e1c63b29879c2ecf1255db506d671c8b3fa6017f67cfd1bf07e6edd1cc8\"}"
+	expected := "{\"message\":\"Hello World\",\"publickey\":\"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192\",\"signature\":\"cdc26c4d137dbbad22ec94fee0bb7d7c1864291aec69c5d30a2d585efb2aa5e349e5497bb94221d8394e56a04e9b39cf9960c73b8212f46d2f03597cd73ebd33\"}"
 
 	assert := assert.New(t)
 	assert.Equal(expected, actual)
