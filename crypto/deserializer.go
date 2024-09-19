@@ -135,15 +135,15 @@ func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction 
 func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
-	usernameLen := int(transaction.Serialized[o])
-	o++
+	publicKeyLength := 48
+
 
 	transaction.Asset = &TransactionAsset{
-		Delegate: &DelegateAsset{
-			Username: string(transaction.Serialized[o:o + usernameLen]),
+		Validator: &ValidatorAsset{
+			ValidatorPublicKey: HexEncode(transaction.Serialized[o:o + publicKeyLength]),
 		},
 	}
-	o += usernameLen
+	o += publicKeyLength
 
 	return transaction.ParseSignatures(o)
 }

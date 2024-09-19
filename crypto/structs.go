@@ -118,7 +118,7 @@ type Message struct {
 type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
 	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
-	Delegate       *DelegateAsset                    `json:"delegate,omitempty"`
+	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
 	Ipfs           string                            `json:"ipfs,omitempty"`
 	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
@@ -131,8 +131,8 @@ type SecondSignatureRegistrationAsset struct {
 	PublicKey string `json:"publicKey,omitempty"`
 }
 
-type DelegateAsset struct {
-	Username string `json:"username,omitempty"`
+type ValidatorAsset struct {
+	ValidatorPublicKey string `json:"validatorPublicKey,omitempty"`
 }
 
 type MultiSignatureRegistrationAsset struct {

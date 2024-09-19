@@ -81,8 +81,8 @@ func validatorRegistrationWithPassphrase(t *testing.T) *Transaction {
 	return BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Delegate: &DelegateAsset{
-					Username: "polopolo",
+				Validator: &ValidatorAsset{
+					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
 				},
 			},
 			Nonce: 5,
@@ -98,8 +98,8 @@ func validatorRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
 	transaction := BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Delegate: &DelegateAsset{
-					Username: "polopolo",
+				Validator: &ValidatorAsset{
+					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
 				},
 			},
 			Nonce: 5,

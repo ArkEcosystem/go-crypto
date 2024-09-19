@@ -133,10 +133,7 @@ func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.
 }
 
 func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
-	delegateBytes := []byte(transaction.Asset.Delegate.Username)
-
-	writeNumberAsByte(ser, len(delegateBytes), "delegate username")
-	ser.Write(delegateBytes)
+	ser.Write(HexDecode(transaction.Asset.Validator.ValidatorPublicKey))
 }
 
 func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
