@@ -9,8 +9,7 @@ package crypto
 
 import (
 	"encoding/binary"
-	"fmt"
-
+	
 	b58 "github.com/btcsuite/btcutil/base58"
 )
 
@@ -151,29 +150,38 @@ func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Trans
 func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
+	// Read the number of votes
 	numVotes := int(transaction.Serialized[o])
 	o++
 
 	transaction.Asset = &TransactionAsset{}
+	transaction.Asset.Votes = make([]string, 0, numVotes)
 
+	// Read the votes
 	for i := 0; i < numVotes; i++ {
-		// 0 = unvote (-), 1 = vote (+)
-		voteType := transaction.Serialized[o]
-		o++
-
-		delegatePublicKeyHex := HexEncode(transaction.Serialized[o:o + compactPubKeyLen])
+		voteBytes := transaction.Serialized[o : o+compactPubKeyLen]
 		o += compactPubKeyLen
 
-		pfx := "+"
-		if voteType == 0 {
-			pfx = "-"
-		}
+		transaction.Asset.Votes = append(transaction.Asset.Votes, HexEncode(voteBytes))
+	}
 
-		transaction.Asset.Votes = append(transaction.Asset.Votes, fmt.Sprintf("%s%s", pfx, delegatePublicKeyHex))
+	// Read the number of unvotes
+	numUnvotes := int(transaction.Serialized[o])
+	o++
+
+	transaction.Asset.Unvotes = make([]string, 0, numUnvotes)
+
+	// Read the unvotes
+	for i := 0; i < numUnvotes; i++ {
+		unvoteBytes := transaction.Serialized[o : o+compactPubKeyLen]
+		o += compactPubKeyLen
+
+		transaction.Asset.Unvotes = append(transaction.Asset.Unvotes, HexEncode(unvoteBytes))
 	}
 
 	return transaction.ParseSignatures(o)
 }
+
 
 func deserializeMultiSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset

@@ -117,6 +117,7 @@ type Message struct {
 
 type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
+	Unvotes        []string                          `json:"unvotes,omitempty"`
 	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`

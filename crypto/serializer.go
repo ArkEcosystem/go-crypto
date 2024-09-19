@@ -10,7 +10,6 @@ package crypto
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"strings"
 
@@ -137,18 +136,25 @@ func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer
 }
 
 func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
-	voteStrings := make([]string, 0)
+	// Serialize Votes
+	votes := transaction.Asset.Votes
+	unvotes := transaction.Asset.Unvotes
 
-	for _, element := range transaction.Asset.Votes {
-		pfx := "00"
-		if element[:1] == "+" {
-			pfx = "01"
-		}
-		voteStrings = append(voteStrings, fmt.Sprintf("%s%s", pfx, element[1:]))
+	// Write the number of votes
+	writeNumberAsByte(ser, len(votes), "number of votes")
+
+	// Write each vote in hexadecimal format
+	for _, vote := range votes {
+		ser.Write(HexDecode(vote))
 	}
 
-	writeNumberAsByte(ser, len(transaction.Asset.Votes), "number of votes")
-	ser.Write(HexDecode(strings.Join(voteStrings, "")))
+	// Write the number of unvotes
+	writeNumberAsByte(ser, len(unvotes), "number of unvotes")
+
+	// Write each unvote in hexadecimal format
+	for _, unvote := range unvotes {
+		ser.Write(HexDecode(unvote))
+	}
 }
 
 func (transaction *Transaction) serializeMultiSignatureRegistration(ser *bytes.Buffer) {
