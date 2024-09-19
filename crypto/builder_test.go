@@ -120,7 +120,7 @@ func voteWithPassphrase(t *testing.T) *Transaction {
 	return BuildVote(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Votes: []string{"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
+				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
 			},
 			Nonce: 5,
 		},
@@ -135,7 +135,7 @@ func voteWithSecondPassphrase(t *testing.T) *Transaction {
 	transaction := BuildVote(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Votes: []string{"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
+				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
 			},
 			Nonce: 5,
 		},
@@ -156,8 +156,10 @@ func unvoteVoteWithPassphrase(t *testing.T) *Transaction {
 		&Transaction{
 			Asset: &TransactionAsset{
 				Votes: []string{
-					"-034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
-					"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
+					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
+				},
+				Unvotes: []string{
+					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
 				},
 			},
 			Nonce: 5,
@@ -205,9 +207,9 @@ func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 		&Transaction{
 			Asset: &TransactionAsset{
 				Payments: []*MultiPaymentAsset{
-					{Amount: FlexToshi(111222), RecipientId: "DHKxXag9PjfjHBbPg3HQS5WCaQZdgDf6yi"},
-					{Amount: FlexToshi(222333), RecipientId: "DBzGiUk8UVjB2dKCfGRixknB7Ki3Zhqthp"},
-					{Amount: FlexToshi(333444), RecipientId: "DFa7vn1LvWAyTuVDrQUr5NKaM73cfjx2Cp"},
+					{Amount: FlexToshi(111222), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
+					{Amount: FlexToshi(222333), RecipientId: "0xb693449AdDa7EFc015D87944EAE8b7C37EB1690A"},
+					{Amount: FlexToshi(333444), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
 				},
 			},
 			Nonce: 5,
@@ -241,7 +243,7 @@ func htlcLockWithPassphrase(t *testing.T) *Transaction {
 				},
 			},
 			Nonce:        5,
-			RecipientId:  "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 		},
 		"This is a top secret passphrase",
 		"",
