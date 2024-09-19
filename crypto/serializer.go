@@ -108,14 +108,20 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 	}
 }
 
+func stripAddressPrefix(recipientId string) string {
+	address := recipientId[2:]
+	if strings.HasPrefix(address, "0x") {
+			address = address[2:]
+	}
+	return address
+}
+
+
 func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
 	binary.Write(ser, binary.LittleEndian, transaction.Expiration)
 	
-	address := transaction.RecipientId[2:]
-	if strings.HasPrefix(address, "0x") {
-		address = address[2:]
-	}
+	address := stripAddressPrefix(transaction.RecipientId)
 	
 	recipientBytes := HexDecode(address)
 
@@ -165,7 +171,7 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 
 	for _, element := range transaction.Asset.Payments {
 		binary.Write(ser, binary.LittleEndian, uint64(element.Amount))
-		ser.Write(Base58CheckDecodeFatal(element.RecipientId))
+		ser.Write(HexDecode(stripAddressPrefix(element.RecipientId)))
 	}
 }
 
@@ -178,7 +184,7 @@ func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Lock.SecretHash))
 	ser.WriteByte(transaction.Asset.Lock.Expiration.Type)
 	binary.Write(ser, binary.LittleEndian, transaction.Asset.Lock.Expiration.Value)
-	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
+	ser.Write(HexDecode(stripAddressPrefix(transaction.RecipientId)))
 }
 
 func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {

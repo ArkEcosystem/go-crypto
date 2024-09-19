@@ -238,6 +238,14 @@ func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *
 		transaction.Asset.Payments = append(transaction.Asset.Payments, payment)
 	}
 
+	var sum uint64
+
+	for _, payment := range transaction.Asset.Payments {
+		sum += uint64(payment.Amount)
+	}
+		
+	transaction.Amount = FlexToshi(sum)
+
 	return transaction.ParseSignatures(o)
 }
 
