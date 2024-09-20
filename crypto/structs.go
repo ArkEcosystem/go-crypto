@@ -113,12 +113,17 @@ type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
 	Unvotes        []string                          `json:"unvotes,omitempty"`
 	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
+	Username       *UsernameAsset                   `json:"validator,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
 	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
 }
 
 type ValidatorAsset struct {
 	ValidatorPublicKey string `json:"validatorPublicKey,omitempty"`
+}
+
+type UsernameAsset struct {
+	Username string `json:"username,omitempty"`
 }
 
 type MultiSignatureRegistrationAsset struct {

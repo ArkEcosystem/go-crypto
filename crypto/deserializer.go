@@ -75,6 +75,10 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 		transaction = deserializeMultiPayment(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.ValidatorResignation:
 		transaction = deserializeValidatorResignation(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.UsernameRegistration:
+		transaction = deserializeUsernameRegistration(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.UsernameResignation:
+		transaction = deserializeUsernameResignation(typeSpecificOffset, transaction)
 	}
 
 	return transaction
@@ -108,6 +112,25 @@ func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Tran
 
 	return transaction.ParseSignatures(o)
 }
+
+func deserializeUsernameRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
+
+	usernameLength := int(transaction.Serialized[o])
+	o++
+
+	username := string(transaction.Serialized[o : o+usernameLength])
+	o += usernameLength
+
+	transaction.Asset = &TransactionAsset{
+		Username: &UsernameAsset{
+			Username: username,
+		},
+	}
+
+	return transaction.ParseSignatures(o)
+}
+
 
 func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
@@ -216,5 +239,9 @@ func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *
 }
 
 func deserializeValidatorResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	return transaction.ParseSignatures(typeSpecificOffset)
+}
+
+func deserializeUsernameResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	return transaction.ParseSignatures(typeSpecificOffset)
 }

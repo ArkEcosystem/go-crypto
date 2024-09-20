@@ -67,17 +67,21 @@ func (transaction *Transaction) serializeVendorField(ser *bytes.Buffer) {
 func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 	switch transaction.Type {
 	case TRANSACTION_TYPES.Transfer:
-		transaction.serializeTransfer(ser)
+			transaction.serializeTransfer(ser)
 	case TRANSACTION_TYPES.ValidatorRegistration:
-		transaction.serializeValidatorRegistration(ser)
+			transaction.serializeValidatorRegistration(ser)
 	case TRANSACTION_TYPES.Vote:
-		transaction.serializeVote(ser)
+			transaction.serializeVote(ser)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
-		transaction.serializeMultiSignatureRegistration(ser)
+			transaction.serializeMultiSignatureRegistration(ser)
 	case TRANSACTION_TYPES.MultiPayment:
-		transaction.serializeMultiPayment(ser)
+			transaction.serializeMultiPayment(ser)
 	case TRANSACTION_TYPES.ValidatorResignation:
-		transaction.serializeValidatorResignation(ser)
+			transaction.serializeValidatorResignation(ser)
+	case TRANSACTION_TYPES.UsernameRegistration:
+			transaction.serializeUsernameRegistration(ser)
+	case TRANSACTION_TYPES.UsernameResignation:
+			transaction.serializeUsernameResignation(ser)
 	}
 }
 
@@ -117,6 +121,15 @@ func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 
 func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Validator.ValidatorPublicKey))
+}
+
+func (transaction *Transaction) serializeUsernameRegistration(ser *bytes.Buffer) {
+	// Write the length of the username
+	username := transaction.Asset.Username.Username
+	writeNumberAsByte(ser, len(username), "username length")
+
+	// Write the username
+	ser.Write([]byte(username))
 }
 
 func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
@@ -159,6 +172,9 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 }
 
 func (transaction *Transaction) serializeValidatorResignation(buffer *bytes.Buffer) {
-	// noop
+	// No specific data to serialize for validator resignation, just parse the signatures
 }
 
+func (transaction *Transaction) serializeUsernameResignation(ser *bytes.Buffer) {
+	// No specific data to serialize for username resignation, just parse the signatures
+}
