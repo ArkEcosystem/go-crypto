@@ -12,8 +12,6 @@ import (
 	"encoding/binary"
 	"log"
 	"strings"
-
-	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 func writeNumberAsByte(ser *bytes.Buffer, num interface{}, name string) {

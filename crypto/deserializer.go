@@ -9,8 +9,6 @@ package crypto
 
 import (
 	"encoding/binary"
-	
-	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 const compactPubKeyLen = 33 // bytes
