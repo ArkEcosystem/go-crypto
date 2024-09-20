@@ -11,16 +11,13 @@ var (
 	CONFIG_NETWORK = &Network{}
 	CONFIG_FEES    = []FlexToshi{
 		TRANSACTION_FEES.Transfer,
-		TRANSACTION_FEES.SecondSignatureRegistration,
 		TRANSACTION_FEES.ValidatorRegistration,
 		TRANSACTION_FEES.Vote,
 		TRANSACTION_FEES.MultiSignatureRegistration,
-		TRANSACTION_FEES.Ipfs,
 		TRANSACTION_FEES.MultiPayment,
 		TRANSACTION_FEES.ValidatorResignation,
-		TRANSACTION_FEES.HtlcLock,
-		TRANSACTION_FEES.HtlcClaim,
-		TRANSACTION_FEES.HtlcRefund,
+		TRANSACTION_FEES.UsernameRegistration,
+		TRANSACTION_FEES.UsernameResignation,
 	}
 	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
 )

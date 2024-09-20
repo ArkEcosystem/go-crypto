@@ -36,16 +36,13 @@ type PublicKey struct {
 
 type TransactionTypes struct {
 	Transfer                    uint16
-	SecondSignatureRegistration uint16
-	ValidatorRegistration        uint16
+	ValidatorRegistration       uint16
 	Vote                        uint16
 	MultiSignatureRegistration  uint16
-	Ipfs                        uint16
 	MultiPayment                uint16
-	ValidatorResignation         uint16
-	HtlcLock                    uint16
-	HtlcClaim                   uint16
-	HtlcRefund                  uint16
+	ValidatorResignation        uint16
+	UsernameRegistration        uint16
+	UsernameResignation         uint16
 }
 
 type TransactionTypeGroups struct {
@@ -55,16 +52,13 @@ type TransactionTypeGroups struct {
 
 type TransactionFees struct {
 	Transfer                    FlexToshi
-	SecondSignatureRegistration FlexToshi
-	ValidatorRegistration        FlexToshi
+	ValidatorRegistration       FlexToshi
 	Vote                        FlexToshi
 	MultiSignatureRegistration  FlexToshi
-	Ipfs                        FlexToshi
 	MultiPayment                FlexToshi
-	ValidatorResignation         FlexToshi
-	HtlcLock                    FlexToshi
-	HtlcClaim                   FlexToshi
-	HtlcRefund                  FlexToshi
+	ValidatorResignation        FlexToshi
+	UsernameRegistration        FlexToshi
+	UsernameResignation         FlexToshi
 }
 
 func (fi *FlexToshi) UnmarshalJSON(b []byte) error {
@@ -118,18 +112,9 @@ type Message struct {
 type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
 	Unvotes        []string                          `json:"unvotes,omitempty"`
-	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
 	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
-	Ipfs           string                            `json:"ipfs,omitempty"`
 	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
-	Lock           *HtlcLockAsset                    `json:"lock,omitempty"`
-	Claim          *HtlcClaimAsset                   `json:"claim,omitempty"`
-	Refund         *HtlcRefundAsset                  `json:"refund,omitempty"`
-}
-
-type SecondSignatureRegistrationAsset struct {
-	PublicKey string `json:"publicKey,omitempty"`
 }
 
 type ValidatorAsset struct {
@@ -144,23 +129,4 @@ type MultiSignatureRegistrationAsset struct {
 type MultiPaymentAsset struct {
 	Amount      FlexToshi `json:"amount,omitempty"`
 	RecipientId string    `json:"recipientId,omitempty"`
-}
-
-type HtlcLockAsset struct {
-	SecretHash string                   `json:"secretHash,omitempty"`
-	Expiration *HtlcLockExpirationAsset `json:"expiration,omitempty"`
-}
-
-type HtlcLockExpirationAsset struct {
-	Type  uint8  `json:"type,omitempty"`
-	Value uint32 `json:"value,omitempty"`
-}
-
-type HtlcClaimAsset struct {
-	LockTransactionId string `json:"lockTransactionId,omitempty"`
-	UnlockSecret      string `json:"unlockSecret,omitempty"`
-}
-
-type HtlcRefundAsset struct {
-	LockTransactionId string `json:"lockTransactionId,omitempty"`
 }

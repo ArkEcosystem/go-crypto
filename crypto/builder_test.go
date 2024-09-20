@@ -67,16 +67,6 @@ func transferMultiSignature(t *testing.T) *Transaction {
 	return transaction
 }
 
-func secondSignatureRegistration(t *testing.T) *Transaction {
-	return BuildSecondSignatureRegistration(
-		&Transaction{
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"This is a top secret second passphrase",
-	)
-}
-
 func validatorRegistrationWithPassphrase(t *testing.T) *Transaction {
 	return BuildValidatorRegistration(
 		&Transaction{
@@ -189,19 +179,6 @@ func multiSignatureRegistrationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func ipfsWithPassphrase(t *testing.T) *Transaction {
-	return BuildIpfs(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Ipfs: "QmYSK2JyM3RyDyB52caZCTKFR3HKniEcMnNJYdk8DQ6KKB",
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
-
 func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 	return BuildMultiPayment(
 		&Transaction{
@@ -230,74 +207,19 @@ func validatorResignationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func htlcLockWithPassphrase(t *testing.T) *Transaction {
-	return BuildHtlcLock(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Lock: &HtlcLockAsset{
-					SecretHash: "ca270216d522f0aa774edea7ad3c7440e8214f2625da0edbc948b28a0d3f5ead",
-					Expiration: &HtlcLockExpirationAsset{
-						Type:  2,
-						Value: 111222333,
-					},
-				},
-			},
-			Nonce:        5,
-			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
-
-func htlcClaimWithPassphrase(t *testing.T) *Transaction {
-	return BuildHtlcClaim(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Claim: &HtlcClaimAsset{
-					LockTransactionId: "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9",
-					UnlockSecret:      "7a5d646b6d604e466e6e395554767431606c5d434a5b466f68635261714e685a",
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
-
-func htlcRefundWithPassphrase(t *testing.T) *Transaction {
-	return BuildHtlcRefund(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Refund: &HtlcRefundAsset{
-					LockTransactionId: "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9",
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
 
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
 		"TransferWithPassphrase":                  transferWithPassphrase,
 		"TransferWithSecondPassphrase":            transferWithSecondPassphrase,
-		"SecondSignatureRegistration":             secondSignatureRegistration,
 		"ValidatorRegistrationWithPassphrase":     validatorRegistrationWithPassphrase,
 		"ValidatorRegistrationWithSecondPassphrase": validatorRegistrationWithSecondPassphrase,
 		"VoteWithPassphrase":                      voteWithPassphrase,
 		"VoteWithSecondPassphrase":                voteWithSecondPassphrase,
 		"UnvoteVoteWithPassphrase":                unvoteVoteWithPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
-		"IpfsWithPassphrase":                      ipfsWithPassphrase,
 		"MultiPaymentWithPassphrase":              multiPaymentWithPassphrase,
 		"ValidatorResignationWithPassphrase":      validatorResignationWithPassphrase,
-		"HtlcLockWithPassphrase":                  htlcLockWithPassphrase,
-		"HtlcClaimWithPassphrase":                 htlcClaimWithPassphrase,
-		"HtlcRefundWithPassphrase":                htlcRefundWithPassphrase,
 	} {
 		// Iterate only over Schnorr signature type
 		for signatureTypeString, signatureType := range map[string]int{

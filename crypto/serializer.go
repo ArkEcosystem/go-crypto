@@ -70,26 +70,16 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 	switch transaction.Type {
 	case TRANSACTION_TYPES.Transfer:
 		transaction.serializeTransfer(ser)
-	case TRANSACTION_TYPES.SecondSignatureRegistration:
-		transaction.serializeSecondSignatureRegistration(ser)
 	case TRANSACTION_TYPES.ValidatorRegistration:
 		transaction.serializeValidatorRegistration(ser)
 	case TRANSACTION_TYPES.Vote:
 		transaction.serializeVote(ser)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
 		transaction.serializeMultiSignatureRegistration(ser)
-	case TRANSACTION_TYPES.Ipfs:
-		transaction.serializeIpfs(ser)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction.serializeMultiPayment(ser)
 	case TRANSACTION_TYPES.ValidatorResignation:
 		transaction.serializeValidatorResignation(ser)
-	case TRANSACTION_TYPES.HtlcLock:
-		transaction.serializeHtlcLock(ser)
-	case TRANSACTION_TYPES.HtlcClaim:
-		transaction.serializeHtlcClaim(ser)
-	case TRANSACTION_TYPES.HtlcRefund:
-		transaction.serializeHtlcRefund(ser)
 	}
 }
 
@@ -127,10 +117,6 @@ func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 	ser.Write(recipientBytes)
 }
 
-func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.Buffer) {
-	ser.Write(HexDecode(transaction.Asset.Signature.PublicKey))
-}
-
 func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Validator.ValidatorPublicKey))
 }
@@ -165,10 +151,6 @@ func (transaction *Transaction) serializeMultiSignatureRegistration(ser *bytes.B
 	ser.Write(HexDecode(strings.Join(publicKeys, "")))
 }
 
-func (transaction *Transaction) serializeIpfs(ser *bytes.Buffer) {
-	ser.Write(b58.Decode(transaction.Asset.Ipfs))
-}
-
 func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, uint16(len(transaction.Asset.Payments)))
 
@@ -182,19 +164,3 @@ func (transaction *Transaction) serializeValidatorResignation(buffer *bytes.Buff
 	// noop
 }
 
-func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
-	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
-	ser.Write(HexDecode(transaction.Asset.Lock.SecretHash))
-	ser.WriteByte(transaction.Asset.Lock.Expiration.Type)
-	binary.Write(ser, binary.LittleEndian, transaction.Asset.Lock.Expiration.Value)
-	ser.Write(HexDecode(stripAddressPrefix(transaction.RecipientId)))
-}
-
-func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {
-	ser.Write(HexDecode(transaction.Asset.Claim.LockTransactionId))
-	ser.Write(HexDecode(transaction.Asset.Claim.UnlockSecret))
-}
-
-func (transaction *Transaction) serializeHtlcRefund(ser *bytes.Buffer) {
-	ser.Write(HexDecode(transaction.Asset.Refund.LockTransactionId))
-}
