@@ -7,6 +7,14 @@
 
 package crypto
 
+import (
+	"errors"
+
+	"encoding/hex"
+
+	blst "github.com/supranational/blst/bindings/go"
+)
+
 func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	transaction.Sign(passphrase)
 
@@ -97,6 +105,13 @@ func BuildTransferMultiSignature(transaction *Transaction, signerIndex int, pass
 func BuildValidatorRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
 	setCommonFields(transaction, TRANSACTION_TYPES.ValidatorRegistration)
 
+	if transaction.Asset != nil && transaction.Asset.Validator != nil {
+		err := validateBLSPublicKey(transaction.Asset.Validator.ValidatorPublicKey)
+		if err != nil {
+			panic("Invalid BLS public key: " + err.Error())
+		}
+	}
+
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
@@ -161,3 +176,26 @@ func BuildValidatorResignation(transaction *Transaction, passphrase string, seco
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
+
+func validateBLSPublicKey(publicKey string) error {
+	if len(publicKey) != 96 {
+		return errors.New("invalid BLS public key length")
+	}
+
+	// Decode the public key from hex
+	pubKeyBytes, err := hex.DecodeString(publicKey)
+	if err != nil {
+		return errors.New("invalid BLS public key hex format")
+	}
+
+	// Deserialize the public key into a blst.P1Affine structure
+	var pubKey blst.P1Affine
+	pubKey.Deserialize(pubKeyBytes)
+
+	// Check if the public key is in G1 group and is valid
+	if !pubKey.InG1() {
+		return errors.New("invalid BLS public key: not in G1 group or invalid structure")
+	}
+
+	return nil
+}
