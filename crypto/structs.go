@@ -170,3 +170,7 @@ type HtlcRefundAsset struct {
 type BLSPrivateKey struct {
 	PrivateKey *blst.SecretKey
 }
+
+type BLSPublicKey struct {
+	PublicKey *blst.P1Affine
+}
