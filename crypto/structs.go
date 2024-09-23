@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/btcsuite/btcd/btcec"
+	blst "github.com/supranational/blst/bindings/go"
 )
 
 type FlexToshi uint64
@@ -164,4 +165,8 @@ type HtlcClaimAsset struct {
 
 type HtlcRefundAsset struct {
 	LockTransactionId string `json:"lockTransactionId,omitempty"`
+}
+
+type BLSPrivateKey struct {
+	PrivateKey *blst.SecretKey
 }
