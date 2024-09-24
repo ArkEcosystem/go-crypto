@@ -8,31 +8,26 @@
 package crypto
 
 import (
+	"encoding/hex"
 	"errors"
-
-	b58 "github.com/btcsuite/btcutil/base58"
+	"strings"
 )
 
 func AddressFromPassphrase(passphrase string) (string, error) {
 	privateKey, err := PrivateKeyFromPassphrase(passphrase)
-
 	if err != nil {
 		return "", err
 	}
-
 	return privateKey.ToAddress(), nil
 }
 
 func ValidateAddress(address string) (bool, error) {
-	_, version, err := b58.CheckDecode(address)
-
+	if !strings.HasPrefix(address, "0x") || len(address) != 42 {
+		return false, errors.New("invalid address format")
+	}
+	_, err := hex.DecodeString(address[2:])
 	if err != nil {
 		return false, err
 	}
-
-	if GetNetwork().Version != version {
-		return false, errors.New("network version mismatch")
-	}
-
 	return true, nil
 }
