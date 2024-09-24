@@ -19,3 +19,6 @@
 
 # Visual Studio Code
 .vscode
+
+# Coverage
+coverage.txt
