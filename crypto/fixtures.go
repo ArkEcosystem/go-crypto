@@ -46,6 +46,26 @@ func GetMessageFixture() TestingMessageFixture {
 	return fixture
 }
 
+
+
+func GetBLSValidatorFixture() BLSValidatorFixture {
+	data := GetFixture("bls_validator")
+
+	var fixture BLSValidatorFixture
+	_ = json.Unmarshal([]byte(data), &fixture)
+
+	return fixture
+}
+
+func GetBLSKeysFixture() []BLSKeyFixture {
+	data := GetFixture("bls_keys")
+
+	var fixtures []BLSKeyFixture
+	_ = json.Unmarshal([]byte(data), &fixtures)
+
+	return fixtures
+}
+
 type TestingFixture struct {
 	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
 	Transaction Transaction `json:"transaction"`
@@ -69,4 +89,15 @@ type TestingMessageFixture struct {
 		Message   string `json:"message,omitempty"`
 	} `json:"data,omitempty"`
 	Passphrase string `json:"passphrase,omitempty"`
+}
+type BLSValidatorFixture struct {
+	BLSPublicKey  string `json:"bls_public_key"`
+	BLSPrivateKey string `json:"bls_private_key"`
+	Passphrase    string `json:"passphrase"`
+}
+
+type BLSKeyFixture struct {
+	BLSPublicKey  string `json:"bls_public_key"`
+	BLSPrivateKey string `json:"bls_private_key"`
+	Passphrase    string `json:"passphrase"`
 }

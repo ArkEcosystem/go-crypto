@@ -8,6 +8,8 @@ require (
 	github.com/ellemouton/schnorr v0.0.0-20230301092540-7b5fdc085456
 	github.com/fatih/structs v1.1.0
 	github.com/stretchr/testify v1.9.0
+	github.com/supranational/blst v0.3.13
+	github.com/tyler-smith/go-bip39 v1.1.0
 	golang.org/x/crypto v0.27.0
 )
 

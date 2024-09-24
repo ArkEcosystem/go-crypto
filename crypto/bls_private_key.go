@@ -1,0 +1,36 @@
+// This file is part of Ark Go Crypto.
+//
+// (c) Ark Ecosystem <info@ark.io>
+//
+// For the full copyright and license information, please view the LICENSE
+// file that was distributed with this source code.
+
+package crypto
+
+import (
+	"encoding/hex"
+
+	blst "github.com/supranational/blst/bindings/go"
+	"github.com/tyler-smith/go-bip39"
+)
+
+func (k *BLSPrivateKey) ToHex() string {
+	return hex.EncodeToString(k.PrivateKey.Serialize())
+}
+
+func (k *BLSPrivateKey) FromPassphrase(passphrase string) error {
+	seed := bip39.NewSeed(passphrase, "")
+
+	k.PrivateKey = blst.KeyGen(seed[:]).DeriveChildEip2333(0)
+
+	return nil
+}
+
+func BLSPrivateKeyFromPassphrase(passphrase string) (*BLSPrivateKey, error) {
+	key := &BLSPrivateKey{}
+	err := key.FromPassphrase(passphrase)
+	if err != nil {
+		return nil, err
+	}
+	return key, nil
+}
