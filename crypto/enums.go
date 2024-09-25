@@ -10,16 +10,13 @@ package crypto
 var (
 	TRANSACTION_TYPES = &TransactionTypes{
 		Transfer: 0,
-		SecondSignatureRegistration: 1,
 		ValidatorRegistration: 2,
 		Vote: 3,
 		MultiSignatureRegistration: 4,
-		Ipfs: 5,
 		MultiPayment: 6,
 		ValidatorResignation: 7,
-		HtlcLock: 8,
-		HtlcClaim: 9,
-		HtlcRefund: 10,
+		UsernameRegistration: 8,
+		UsernameResignation: 9,
 	}
 	TRANSACTION_TYPE_GROUPS = &TransactionTypeGroups{
 		Test: 0,
@@ -27,16 +24,13 @@ var (
 	}
 	TRANSACTION_FEES = &TransactionFees{
 		Transfer: 10000000,
-		SecondSignatureRegistration: 500000000,
 		ValidatorRegistration: 2500000000,
 		Vote: 100000000,
 		MultiSignatureRegistration: 500000000,
-		Ipfs: 500000000,
 		MultiPayment: 10000000,
 		ValidatorResignation: 2500000000,
-		HtlcLock: 10000000,
-		HtlcClaim: 0,
-		HtlcRefund: 0,
+		UsernameRegistration: 2500000000,
+		UsernameResignation: 2500000000,
 	}
 )
 

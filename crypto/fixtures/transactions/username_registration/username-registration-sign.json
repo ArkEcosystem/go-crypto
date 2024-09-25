@@ -1,0 +1,18 @@
+{
+    "transaction": {
+        "version": 1,
+        "network": 30,
+        "typeGroup": 1,
+        "type": 8,
+        "nonce": "4",
+        "senderPublicKey": "023efc1da7f315f3c533a4080e491f32cd4219731cef008976c3876539e1f192d3",
+        "fee": "2500000000",
+        "amount": "0",
+        "asset": {
+            "username": "simple_tx_tester"
+        },
+        "signature": "70014805da364407f71ca7e09dae5a685af562b985279e370d1a936ebbe7c2545dca35b0f0f30b72eaee0ca042beb6ef2cab5666dd42831a7d0dacac3d962563",
+        "id": "a50b909f5b483ef1a9bebff66582de169782d3a8adc3e8fca7b183c39738c721"
+    },
+    "serializedHex": "ff011e0100000008000400000000000000023efc1da7f315f3c533a4080e491f32cd4219731cef008976c3876539e1f192d300f9029500000000001073696d706c655f74785f74657374657270014805da364407f71ca7e09dae5a685af562b985279e370d1a936ebbe7c2545dca35b0f0f30b72eaee0ca042beb6ef2cab5666dd42831a7d0dacac3d962563"
+}

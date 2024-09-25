@@ -9,8 +9,6 @@ package crypto
 
 import (
 	"encoding/binary"
-	
-	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 const compactPubKeyLen = 33 // bytes
@@ -67,26 +65,20 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 	switch transaction.Type {
 	case TRANSACTION_TYPES.Transfer:
 		transaction = deserializeTransfer(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.SecondSignatureRegistration:
-		transaction = deserializeSecondSignatureRegistration(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.ValidatorRegistration:
 		transaction = deserializeValidatorRegistration(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.Vote:
 		transaction = deserializeVote(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
 		transaction = deserializeMultiSignatureRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.Ipfs:
-		transaction = deserializeIpfs(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction = deserializeMultiPayment(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.ValidatorResignation:
 		transaction = deserializeValidatorResignation(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.HtlcLock:
-		transaction = deserializeHtlcLock(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.HtlcClaim:
-		transaction = deserializeHtlcClaim(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.HtlcRefund:
-		transaction = deserializeHtlcRefund(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.UsernameRegistration:
+		transaction = deserializeUsernameRegistration(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.UsernameResignation:
+		transaction = deserializeUsernameResignation(typeSpecificOffset, transaction)
 	}
 
 	return transaction
@@ -121,15 +113,24 @@ func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Tran
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+func deserializeUsernameRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	o := typeSpecificOffset
+
+	usernameLength := int(transaction.Serialized[o])
+	o++
+
+	username := string(transaction.Serialized[o : o+usernameLength])
+	o += usernameLength
+
 	transaction.Asset = &TransactionAsset{
-		Signature: &SecondSignatureRegistrationAsset{
-			PublicKey: HexEncode(transaction.Serialized[typeSpecificOffset:typeSpecificOffset + compactPubKeyLen]),
+		Username: &UsernameAsset{
+			Username: username,
 		},
 	}
 
-	return transaction.ParseSignatures(typeSpecificOffset + compactPubKeyLen)
+	return transaction.ParseSignatures(o)
 }
+
 
 func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
@@ -207,26 +208,6 @@ func deserializeMultiSignatureRegistration(typeSpecificOffset int, transaction *
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeIpfs(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	// ipfs hash:
-	// transaction.Serialized[offset + 0] - function
-	// transaction.Serialized[offset + 1] - length (L)
-	// transaction.Serialized[offset + 2 : offset + 2 + L] - data
-
-	o := typeSpecificOffset
-
-	length := int(transaction.Serialized[o + 1])
-
-	ipfsHash := transaction.Serialized[o:o + 2 + length]
-	o += 2 + length
-
-	transaction.Asset = &TransactionAsset{
-		Ipfs: b58.Encode(ipfsHash),
-	}
-
-	return transaction.ParseSignatures(o)
-}
-
 func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
@@ -261,66 +242,6 @@ func deserializeValidatorResignation(typeSpecificOffset int, transaction *Transa
 	return transaction.ParseSignatures(typeSpecificOffset)
 }
 
-func deserializeHtlcLock(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
-	o += 8
-
-	secretHash := HexEncode(transaction.Serialized[o:o + 32])
-	o += 32
-
-	expirationType := transaction.Serialized[o]
-	o++
-
-	expirationValue := binary.LittleEndian.Uint32(transaction.Serialized[o:o + 4])
-	o += 4
-
-	transaction.Asset = &TransactionAsset{
-		Lock: &HtlcLockAsset{
-			SecretHash: secretHash,
-			Expiration: &HtlcLockExpirationAsset{
-				Type: expirationType,
-				Value: expirationValue,
-			},
-		},
-	}
-
-	transaction.RecipientId, o = deserializeAddress(transaction.Serialized, o)
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeHtlcClaim(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	lockTransactionId := HexEncode(transaction.Serialized[o:o + 32])
-	o += 32
-
-	unlockSecret := HexEncode(transaction.Serialized[o:o + 32])
-	o += 32
-
-	transaction.Asset = &TransactionAsset{
-		Claim: &HtlcClaimAsset{
-			LockTransactionId: lockTransactionId,
-			UnlockSecret: unlockSecret,
-		},
-	}
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeHtlcRefund(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	lockTransactionId := HexEncode(transaction.Serialized[o:o + 32])
-	o += 32
-
-	transaction.Asset = &TransactionAsset{
-		Refund: &HtlcRefundAsset{
-			LockTransactionId: lockTransactionId,
-		},
-	}
-
-	return transaction.ParseSignatures(o)
+func deserializeUsernameResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
+	return transaction.ParseSignatures(typeSpecificOffset)
 }
