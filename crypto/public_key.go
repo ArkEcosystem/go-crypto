@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/btcsuite/btcd/btcec"
-	"github.com/hbakhtiyor/schnorr"
+	"github.com/ellemouton/schnorr"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -102,41 +102,38 @@ func (publicKey *PublicKey) SerializeUncompressed() []byte {
 	return publicKey.PublicKey.SerializeUncompressed()
 }
 
-func (publicKey *PublicKey) Verify(signature []byte, data []byte) (bool, error) {
-	if isSchnorrSignature(len(signature)) {
-		return publicKey.VerifySchnorr(signature, data)
-	}
-	return publicKey.VerifyECDSA(signature, data)
-}
-
-func (publicKey *PublicKey) VerifyECDSA(signature []byte, data []byte) (bool, error) {
-	parsedSignature, err := btcec.ParseSignature(signature, btcec.S256())
-	if err != nil {
-		return false, err
-	}
-	verified := parsedSignature.Verify(data, publicKey.PublicKey)
-	if !verified {
-		return false, nil
-	}
-	return true, nil
+func (publicKey *PublicKey) Verify(signature []byte, hash []byte) (bool, error) {
+	return publicKey.VerifySchnorr(signature, hash)
 }
 
 func (publicKey *PublicKey) VerifySchnorr(signature []byte, hash []byte) (bool, error) {
 	if len(signature) != 64 {
 		return false, fmt.Errorf("VerifySchnorr: signature is %d bytes, should be 64", len(signature))
 	}
-	var signatureArr [64]byte
-	copy(signatureArr[:], signature)
 	if len(hash) != 32 {
 		return false, fmt.Errorf("VerifySchnorr: message hash is %d bytes, should be 32", len(hash))
 	}
-	var hashArr [32]byte
-	copy(hashArr[:], hash)
-	publicKeyBytes := publicKey.SerializeCompressed()
-	if len(publicKeyBytes) != 33 {
-		return false, fmt.Errorf("VerifySchnorr: public key is %d bytes, should be 33", len(publicKeyBytes))
+
+	// Parse the signature using the schnorr package
+	sig, err := schnorr.NewSignatureFromBytes(signature)
+	if err != nil {
+		return false, fmt.Errorf("VerifySchnorr: failed to parse signature: %v", err)
 	}
-	var publicKeyArr [33]byte
-	copy(publicKeyArr[:], publicKeyBytes)
-	return schnorr.Verify(publicKeyArr, hashArr, signatureArr)
+
+	// Parse the public key using the schnorr package
+	var schnorrPubKey *schnorr.PublicKey
+	if len(publicKey.PublicKey.SerializeCompressed()) == 33 {
+		schnorrPubKey, err = schnorr.ParsePlainPubKey(publicKey.PublicKey.SerializeCompressed())
+	} else {
+		schnorrPubKey, err = schnorr.ParseXOnlyPubKey(publicKey.PublicKey.SerializeCompressed())
+	}
+
+	if err != nil {
+		return false, fmt.Errorf("VerifySchnorr: failed to parse public key: %v", err)
+	}
+
+	// Verify the signature
+	err = sig.Verify(schnorrPubKey, hash) // Assuming `Verify` returns only bool
+
+	return err == nil, err
 }

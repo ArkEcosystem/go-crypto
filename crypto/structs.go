@@ -38,12 +38,12 @@ type PublicKey struct {
 type TransactionTypes struct {
 	Transfer                    uint16
 	SecondSignatureRegistration uint16
-	DelegateRegistration        uint16
+	ValidatorRegistration        uint16
 	Vote                        uint16
 	MultiSignatureRegistration  uint16
 	Ipfs                        uint16
 	MultiPayment                uint16
-	DelegateResignation         uint16
+	ValidatorResignation         uint16
 	HtlcLock                    uint16
 	HtlcClaim                   uint16
 	HtlcRefund                  uint16
@@ -57,12 +57,12 @@ type TransactionTypeGroups struct {
 type TransactionFees struct {
 	Transfer                    FlexToshi
 	SecondSignatureRegistration FlexToshi
-	DelegateRegistration        FlexToshi
+	ValidatorRegistration        FlexToshi
 	Vote                        FlexToshi
 	MultiSignatureRegistration  FlexToshi
 	Ipfs                        FlexToshi
 	MultiPayment                FlexToshi
-	DelegateResignation         FlexToshi
+	ValidatorResignation         FlexToshi
 	HtlcLock                    FlexToshi
 	HtlcClaim                   FlexToshi
 	HtlcRefund                  FlexToshi
@@ -118,8 +118,9 @@ type Message struct {
 
 type TransactionAsset struct {
 	Votes          []string                          `json:"votes,omitempty"`
+	Unvotes        []string                          `json:"unvotes,omitempty"`
 	Signature      *SecondSignatureRegistrationAsset `json:"signature,omitempty"`
-	Delegate       *DelegateAsset                    `json:"delegate,omitempty"`
+	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
 	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
 	Ipfs           string                            `json:"ipfs,omitempty"`
 	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
@@ -132,8 +133,8 @@ type SecondSignatureRegistrationAsset struct {
 	PublicKey string `json:"publicKey,omitempty"`
 }
 
-type DelegateAsset struct {
-	Username string `json:"username,omitempty"`
+type ValidatorAsset struct {
+	ValidatorPublicKey string `json:"validatorPublicKey,omitempty"`
 }
 
 type MultiSignatureRegistrationAsset struct {

@@ -10,11 +10,10 @@ package crypto
 import (
 	"crypto/sha256"
 	"fmt"
-	"math/big"
 
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/btcsuite/btcd/btcec"
-	"github.com/hbakhtiyor/schnorr"
+	"github.com/btcsuite/btcutil/base58"
+	"github.com/ellemouton/schnorr"
 )
 
 func PrivateKeyFromPassphrase(passphrase string) (*PrivateKey, error) {
@@ -67,34 +66,68 @@ func (privateKey *PrivateKey) Serialize() []byte {
 	return privateKey.PrivateKey.Serialize()
 }
 
-func (privateKey *PrivateKey) SignECDSA(hash []byte) ([]byte, error) {
-	signed, err := privateKey.PrivateKey.Sign(hash)
-	if err != nil {
-		return nil, err
-	}
-	return signed.Serialize(), nil
-}
-
-func (privateKey *PrivateKey) SignSchnorr(hash []byte) ([]byte, error) {
-	if len(hash) != 32 {
-		return nil, fmt.Errorf("SignSchnorr: message hash is %d bytes, should be 32", len(hash))
-	}
-	privKeyInt := new(big.Int).SetBytes(privateKey.PrivateKey.Serialize())
-	var hashArr [32]byte
-	copy(hashArr[:], hash)
-	signed, err := schnorr.Sign(privKeyInt, hashArr)
-	if err != nil {
-		return nil, err
-	}
-	return signed[:], nil
-}
-
 func (privateKey *PrivateKey) Sign(hash []byte) ([]byte, error) {
-	switch CONFIG_SIGNATURE_TYPE {
-	case SIGNATURE_TYPE_ECDSA:
-		return privateKey.SignECDSA(hash)
-	case SIGNATURE_TYPE_SCHNORR:
-		return privateKey.SignSchnorr(hash)
+	// Parse the private key using the schnorr package
+	schnorrPrivKey, err := schnorr.ParsePrivKeyHexString(HexEncode(privateKey.PrivateKey.Serialize()))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse Schnorr private key: %v", err)
 	}
-	return nil, fmt.Errorf("Sign: unknown signature type configured: %d", CONFIG_SIGNATURE_TYPE)
+
+	// Sign the hash using Schnorr
+	signature, err := schnorrPrivKey.Sign(hash, make([]byte, 32))
+	if err != nil {
+		return nil, fmt.Errorf("failed to sign hash with Schnorr: %v", err)
+	}
+
+	// Convert [64]byte to []byte
+	sigArray := signature.Bytes()
+	sigSlice := make([]byte, 64)
+	copy(sigSlice, sigArray[:])
+
+	return sigSlice, nil
+}
+
+func (privateKey *PrivateKey) SignMulti(hash []byte, signerIndex int) ([]byte, error) {
+	// Parse the private key using the schnorr package
+	schnorrPrivKey, err := schnorr.ParsePrivKeyBytes(privateKey.PrivateKey.Serialize())
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse Schnorr private key: %v", err)
+	}
+
+	// Sign the hash using Schnorr
+	signature, err := schnorrPrivKey.Sign(hash, make([]byte, 32))
+	if err != nil {
+		return nil, fmt.Errorf("failed to sign hash with Schnorr: %v", err)
+	}
+
+	// Convert [64]byte to []byte
+	sigArray := signature.Bytes()
+	sigSlice := make([]byte, 64)
+	copy(sigSlice, sigArray[:])
+
+	// Prepend the signer index to the signature
+	signatureWithIndex := append([]byte{byte(signerIndex)}, sigSlice...)
+
+	return signatureWithIndex, nil
+}
+
+func (privateKey *PrivateKey) SecondSign(hash []byte) ([]byte, error) {
+	// Parse the private key using the schnorr package
+	schnorrPrivKey, err := schnorr.ParsePrivKeyBytes(privateKey.PrivateKey.Serialize())
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse Schnorr private key: %v", err)
+	}
+
+	// Sign the hash using Schnorr
+	signature, err := schnorrPrivKey.Sign(hash, make([]byte, 32))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create second Schnorr signature: %v", err)
+	}
+
+	// Convert [64]byte to []byte
+	sigArray := signature.Bytes()
+	sigSlice := make([]byte, 64)
+	copy(sigSlice, sigArray[:])
+
+	return sigSlice, nil
 }

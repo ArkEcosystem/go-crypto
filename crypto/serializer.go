@@ -10,7 +10,6 @@ package crypto
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"strings"
 
@@ -41,12 +40,8 @@ func (transaction *Transaction) serialize(includeSignature bool, includeSecondSi
 func (transaction *Transaction) serializeHeader(ser *bytes.Buffer) {
 	ser.WriteByte(uint8(0xFF))
 
-	if transaction.Version == 2 {
-		ser.WriteByte(transaction.Version)
-	} else {
-		log.Fatal("Serialization is only implemented for version 2 transactions")
-	}
-
+	ser.WriteByte(transaction.Version)
+	
 	if transaction.Network == 0 {
 		ser.WriteByte(GetNetwork().Version)
 	} else {
@@ -56,7 +51,9 @@ func (transaction *Transaction) serializeHeader(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, transaction.TypeGroup)
 	binary.Write(ser, binary.LittleEndian, transaction.Type)
 	binary.Write(ser, binary.LittleEndian, transaction.Nonce)
-	ser.Write(HexDecode(transaction.SenderPublicKey))
+	if transaction.SenderPublicKey != "" {
+		ser.Write(HexDecode(transaction.SenderPublicKey))
+	}
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Fee))
 }
 
@@ -75,8 +72,8 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 		transaction.serializeTransfer(ser)
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
 		transaction.serializeSecondSignatureRegistration(ser)
-	case TRANSACTION_TYPES.DelegateRegistration:
-		transaction.serializeDelegateRegistration(ser)
+	case TRANSACTION_TYPES.ValidatorRegistration:
+		transaction.serializeValidatorRegistration(ser)
 	case TRANSACTION_TYPES.Vote:
 		transaction.serializeVote(ser)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
@@ -85,8 +82,8 @@ func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
 		transaction.serializeIpfs(ser)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction.serializeMultiPayment(ser)
-	case TRANSACTION_TYPES.DelegateResignation:
-		transaction.serializeDelegateResignation(ser)
+	case TRANSACTION_TYPES.ValidatorResignation:
+		transaction.serializeValidatorResignation(ser)
 	case TRANSACTION_TYPES.HtlcLock:
 		transaction.serializeHtlcLock(ser)
 	case TRANSACTION_TYPES.HtlcClaim:
@@ -110,36 +107,54 @@ func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSi
 	}
 }
 
+func stripAddressPrefix(recipientId string) string {
+	address := recipientId[2:]
+	if strings.HasPrefix(address, "0x") {
+			address = address[2:]
+	}
+	return address
+}
+
+
 func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
 	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
 	binary.Write(ser, binary.LittleEndian, transaction.Expiration)
-	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
+	
+	address := stripAddressPrefix(transaction.RecipientId)
+	
+	recipientBytes := HexDecode(address)
+
+	ser.Write(recipientBytes)
 }
 
 func (transaction *Transaction) serializeSecondSignatureRegistration(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Signature.PublicKey))
 }
 
-func (transaction *Transaction) serializeDelegateRegistration(ser *bytes.Buffer) {
-	delegateBytes := []byte(transaction.Asset.Delegate.Username)
-
-	writeNumberAsByte(ser, len(delegateBytes), "delegate username")
-	ser.Write(delegateBytes)
+func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
+	ser.Write(HexDecode(transaction.Asset.Validator.ValidatorPublicKey))
 }
 
 func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
-	voteStrings := make([]string, 0)
+	// Serialize Votes
+	votes := transaction.Asset.Votes
+	unvotes := transaction.Asset.Unvotes
 
-	for _, element := range transaction.Asset.Votes {
-		pfx := "00"
-		if element[:1] == "+" {
-			pfx = "01"
-		}
-		voteStrings = append(voteStrings, fmt.Sprintf("%s%s", pfx, element[1:]))
+	// Write the number of votes
+	writeNumberAsByte(ser, len(votes), "number of votes")
+
+	// Write each vote in hexadecimal format
+	for _, vote := range votes {
+		ser.Write(HexDecode(vote))
 	}
 
-	writeNumberAsByte(ser, len(transaction.Asset.Votes), "number of votes")
-	ser.Write(HexDecode(strings.Join(voteStrings, "")))
+	// Write the number of unvotes
+	writeNumberAsByte(ser, len(unvotes), "number of unvotes")
+
+	// Write each unvote in hexadecimal format
+	for _, unvote := range unvotes {
+		ser.Write(HexDecode(unvote))
+	}
 }
 
 func (transaction *Transaction) serializeMultiSignatureRegistration(ser *bytes.Buffer) {
@@ -159,11 +174,11 @@ func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
 
 	for _, element := range transaction.Asset.Payments {
 		binary.Write(ser, binary.LittleEndian, uint64(element.Amount))
-		ser.Write(Base58CheckDecodeFatal(element.RecipientId))
+		ser.Write(HexDecode(stripAddressPrefix(element.RecipientId)))
 	}
 }
 
-func (transaction *Transaction) serializeDelegateResignation(buffer *bytes.Buffer) {
+func (transaction *Transaction) serializeValidatorResignation(buffer *bytes.Buffer) {
 	// noop
 }
 
@@ -172,7 +187,7 @@ func (transaction *Transaction) serializeHtlcLock(ser *bytes.Buffer) {
 	ser.Write(HexDecode(transaction.Asset.Lock.SecretHash))
 	ser.WriteByte(transaction.Asset.Lock.Expiration.Type)
 	binary.Write(ser, binary.LittleEndian, transaction.Asset.Lock.Expiration.Value)
-	ser.Write(Base58CheckDecodeFatal(transaction.RecipientId))
+	ser.Write(HexDecode(stripAddressPrefix(transaction.RecipientId)))
 }
 
 func (transaction *Transaction) serializeHtlcClaim(ser *bytes.Buffer) {

@@ -45,7 +45,7 @@ func setCommonFields(transaction *Transaction, transactionType uint16) {
 
 	transaction.Type = transactionType
 	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
-	transaction.Version = 2
+	transaction.Version = 1
 }
 
 /** Set all fields and sign a TransactionTypes.Transfer transaction.
@@ -108,7 +108,7 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-/** Set all fields and sign a TransactionTypes.DelegateRegistration transaction.
+/** Set all fields and sign a TransactionTypes.ValidatorRegistration transaction.
  * Members of the supplied transaction that must be set when calling this function:
  *   Asset.Delegate.Username
  *   Expiration - optional, could be 0 to designate no expiration
@@ -117,8 +117,8 @@ func BuildSecondSignatureRegistration(transaction *Transaction, passphrase strin
  *   Nonce
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
-func BuildDelegateRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.DelegateRegistration)
+func BuildValidatorRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.ValidatorRegistration)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
@@ -185,7 +185,7 @@ func BuildMultiPayment(transaction *Transaction, passphrase string, secondPassph
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }
 
-/** Set all fields and sign a TransactionTypes.DelegateResignation transaction.
+/** Set all fields and sign a TransactionTypes.ValidatorResignation transaction.
  * Members of the supplied transaction that must be set when calling this function:
  *   Expiration - optional, could be 0 to designate no expiration
  *   Fee - optional, if 0, then it will be set to a default fee
@@ -193,8 +193,8 @@ func BuildMultiPayment(transaction *Transaction, passphrase string, secondPassph
  *   Nonce
  *   Timestamp - optional, if 0, then it will be set to the present time
  *   VendorField - optional */
-func BuildDelegateResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.DelegateResignation)
+func BuildValidatorResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.ValidatorResignation)
 
 	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
 }

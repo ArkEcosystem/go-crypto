@@ -17,14 +17,14 @@ import (
 func transferWithPassphrase(t *testing.T) *Transaction {
 	return BuildTransfer(
 		&Transaction{
-			Amount: FlexToshi(200000000),
-			Expiration: 4333222,
-			Fee: FlexToshi(10),
-			Network: 30,
-			Nonce: 6,
-			RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+			Amount:      FlexToshi(133380000000),
+			Expiration:  4333222,
+			Fee:         FlexToshi(10),
+			Network:     30,
+			Nonce:       6,
+			RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 		},
-		"LIq[ChitMOgz66RWvGP1eAY",
+		"my super secret passphrase",
 		"",
 	)
 }
@@ -34,10 +34,10 @@ func transferWithSecondPassphrase(t *testing.T) *Transaction {
 
 	transaction := BuildTransfer(
 		&Transaction{
-			Amount: FlexToshi(133380000000),
-			Nonce: 5,
-			RecipientId: "AXoXnFi4z1Z6aFvjEYkDVCtBGW2PaRiM25",
-			VendorField: "This is a transaction from Go",
+			Amount:       FlexToshi(133380000000),
+			Nonce:        5,
+			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
+			VendorField:  "This is a transaction from Go",
 		},
 		"This is a top secret passphrase",
 		secondPassPhrase,
@@ -53,12 +53,12 @@ func transferWithSecondPassphrase(t *testing.T) *Transaction {
 
 func transferMultiSignature(t *testing.T) *Transaction {
 	transaction := &Transaction{
-		Amount: FlexToshi(200000000),
-		Expiration: 4333222,
-		Fee: FlexToshi(10),
-		Network: 30,
-		Nonce: 6,
-		RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+		Amount:       FlexToshi(200000000),
+		Expiration:   4333222,
+		Fee:          FlexToshi(10),
+		Network:      30,
+		Nonce:        6,
+		RecipientId:  "0xb693449AdDa7EFc015D87944EAE8b7C37EB1690A",
 	}
 
 	transaction = BuildTransferMultiSignature(transaction, 0, "multisig participant 1")
@@ -77,12 +77,12 @@ func secondSignatureRegistration(t *testing.T) *Transaction {
 	)
 }
 
-func delegateRegistrationWithPassphrase(t *testing.T) *Transaction {
-	return BuildDelegateRegistration(
+func validatorRegistrationWithPassphrase(t *testing.T) *Transaction {
+	return BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Delegate: &DelegateAsset{
-					Username: "polopolo",
+				Validator: &ValidatorAsset{
+					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
 				},
 			},
 			Nonce: 5,
@@ -92,14 +92,14 @@ func delegateRegistrationWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func delegateRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
+func validatorRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
 	secondPassPhrase := "This is a top secret second passphrase"
 
-	transaction := BuildDelegateRegistration(
+	transaction := BuildValidatorRegistration(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Delegate: &DelegateAsset{
-					Username: "polopolo",
+				Validator: &ValidatorAsset{
+					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
 				},
 			},
 			Nonce: 5,
@@ -120,7 +120,7 @@ func voteWithPassphrase(t *testing.T) *Transaction {
 	return BuildVote(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Votes: []string{ "+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192" },
+				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
 			},
 			Nonce: 5,
 		},
@@ -135,7 +135,7 @@ func voteWithSecondPassphrase(t *testing.T) *Transaction {
 	transaction := BuildVote(
 		&Transaction{
 			Asset: &TransactionAsset{
-				Votes: []string{ "+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192" },
+				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
 			},
 			Nonce: 5,
 		},
@@ -156,8 +156,10 @@ func unvoteVoteWithPassphrase(t *testing.T) *Transaction {
 		&Transaction{
 			Asset: &TransactionAsset{
 				Votes: []string{
-					"-034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
-					"+034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
+					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
+				},
+				Unvotes: []string{
+					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
 				},
 			},
 			Nonce: 5,
@@ -205,9 +207,9 @@ func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 		&Transaction{
 			Asset: &TransactionAsset{
 				Payments: []*MultiPaymentAsset{
-					{ Amount: FlexToshi(111222), RecipientId: "DHKxXag9PjfjHBbPg3HQS5WCaQZdgDf6yi" },
-					{ Amount: FlexToshi(222333), RecipientId: "DBzGiUk8UVjB2dKCfGRixknB7Ki3Zhqthp" },
-					{ Amount: FlexToshi(333444), RecipientId: "DFa7vn1LvWAyTuVDrQUr5NKaM73cfjx2Cp" },
+					{Amount: FlexToshi(111222), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
+					{Amount: FlexToshi(222333), RecipientId: "0xb693449AdDa7EFc015D87944EAE8b7C37EB1690A"},
+					{Amount: FlexToshi(333444), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
 				},
 			},
 			Nonce: 5,
@@ -217,11 +219,11 @@ func multiPaymentWithPassphrase(t *testing.T) *Transaction {
 	)
 }
 
-func delegateResignationWithPassphrase(t *testing.T) *Transaction {
-	return BuildDelegateResignation(
+func validatorResignationWithPassphrase(t *testing.T) *Transaction {
+	return BuildValidatorResignation(
 		&Transaction{
-			Amount: FlexToshi(0),
-			Nonce: 5,
+			Amount:  FlexToshi(0),
+			Nonce:   5,
 		},
 		"This is a top secret passphrase",
 		"",
@@ -235,13 +237,13 @@ func htlcLockWithPassphrase(t *testing.T) *Transaction {
 				Lock: &HtlcLockAsset{
 					SecretHash: "ca270216d522f0aa774edea7ad3c7440e8214f2625da0edbc948b28a0d3f5ead",
 					Expiration: &HtlcLockExpirationAsset{
-						Type: 2,
+						Type:  2,
 						Value: 111222333,
 					},
 				},
 			},
-			Nonce: 5,
-			RecipientId: "DPXaJv1GcVpZPvxw5T4fXebqTVhFpfqyrC",
+			Nonce:        5,
+			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
 		},
 		"This is a top secret passphrase",
 		"",
@@ -254,7 +256,7 @@ func htlcClaimWithPassphrase(t *testing.T) *Transaction {
 			Asset: &TransactionAsset{
 				Claim: &HtlcClaimAsset{
 					LockTransactionId: "d25c84e544bafc1d1bed9538c67b4275b0b79f49ef6b8677b31a709650442fe9",
-					UnlockSecret: "7a5d646b6d604e466e6e395554767431606c5d434a5b466f68635261714e685a",
+					UnlockSecret:      "7a5d646b6d604e466e6e395554767431606c5d434a5b466f68635261714e685a",
 				},
 			},
 			Nonce: 5,
@@ -281,31 +283,31 @@ func htlcRefundWithPassphrase(t *testing.T) *Transaction {
 
 func TestBuild(t *testing.T) {
 	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
-		"TransferWithPassphrase": transferWithPassphrase,
-		"TransferWithSecondPassphrase": transferWithSecondPassphrase,
-		"SecondSignatureRegistration": secondSignatureRegistration,
-		"DelegateRegistrationWithPassphrase": delegateRegistrationWithPassphrase,
-		"DelegateRegistrationWithSecondPassphrase": delegateRegistrationWithSecondPassphrase,
-		"VoteWithPassphrase": voteWithPassphrase,
-		"VoteWithSecondPassphrase": voteWithSecondPassphrase,
-		"UnvoteVoteWithPassphrase": unvoteVoteWithPassphrase,
+		"TransferWithPassphrase":                  transferWithPassphrase,
+		"TransferWithSecondPassphrase":            transferWithSecondPassphrase,
+		"SecondSignatureRegistration":             secondSignatureRegistration,
+		"ValidatorRegistrationWithPassphrase":     validatorRegistrationWithPassphrase,
+		"ValidatorRegistrationWithSecondPassphrase": validatorRegistrationWithSecondPassphrase,
+		"VoteWithPassphrase":                      voteWithPassphrase,
+		"VoteWithSecondPassphrase":                voteWithSecondPassphrase,
+		"UnvoteVoteWithPassphrase":                unvoteVoteWithPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
-		"IpfsWithPassphrase": ipfsWithPassphrase,
-		"MultiPaymentWithPassphrase": multiPaymentWithPassphrase,
-		"DelegateResignationWithPassphrase": delegateResignationWithPassphrase,
-		"HtlcLockWithPassphrase": htlcLockWithPassphrase,
-		"HtlcClaimWithPassphrase": htlcClaimWithPassphrase,
-		"HtlcRefundWithPassphrase": htlcRefundWithPassphrase,
+		"IpfsWithPassphrase":                      ipfsWithPassphrase,
+		"MultiPaymentWithPassphrase":              multiPaymentWithPassphrase,
+		"ValidatorResignationWithPassphrase":      validatorResignationWithPassphrase,
+		"HtlcLockWithPassphrase":                  htlcLockWithPassphrase,
+		"HtlcClaimWithPassphrase":                 htlcClaimWithPassphrase,
+		"HtlcRefundWithPassphrase":                htlcRefundWithPassphrase,
 	} {
+		// Iterate only over Schnorr signature type
 		for signatureTypeString, signatureType := range map[string]int{
-			"ECDSA": SIGNATURE_TYPE_ECDSA,
 			"Schnorr": SIGNATURE_TYPE_SCHNORR,
 		} {
 			CONFIG_SIGNATURE_TYPE = signatureType
 
-			test := func (t *testing.T) {
+			test := func(t *testing.T) {
 				transaction := buildTransaction(t)
-
+				
 				assert := assert.New(t)
 
 				assert.True(transaction.Verify())
@@ -316,10 +318,7 @@ func TestBuild(t *testing.T) {
 	}
 
 	// Test multisignature transfer separately
-
-	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
-
-	test := func (t *testing.T) {
+	test := func(t *testing.T) {
 		transaction := transferMultiSignature(t)
 
 		assert := assert.New(t)
@@ -329,7 +328,6 @@ func TestBuild(t *testing.T) {
 			PublicKeys: []string{
 				"037eaa8cb236c40a08fcb9d6220743ee6ae1b5c40e8a77a38f286516c3ff663901",
 				"0301fd417566397113ba8c55de2f093a572744ed1829b37b56a129058000ef7bce",
-				"0209d3c0f68994253cee24b23df3266ba1f0ca2f0666cd69a46544d63001cdf150",
 			},
 		}
 
@@ -338,4 +336,3 @@ func TestBuild(t *testing.T) {
 
 	t.Run("TransferMultiSignature-Schnorr", test)
 }
-

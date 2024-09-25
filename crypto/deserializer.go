@@ -9,23 +9,22 @@ package crypto
 
 import (
 	"encoding/binary"
-	"fmt"
-
+	
 	b58 "github.com/btcsuite/btcutil/base58"
 )
 
 const compactPubKeyLen = 33 // bytes
-const addressLen = 21 // bytes
+const addressLen = 20 // bytes
 
 func deserializeAddress(serialized []byte, offset int) (address string, offsetAfter int) {
-	addressRaw := serialized[offset:offset + addressLen]
-
-	addressVersion := addressRaw[0]
-	addressHash := addressRaw[1:]
-
-	address = b58.CheckEncode(addressHash, addressVersion)
-	offsetAfter = offset + addressLen
-
+	if len(serialized[offset:]) >= addressLen {
+		addressBytes := serialized[offset : offset+addressLen]
+		address = "0x" + EIP55Checksum(HexEncode(addressBytes))
+		offsetAfter = offset + addressLen
+	} else {
+		address = ""
+		offsetAfter = offset
+	}
 	return
 }
 
@@ -70,8 +69,8 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 		transaction = deserializeTransfer(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.SecondSignatureRegistration:
 		transaction = deserializeSecondSignatureRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.DelegateRegistration:
-		transaction = deserializeDelegateRegistration(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.ValidatorRegistration:
+		transaction = deserializeValidatorRegistration(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.Vote:
 		transaction = deserializeVote(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiSignatureRegistration:
@@ -80,8 +79,8 @@ func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *
 		transaction = deserializeIpfs(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.MultiPayment:
 		transaction = deserializeMultiPayment(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.DelegateResignation:
-		transaction = deserializeDelegateResignation(typeSpecificOffset, transaction)
+	case TRANSACTION_TYPES.ValidatorResignation:
+		transaction = deserializeValidatorResignation(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.HtlcLock:
 		transaction = deserializeHtlcLock(typeSpecificOffset, transaction)
 	case TRANSACTION_TYPES.HtlcClaim:
@@ -107,14 +106,17 @@ func deserializeCommon(transaction *Transaction) *Transaction {
 
 func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
-
-	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
+	
+	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o : o+8]))
 	o += 8
-
-	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o:o + 4])
+	
+	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o : o+4])
 	o += 4
-
-	transaction.RecipientId, o = deserializeAddress(transaction.Serialized, o)
+	
+	address, newOffset := deserializeAddress(transaction.Serialized, o)
+	
+	transaction.RecipientId = address
+	o = newOffset
 
 	return transaction.ParseSignatures(o)
 }
@@ -129,18 +131,18 @@ func deserializeSecondSignatureRegistration(typeSpecificOffset int, transaction 
 	return transaction.ParseSignatures(typeSpecificOffset + compactPubKeyLen)
 }
 
-func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
+func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
-	usernameLen := int(transaction.Serialized[o])
-	o++
+	publicKeyLength := 48
+
 
 	transaction.Asset = &TransactionAsset{
-		Delegate: &DelegateAsset{
-			Username: string(transaction.Serialized[o:o + usernameLen]),
+		Validator: &ValidatorAsset{
+			ValidatorPublicKey: HexEncode(transaction.Serialized[o:o + publicKeyLength]),
 		},
 	}
-	o += usernameLen
+	o += publicKeyLength
 
 	return transaction.ParseSignatures(o)
 }
@@ -148,29 +150,38 @@ func deserializeDelegateRegistration(typeSpecificOffset int, transaction *Transa
 func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
 
+	// Read the number of votes
 	numVotes := int(transaction.Serialized[o])
 	o++
 
 	transaction.Asset = &TransactionAsset{}
+	transaction.Asset.Votes = make([]string, 0, numVotes)
 
+	// Read the votes
 	for i := 0; i < numVotes; i++ {
-		// 0 = unvote (-), 1 = vote (+)
-		voteType := transaction.Serialized[o]
-		o++
-
-		delegatePublicKeyHex := HexEncode(transaction.Serialized[o:o + compactPubKeyLen])
+		voteBytes := transaction.Serialized[o : o+compactPubKeyLen]
 		o += compactPubKeyLen
 
-		pfx := "+"
-		if voteType == 0 {
-			pfx = "-"
-		}
+		transaction.Asset.Votes = append(transaction.Asset.Votes, HexEncode(voteBytes))
+	}
 
-		transaction.Asset.Votes = append(transaction.Asset.Votes, fmt.Sprintf("%s%s", pfx, delegatePublicKeyHex))
+	// Read the number of unvotes
+	numUnvotes := int(transaction.Serialized[o])
+	o++
+
+	transaction.Asset.Unvotes = make([]string, 0, numUnvotes)
+
+	// Read the unvotes
+	for i := 0; i < numUnvotes; i++ {
+		unvoteBytes := transaction.Serialized[o : o+compactPubKeyLen]
+		o += compactPubKeyLen
+
+		transaction.Asset.Unvotes = append(transaction.Asset.Unvotes, HexEncode(unvoteBytes))
 	}
 
 	return transaction.ParseSignatures(o)
 }
+
 
 func deserializeMultiSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	o := typeSpecificOffset
@@ -235,10 +246,18 @@ func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *
 		transaction.Asset.Payments = append(transaction.Asset.Payments, payment)
 	}
 
+	var sum uint64
+
+	for _, payment := range transaction.Asset.Payments {
+		sum += uint64(payment.Amount)
+	}
+		
+	transaction.Amount = FlexToshi(sum)
+
 	return transaction.ParseSignatures(o)
 }
 
-func deserializeDelegateResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
+func deserializeValidatorResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
 	return transaction.ParseSignatures(typeSpecificOffset)
 }
 
