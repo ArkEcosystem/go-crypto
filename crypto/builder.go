@@ -177,6 +177,44 @@ func BuildValidatorResignation(transaction *Transaction, passphrase string, seco
 }
 
 
+/** Set all fields and sign a TransactionTypes.UsernameRegistration transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Asset.Username.Username
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+ func BuildUsernameRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.UsernameRegistration)
+
+	// Validate if Username is set
+	if transaction.Asset != nil && transaction.Asset.Username != nil {
+		if transaction.Asset.Username.Username == "" {
+			panic("Invalid username: username is empty")
+		}
+	} else {
+		panic("Invalid username: no username asset provided")
+	}
+
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
+/** Set all fields and sign a TransactionTypes.UsernameResignation transaction.
+ * Members of the supplied transaction that must be set when calling this function:
+ *   Expiration - optional, could be 0 to designate no expiration
+ *   Fee - optional, if 0, then it will be set to a default fee
+ *   Network - optional, if 0, then it will be set to the configured network
+ *   Nonce
+ *   Timestamp - optional, if 0, then it will be set to the present time
+ *   VendorField - optional */
+func BuildUsernameResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
+	setCommonFields(transaction, TRANSACTION_TYPES.UsernameResignation)
+
+	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+}
+
 func validateBLSPublicKey(publicKey string) error {
 	if len(publicKey) != 96 {
 		return errors.New("invalid BLS public key length")
