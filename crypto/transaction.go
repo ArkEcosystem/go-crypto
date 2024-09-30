@@ -17,7 +17,7 @@ import (
 )
 
 func (transaction *Transaction) GetId() string {
-	return fmt.Sprintf("%x", sha256.Sum256(transaction.serialize(true, true, true)))
+	return fmt.Sprintf("%x", sha256.Sum256(transaction.Serialize(true, true, true)))
 }
 
 func (transaction *Transaction) Sign(passphrase string) {
@@ -29,7 +29,7 @@ func (transaction *Transaction) Sign(passphrase string) {
 
 	transaction.SenderPublicKey = HexEncode(privateKey.PublicKey.Serialize())
 	
-	hash := sha256.Sum256(transaction.serialize(false, false, false))
+	hash := sha256.Sum256(transaction.Serialize(false, false, false))
 
 	signature, err := privateKey.Sign(hash[:])
 	if err == nil {
@@ -46,7 +46,7 @@ func (transaction *Transaction) SignMulti(signerIndex int, passphrase string) {
 		return
 	}
 
-	hash := sha256.Sum256(transaction.serialize(false, false, false))
+	hash := sha256.Sum256(transaction.Serialize(false, false, false))
 
 	signature, err := privateKey.SignMulti(hash[:], signerIndex)
 	if err == nil {
@@ -63,7 +63,7 @@ func (transaction *Transaction) SecondSign(passphrase string) {
 		return
 	}
 
-	hash := sha256.Sum256(transaction.serialize(true, false, false))
+	hash := sha256.Sum256(transaction.Serialize(true, false, false))
 
 	signature, err := privateKey.SecondSign(hash[:])
 	if err == nil {
@@ -74,7 +74,7 @@ func (transaction *Transaction) SecondSign(passphrase string) {
 }
 
 func (transaction *Transaction) VerifyMultiSignature(multiSignatureAsset *MultiSignatureRegistrationAsset) (bool, error) {
-	hash := sha256.Sum256(transaction.serialize(false, false, false))
+	hash := sha256.Sum256(transaction.Serialize(false, false, false))
 
 	publicKeyIndexes := make(map[int]bool)
 	numVerified := 0
@@ -139,13 +139,13 @@ func (transaction *Transaction) Verify(multiSignatureAsset ...*MultiSignatureReg
 		return false, err
 	}
 
-	hash := sha256.Sum256(transaction.serialize(false, false, true))
+	hash := sha256.Sum256(transaction.Serialize(false, false, true))
 
 	return publicKey.Verify(HexDecode(transaction.Signature), hash[:])
 }
 
 func (transaction *Transaction) SecondVerify(secondPublicKey *PublicKey) (bool, error) {
-	hash := sha256.Sum256(transaction.serialize(true, false, false))
+	hash := sha256.Sum256(transaction.Serialize(true, false, false))
 
 	return secondPublicKey.Verify(HexDecode(transaction.SecondSignature), hash[:])
 }
