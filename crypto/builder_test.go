@@ -106,6 +106,32 @@ func validatorRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
 	return transaction
 }
 
+func usernameRegistrationWithPassphrase(t *testing.T) *Transaction {
+	return BuildUsernameRegistration(
+		&Transaction{
+			Asset: &TransactionAsset{
+				Username: &UsernameAsset{
+					Username: "test",
+				},
+			},
+			Nonce: 5,
+		},
+		"your secret passphrase",
+		"",
+	)
+}
+
+func usernameResignationWithPassphrase(t *testing.T) *Transaction {
+	return BuildUsernameResignation(
+		&Transaction{
+			Nonce: 5,
+		},
+		"your secret passphrase",
+		"",
+	)
+}
+
+
 func voteWithPassphrase(t *testing.T) *Transaction {
 	return BuildVote(
 		&Transaction{
@@ -215,6 +241,8 @@ func TestBuild(t *testing.T) {
 		"ValidatorRegistrationWithPassphrase":     validatorRegistrationWithPassphrase,
 		"ValidatorRegistrationWithSecondPassphrase": validatorRegistrationWithSecondPassphrase,
 		"VoteWithPassphrase":                      voteWithPassphrase,
+		"UsernameRegistrationWithPassphrase":      usernameRegistrationWithPassphrase,
+		"UsernameResignationWithPassphrase":       usernameResignationWithPassphrase,
 		"VoteWithSecondPassphrase":                voteWithSecondPassphrase,
 		"UnvoteVoteWithPassphrase":                unvoteVoteWithPassphrase,
 		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,

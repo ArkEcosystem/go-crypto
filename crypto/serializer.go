@@ -24,7 +24,7 @@ func writeNumberAsByte(ser *bytes.Buffer, num interface{}, name string) {
 	ser.WriteByte(uint8(numInt))
 }
 
-func (transaction *Transaction) serialize(includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) []byte {
+func (transaction *Transaction) Serialize(includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) []byte {
 	ser := new(bytes.Buffer)
 
     transaction.serializeHeader(ser)

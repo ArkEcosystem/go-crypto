@@ -9,15 +9,15 @@ package crypto
 
 var (
 	CONFIG_NETWORK = &Network{}
-	CONFIG_FEES    = []FlexToshi{
-		TRANSACTION_FEES.Transfer,
-		TRANSACTION_FEES.ValidatorRegistration,
-		TRANSACTION_FEES.Vote,
-		TRANSACTION_FEES.MultiSignatureRegistration,
-		TRANSACTION_FEES.MultiPayment,
-		TRANSACTION_FEES.ValidatorResignation,
-		TRANSACTION_FEES.UsernameRegistration,
-		TRANSACTION_FEES.UsernameResignation,
+	CONFIG_FEES = map[uint16]FlexToshi{
+		TRANSACTION_TYPES.Transfer:                 TRANSACTION_FEES.Transfer,
+		TRANSACTION_TYPES.ValidatorRegistration:    TRANSACTION_FEES.ValidatorRegistration,
+		TRANSACTION_TYPES.Vote:                     TRANSACTION_FEES.Vote,
+		TRANSACTION_TYPES.MultiSignatureRegistration: TRANSACTION_FEES.MultiSignatureRegistration,
+		TRANSACTION_TYPES.MultiPayment:             TRANSACTION_FEES.MultiPayment,
+		TRANSACTION_TYPES.ValidatorResignation:     TRANSACTION_FEES.ValidatorResignation,
+		TRANSACTION_TYPES.UsernameRegistration:     TRANSACTION_FEES.UsernameRegistration,
+		TRANSACTION_TYPES.UsernameResignation:      TRANSACTION_FEES.UsernameResignation,
 	}
 	CONFIG_SIGNATURE_TYPE = SIGNATURE_TYPE_SCHNORR
 )

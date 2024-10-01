@@ -50,7 +50,7 @@ func commonSerDeserTest(t *testing.T, fixturePath string) {
 
 	compareTransactions(t, fixture.Transaction, *transaction)
 
-	assert.Equal(fixture.SerializedHex, HexEncode(transaction.serialize(true, true, true)))
+	assert.Equal(fixture.SerializedHex, HexEncode(transaction.Serialize(true, true, true)))
 
 	assert.True(transaction.Verify(&fixture.MultiSignatureAsset))
 }
