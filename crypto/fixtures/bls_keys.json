@@ -2,11 +2,13 @@
     {
         "bls_public_key": "90507d5a1a4cde6729f61a0e8fcc34f854113faf05f995b3ffd320639c4ffd118c335099350c92daa58e9ba22ca71af1",
         "bls_private_key": "710b0de2981d407d144161a5123f498a88355e3b0a559aa7942d90d49d0d5b34",
+        "proof_of_possession": "a2fd406fe7d8d171eed27d35f890b9f51e918724f51523cab2e030f8a1993d317871fb7358232b334e36a703abfc798201aaf8bd0043b1247dc0a676cdec5bfe047fcfb3ce35838036d8c9c6297a360b670d04c70035720d06ac8d591985550d",
         "passphrase": "famous dolphin salad photo spend stock portion outdoor print fiscal element smoke silent ritual verify current better raw visual mom real bubble certain banana"
     },
     {
         "bls_public_key": "af7f00ec30273a99411aa940ecf40646fa684f82d7d70e536a76c7c02e8ee6f3ffd297c42ad3775922938a31925bc1ab",
         "bls_private_key": "5a010d4c79c01fc4d26fcce16a601da683bd2dcb67aa09d6d4ab29042020e62b",
+        "proof_of_possession": "a8ebf3739e4a39d1f1f148cee0448ee4e525a6dcf7dffd35c9af3234abf147d9fa252b570e731ab13dc268629c4ad0a912008d097f36a26e3f600a35acc681f790a22506a90ea0c2ee4c85ad54baed2e664ea46fafa63be9475c70e58f44da37",
         "passphrase": "good copper economy hope purity budget mistake achieve tail endless travel vibrant office cement inmate gospel effort desert garbage fiscal direct siege bright habit"
     }
 ]

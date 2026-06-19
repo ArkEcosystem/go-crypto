@@ -46,8 +46,6 @@ func GetMessageFixture() TestingMessageFixture {
 	return fixture
 }
 
-
-
 func GetBLSValidatorFixture() BLSValidatorFixture {
 	data := GetFixture("bls_validator")
 
@@ -68,8 +66,8 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 
 type TestingFixture struct {
 	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
-	Transaction Transaction `json:"transaction"`
-	SerializedHex string `json:"serializedHex"`
+	Transaction         Transaction                     `json:"transaction"`
+	SerializedHex       string                          `json:"serializedHex"`
 }
 
 type TestingIdentityFixture struct {
@@ -97,7 +95,8 @@ type BLSValidatorFixture struct {
 }
 
 type BLSKeyFixture struct {
-	BLSPublicKey  string `json:"bls_public_key"`
-	BLSPrivateKey string `json:"bls_private_key"`
-	Passphrase    string `json:"passphrase"`
+	BLSPublicKey      string `json:"bls_public_key"`
+	BLSPrivateKey     string `json:"bls_private_key"`
+	ProofOfPossession string `json:"proof_of_possession"`
+	Passphrase        string `json:"passphrase"`
 }
