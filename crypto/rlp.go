@@ -29,14 +29,12 @@ type RlpItem interface {
 	DecodeRLP(data []byte) (int, error)
 }
 
-// RlpEncode encodes an RlpItem as RLP.
 func RlpEncode(item RlpItem) ([]byte, error) {
 	return item.EncodeRLP()
 }
 
-// RlpDecode decodes RLP-encoded data into item and returns the number of
-// bytes read. The given data may be longer than the encoded item, in which
-// case the remaining data is ignored.
+// RlpDecode's data may be longer than the encoded item; the remainder is
+// ignored, and the number of bytes actually consumed is returned.
 func RlpDecode(data []byte, item RlpItem) (int, error) {
 	return item.DecodeRLP(data)
 }
@@ -180,8 +178,6 @@ func (l *RlpList) DecodeRLP(data []byte) (int, error) {
 	return prefixLen + int(dataLen), nil
 }
 
-// rlpEncodePrefix encodes the RLP type-and-length prefix for offset
-// (rlpStringOffset or rlpListOffset) and the given payload length.
 func rlpEncodePrefix(length int, offset byte) ([]byte, error) {
 	if length <= 55 {
 		return []byte{offset + byte(length)}, nil
@@ -199,7 +195,6 @@ func rlpEncodePrefix(length int, offset byte) ([]byte, error) {
 	return prefix, nil
 }
 
-// rlpEncodeLength returns the minimal big-endian encoding of length.
 func rlpEncodeLength(length uint64) []byte {
 	var buf [8]byte
 
@@ -213,9 +208,6 @@ func rlpEncodeLength(length uint64) []byte {
 	return append([]byte{}, buf[8-n:]...)
 }
 
-// rlpDecodePrefix decodes the RLP type-and-length prefix at the start of
-// data, returning which offset (rlpStringOffset or rlpListOffset) applies,
-// the payload length, and the prefix length in bytes.
 func rlpDecodePrefix(data []byte) (offset byte, dataLen uint64, prefixLen int, err error) {
 	if len(data) == 0 {
 		return 0, 0, 0, ErrRlpUnexpectedEndOfData
@@ -247,7 +239,6 @@ func rlpDecodePrefix(data []byte) (offset byte, dataLen uint64, prefixLen int, e
 	}
 }
 
-// rlpReadUint reads a big-endian unsigned integer of the given byte length.
 func rlpReadUint(data []byte, length int) (uint64, error) {
 	if length > 8 {
 		return 0, ErrRlpTooLarge

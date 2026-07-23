@@ -74,7 +74,6 @@ func AbiAddress(address string) (AbiArg, error) {
 	return AbiArg{Encoded: encoded, Dynamic: false}, nil
 }
 
-// AbiUint256 encodes a static "uint256" argument.
 func AbiUint256(x *big.Int) (AbiArg, error) {
 	if x == nil || x.Sign() < 0 {
 		return AbiArg{}, ErrAbiNegativeUint
@@ -88,17 +87,14 @@ func AbiUint256(x *big.Int) (AbiArg, error) {
 	return AbiArg{Encoded: encoded, Dynamic: false}, nil
 }
 
-// AbiBytes encodes a dynamic "bytes" argument.
 func AbiBytes(data []byte) AbiArg {
 	return AbiArg{Encoded: abiEncodeDynamicBytes(data), Dynamic: true}
 }
 
-// AbiString encodes a dynamic "string" argument.
 func AbiString(s string) AbiArg {
 	return AbiArg{Encoded: abiEncodeDynamicBytes([]byte(s)), Dynamic: true}
 }
 
-// AbiAddressArray encodes a dynamic "address[]" argument.
 func AbiAddressArray(addresses []string) (AbiArg, error) {
 	body := make([]byte, 0, len(addresses)*abiWordLength)
 
@@ -115,7 +111,6 @@ func AbiAddressArray(addresses []string) (AbiArg, error) {
 	return AbiArg{Encoded: encoded, Dynamic: true}, nil
 }
 
-// AbiUint256Array encodes a dynamic "uint256[]" argument.
 func AbiUint256Array(values []*big.Int) (AbiArg, error) {
 	body := make([]byte, 0, len(values)*abiWordLength)
 
@@ -221,7 +216,6 @@ func NewAbiDecoder(data []byte, signature string, argCount int) (*AbiDecoder, er
 	return &AbiDecoder{head: head, tail: body}, nil
 }
 
-// Address decodes the argIndex-th argument as a static "address".
 func (d *AbiDecoder) Address(argIndex int) (string, error) {
 	word, err := d.headWord(argIndex)
 	if err != nil {
@@ -231,7 +225,6 @@ func (d *AbiDecoder) Address(argIndex int) (string, error) {
 	return AddressFromBytes(word[abiWordLength-abiAddressLength:]), nil
 }
 
-// Uint256 decodes the argIndex-th argument as a static "uint256".
 func (d *AbiDecoder) Uint256(argIndex int) (*big.Int, error) {
 	word, err := d.headWord(argIndex)
 	if err != nil {
@@ -241,7 +234,6 @@ func (d *AbiDecoder) Uint256(argIndex int) (*big.Int, error) {
 	return new(big.Int).SetBytes(word), nil
 }
 
-// Bytes decodes the argIndex-th argument as a dynamic "bytes".
 func (d *AbiDecoder) Bytes(argIndex int) ([]byte, error) {
 	tailData, err := d.dynamicTail(argIndex)
 	if err != nil {
@@ -262,7 +254,6 @@ func (d *AbiDecoder) Bytes(argIndex int) ([]byte, error) {
 	return append([]byte{}, tailData[:length]...), nil
 }
 
-// String decodes the argIndex-th argument as a dynamic "string".
 func (d *AbiDecoder) String(argIndex int) (string, error) {
 	data, err := d.Bytes(argIndex)
 	if err != nil {
@@ -271,7 +262,6 @@ func (d *AbiDecoder) String(argIndex int) (string, error) {
 	return string(data), nil
 }
 
-// AddressArray decodes the argIndex-th argument as a dynamic "address[]".
 func (d *AbiDecoder) AddressArray(argIndex int) ([]string, error) {
 	tailData, err := d.dynamicTail(argIndex)
 	if err != nil {
@@ -292,7 +282,6 @@ func (d *AbiDecoder) AddressArray(argIndex int) ([]string, error) {
 	return addresses, nil
 }
 
-// Uint256Array decodes the argIndex-th argument as a dynamic "uint256[]".
 func (d *AbiDecoder) Uint256Array(argIndex int) ([]*big.Int, error) {
 	tailData, err := d.dynamicTail(argIndex)
 	if err != nil {

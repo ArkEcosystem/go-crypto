@@ -79,9 +79,6 @@ func (privateKey *PrivateKey) Serialize() []byte {
 	return privateKey.PrivateKey.Serialize()
 }
 
-// Sign produces a recoverable ECDSA signature over hash using RFC6979
-// deterministic k and BIP0062 low-S normalization (both handled by
-// ecdsa.SignCompact, which cannot fail for a valid key and hash).
 func (privateKey *PrivateKey) Sign(hash []byte) *EcdsaSignature {
 	compact := ecdsa.SignCompact(privateKey.PrivateKey, hash, privateKey.PublicKey.isCompressed)
 

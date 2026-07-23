@@ -102,7 +102,6 @@ func (publicKey *PublicKey) SerializeUncompressed() []byte {
 	return publicKey.PublicKey.SerializeUncompressed()
 }
 
-// RecoverPublicKey recovers the public key that produced sig over hash.
 // isCompressed must match how the signer's key was represented when signing
 // (PrivateKey.Sign uses the signing key's own isCompressed value).
 func RecoverPublicKey(hash []byte, sig *EcdsaSignature, isCompressed bool) (*PublicKey, error) {
@@ -132,8 +131,7 @@ func RecoverPublicKey(hash []byte, sig *EcdsaSignature, isCompressed bool) (*Pub
 	}, nil
 }
 
-// Verify reports whether sig, over hash, was produced by publicKey's private
-// key, by recovering the actual signer and comparing it to publicKey.
+// Verify recovers the actual signer from sig and compares it to publicKey.
 func (publicKey *PublicKey) Verify(hash []byte, sig *EcdsaSignature) (bool, error) {
 	recovered, err := RecoverPublicKey(hash, sig, publicKey.isCompressed)
 	if err != nil {
