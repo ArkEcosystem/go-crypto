@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -18,10 +11,8 @@ var (
 	ErrDeserializeInvalidV  = errors.New("deserialize: v field does not decode to a valid recovery id")
 )
 
-// DeserializeTransaction decodes a hex-encoded RLP transaction envelope
-// ([nonce, gasPrice, gasLimit, to, value, data, v, r, s]), reverses the
-// EIP-155 v encoding back to a raw recovery id, computes the transaction
-// hash, and recovers the sender's public key and address from the signature.
+// DeserializeTransaction decodes a hex-encoded RLP transaction envelope:
+// [nonce, gasPrice, gasLimit, to, value, data, v, r, s].
 func DeserializeTransaction(serializedHex string) (*Transaction, error) {
 	serialized := HexDecode(serializedHex)
 
@@ -74,6 +65,10 @@ func DeserializeTransaction(serializedHex string) (*Transaction, error) {
 	transaction.Hash = hash
 
 	if err := transaction.RecoverSender(); err != nil {
+		return nil, err
+	}
+
+	if err := DecodeTransactionArgs(transaction); err != nil {
 		return nil, err
 	}
 
