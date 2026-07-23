@@ -14,10 +14,6 @@ import (
 	"github.com/fatih/structs"
 )
 
-// NOTE: this still hashes the message with plain sha256, carried over
-// unchanged from before the Mainsail migration. Ethereum's personal_sign
-// convention (keccak256("\x19Ethereum Signed Message:\n" + len(message) +
-// message)) is a separate, not-yet-made design change.
 func SignMessage(message string, passphrase string) (*Message, error) {
 	privateKey, err := PrivateKeyFromPassphrase(passphrase)
 	if err != nil {
