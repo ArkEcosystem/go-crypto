@@ -23,9 +23,8 @@ func keccak256(data []byte) []byte {
 	return hash.Sum(nil)
 }
 
-// SigningHash returns the keccak256 hash of the transaction's unsigned RLP
-// encoding (v/r/s replaced with the EIP-155 [chainId, 0, 0] placeholder) —
-// this is the message a signer signs and a verifier/recoverer checks against.
+// SigningHash is the message a signer signs and a verifier/recoverer checks
+// against.
 func (transaction *Transaction) SigningHash() ([]byte, error) {
 	serialized, err := transaction.Serialize(true)
 	if err != nil {
@@ -34,9 +33,8 @@ func (transaction *Transaction) SigningHash() ([]byte, error) {
 	return keccak256(serialized), nil
 }
 
-// GetHash returns the hex-encoded keccak256 hash of the transaction's full
-// RLP encoding. Once the transaction is signed this is its final hash/ID;
-// before signing it is identical to SigningHash (no v/r/s to embed yet).
+// Before signing, GetHash is identical to SigningHash (no v/r/s to embed
+// yet); once signed, it becomes the transaction's final hash/ID.
 func (transaction *Transaction) GetHash() (string, error) {
 	serialized, err := transaction.Serialize(false)
 	if err != nil {

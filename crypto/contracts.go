@@ -1,6 +1,5 @@
 package crypto
 
-// Well-known Mainsail system contract addresses.
 const (
 	ContractConsensus     = "0x535B3D7A252fa034Ed71F0C53ec0C6F784cB64E1"
 	ContractMultipayment  = "0x00EFd0D4639191C49908A7BddbB9A11A994A8527"
@@ -8,8 +7,6 @@ const (
 	ContractBatchTransfer = "0x5a223F4434D5Bd8478100EEb3b0166a57A26350d"
 )
 
-// ABI function signatures for the Mainsail system contracts, plus the
-// generic ERC-20 functions used by the token convenience builders.
 const (
 	AbiSignatureVote                   = "vote(address)"
 	AbiSignatureUnvote                 = "unvote()"

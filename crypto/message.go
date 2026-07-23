@@ -14,9 +14,6 @@ import (
 	"github.com/fatih/structs"
 )
 
-// SignMessage signs an arbitrary message with the private key derived from
-// passphrase.
-//
 // NOTE: this still hashes the message with plain sha256, carried over
 // unchanged from before the Mainsail migration. Ethereum's personal_sign
 // convention (keccak256("\x19Ethereum Signed Message:\n" + len(message) +

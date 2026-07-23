@@ -25,8 +25,6 @@ func AddressFromPassphrase(passphrase string) (string, error) {
 	return privateKey.ToAddress(), nil
 }
 
-// AddressToBytes decodes a "0x"-prefixed, 40-hex-char address into its raw
-// 20 bytes.
 func AddressToBytes(address string) ([]byte, error) {
 	if !strings.HasPrefix(address, "0x") || len(address) != 2+AddressByteLength*2 {
 		return nil, ErrInvalidAddress
@@ -40,8 +38,6 @@ func AddressToBytes(address string) ([]byte, error) {
 	return addressBytes, nil
 }
 
-// AddressFromBytes formats raw 20 address bytes as a "0x"-prefixed,
-// EIP-55-checksummed address.
 func AddressFromBytes(addressBytes []byte) string {
 	return "0x" + EIP55Checksum(hex.EncodeToString(addressBytes))
 }

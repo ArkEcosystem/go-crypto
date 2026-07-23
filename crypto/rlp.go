@@ -39,7 +39,6 @@ func RlpDecode(data []byte, item RlpItem) (int, error) {
 	return item.DecodeRLP(data)
 }
 
-// RlpBytes is an RLP byte string.
 type RlpBytes []byte
 
 func (s *RlpBytes) EncodeRLP() ([]byte, error) {
@@ -72,7 +71,6 @@ func (s *RlpBytes) DecodeRLP(data []byte) (int, error) {
 	return prefixLen + int(dataLen), nil
 }
 
-// RlpBigInt is an RLP-encoded arbitrary-precision, non-negative integer.
 // Zero always encodes as an empty RLP string.
 type RlpBigInt struct{ X *big.Int }
 
@@ -106,9 +104,9 @@ func (b *RlpBigInt) DecodeRLP(data []byte) (int, error) {
 	return n, nil
 }
 
-// RlpList is an ordered RLP list of items. When decoding, positions already
-// populated with an item are decoded into that item's concrete type; any
-// items beyond the pre-populated length are appended as raw RlpBytes.
+// When decoding, positions already populated with an item are decoded into
+// that item's concrete type; any items beyond the pre-populated length are
+// appended as raw RlpBytes.
 type RlpList []RlpItem
 
 func NewRlpList(items ...RlpItem) *RlpList {
