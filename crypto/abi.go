@@ -21,26 +21,17 @@ var (
 	ErrAbiInvalidOffset       = errors.New("abi: dynamic value offset is invalid")
 )
 
-// AbiFunctionSelector returns the first 4 bytes of keccak256(signature), e.g.
-// AbiFunctionSelector("vote(address)").
 func AbiFunctionSelector(signature string) []byte {
 	hash := sha3.NewLegacyKeccak256()
 	hash.Write([]byte(signature))
 	return hash.Sum(nil)[:abiSelectorLength]
 }
 
-// AbiArg is a single already-ABI-encoded function argument, tagged with
-// whether it belongs in the head (static) or tail (dynamic) section of a
-// function call's calldata.
 type AbiArg struct {
 	Encoded []byte
 	Dynamic bool
 }
 
-// AbiEncodeFunctionCall assembles a full function call: the 4-byte selector
-// followed by the head/tail encoding of args, per the Solidity ABI spec —
-// static args are encoded directly in the head, dynamic args contribute a
-// 32-byte offset in the head and their data in the tail.
 func AbiEncodeFunctionCall(signature string, args ...AbiArg) []byte {
 	head := make([]byte, 0, len(args)*abiWordLength)
 	tail := []byte{}
@@ -64,8 +55,7 @@ func AbiEncodeFunctionCall(signature string, args ...AbiArg) []byte {
 	return result
 }
 
-// AbiAddress encodes a static "address" argument. address must be a
-// "0x"-prefixed, 40-hex-char string.
+// address must be a "0x"-prefixed, 40-hex-char string.
 func AbiAddress(address string) (AbiArg, error) {
 	encoded, err := abiEncodeAddress(address)
 	if err != nil {
@@ -131,16 +121,13 @@ func AbiUint256Array(values []*big.Int) (AbiArg, error) {
 	return AbiArg{Encoded: encoded, Dynamic: true}, nil
 }
 
-// abiPadWordLeft left-pads b into a 32-byte word. Callers must ensure
-// len(b) <= abiWordLength.
+// Callers must ensure len(b) <= abiWordLength.
 func abiPadWordLeft(b []byte) []byte {
 	word := make([]byte, abiWordLength)
 	copy(word[abiWordLength-len(b):], b)
 	return word
 }
 
-// abiEncodeUintWord encodes an arbitrary, possibly caller-supplied uint256,
-// rejecting values that don't fit in one 32-byte word.
 func abiEncodeUintWord(x *big.Int) ([]byte, error) {
 	b := x.Bytes()
 	if len(b) > abiWordLength {
@@ -183,18 +170,11 @@ func abiEncodeDynamicBytes(data []byte) []byte {
 	return append(lengthWord, body...)
 }
 
-// AbiDecoder decodes the calldata of a single, known function call: the
-// 4-byte selector followed by a flat sequence of 32-byte head words, one per
-// top-level argument, where dynamic arguments' head word is an offset
-// pointing into the tail section.
 type AbiDecoder struct {
 	head [][]byte
 	tail []byte
 }
 
-// NewAbiDecoder validates that data starts with the given function selector
-// and splits the remaining calldata into its head words and tail region,
-// where argCount is the function's total number of top-level arguments.
 func NewAbiDecoder(data []byte, signature string, argCount int) (*AbiDecoder, error) {
 	if len(data) < abiSelectorLength {
 		return nil, ErrAbiUnexpectedEndOfData
@@ -323,8 +303,6 @@ func (d *AbiDecoder) headWord(argIndex int) ([]byte, error) {
 	return d.head[argIndex], nil
 }
 
-// dynamicTail follows the offset stored in the argIndex-th head word and
-// returns the tail data starting at that offset.
 func (d *AbiDecoder) dynamicTail(argIndex int) ([]byte, error) {
 	word, err := d.headWord(argIndex)
 	if err != nil {
