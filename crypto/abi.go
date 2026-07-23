@@ -2,10 +2,8 @@ package crypto
 
 import (
 	"bytes"
-	"encoding/hex"
 	"errors"
 	"math/big"
-	"strings"
 
 	"golang.org/x/crypto/sha3"
 )
@@ -51,7 +49,7 @@ func AbiEncodeFunctionCall(signature string, args ...AbiArg) []byte {
 	for _, arg := range args {
 		if arg.Dynamic {
 			offset := headLen + len(tail)
-			head = append(head, abiEncodeUintWord(big.NewInt(int64(offset)))...)
+			head = append(head, abiEncodeSmallUintWord(offset)...)
 			tail = append(tail, arg.Encoded...)
 		} else {
 			head = append(head, arg.Encoded...)
@@ -81,7 +79,13 @@ func AbiUint256(x *big.Int) (AbiArg, error) {
 	if x == nil || x.Sign() < 0 {
 		return AbiArg{}, ErrAbiNegativeUint
 	}
-	return AbiArg{Encoded: abiEncodeUintWord(x), Dynamic: false}, nil
+
+	encoded, err := abiEncodeUintWord(x)
+	if err != nil {
+		return AbiArg{}, err
+	}
+
+	return AbiArg{Encoded: encoded, Dynamic: false}, nil
 }
 
 // AbiBytes encodes a dynamic "bytes" argument.
@@ -106,7 +110,7 @@ func AbiAddressArray(addresses []string) (AbiArg, error) {
 		body = append(body, word...)
 	}
 
-	encoded := append(abiEncodeUintWord(big.NewInt(int64(len(addresses)))), body...)
+	encoded := append(abiEncodeSmallUintWord(len(addresses)), body...)
 
 	return AbiArg{Encoded: encoded, Dynamic: true}, nil
 }
@@ -119,48 +123,59 @@ func AbiUint256Array(values []*big.Int) (AbiArg, error) {
 		if v == nil || v.Sign() < 0 {
 			return AbiArg{}, ErrAbiNegativeUint
 		}
-		body = append(body, abiEncodeUintWord(v)...)
+
+		word, err := abiEncodeUintWord(v)
+		if err != nil {
+			return AbiArg{}, err
+		}
+		body = append(body, word...)
 	}
 
-	encoded := append(abiEncodeUintWord(big.NewInt(int64(len(values)))), body...)
+	encoded := append(abiEncodeSmallUintWord(len(values)), body...)
 
 	return AbiArg{Encoded: encoded, Dynamic: true}, nil
 }
 
-func abiEncodeUintWord(x *big.Int) []byte {
+// abiPadWordLeft left-pads b into a 32-byte word. Callers must ensure
+// len(b) <= abiWordLength.
+func abiPadWordLeft(b []byte) []byte {
 	word := make([]byte, abiWordLength)
-	b := x.Bytes()
 	copy(word[abiWordLength-len(b):], b)
 	return word
 }
 
-func abiEncodeAddress(address string) ([]byte, error) {
-	addressBytes, err := abiDecodeAddressBytes(address)
-	if err != nil {
-		return nil, err
+// abiEncodeUintWord encodes an arbitrary, possibly caller-supplied uint256,
+// rejecting values that don't fit in one 32-byte word.
+func abiEncodeUintWord(x *big.Int) ([]byte, error) {
+	b := x.Bytes()
+	if len(b) > abiWordLength {
+		return nil, ErrAbiValueTooLarge
 	}
 
-	word := make([]byte, abiWordLength)
-	copy(word[abiWordLength-abiAddressLength:], addressBytes)
+	return abiPadWordLeft(b), nil
+}
+
+// abiEncodeSmallUintWord encodes a non-negative, internally-computed
+// offset/length/count. Safe by construction, not just in practice: an int64's
+// big-endian representation is at most 8 bytes, always well under the
+// 32-byte word size, so there is no failure mode to check for.
+func abiEncodeSmallUintWord(n int) []byte {
+	return abiPadWordLeft(big.NewInt(int64(n)).Bytes())
+}
+
+func abiEncodeAddress(address string) ([]byte, error) {
+	addressBytes, err := AddressToBytes(address)
+	if err != nil {
+		return nil, ErrAbiInvalidAddress
+	}
+
+	word := abiPadWordLeft(addressBytes)
 
 	return word, nil
 }
 
-func abiDecodeAddressBytes(address string) ([]byte, error) {
-	if !strings.HasPrefix(address, "0x") || len(address) != 2+abiAddressLength*2 {
-		return nil, ErrAbiInvalidAddress
-	}
-
-	addressBytes, err := hex.DecodeString(address[2:])
-	if err != nil {
-		return nil, ErrAbiInvalidAddress
-	}
-
-	return addressBytes, nil
-}
-
 func abiEncodeDynamicBytes(data []byte) []byte {
-	lengthWord := abiEncodeUintWord(big.NewInt(int64(len(data))))
+	lengthWord := abiEncodeSmallUintWord(len(data))
 
 	paddedLen := len(data)
 	if rem := paddedLen % abiWordLength; rem != 0 {
@@ -213,10 +228,7 @@ func (d *AbiDecoder) Address(argIndex int) (string, error) {
 		return "", err
 	}
 
-	addressBytes := word[abiWordLength-abiAddressLength:]
-	address := "0x" + EIP55Checksum(hex.EncodeToString(addressBytes))
-
-	return address, nil
+	return AddressFromBytes(word[abiWordLength-abiAddressLength:]), nil
 }
 
 // Uint256 decodes the argIndex-th argument as a static "uint256".
@@ -274,7 +286,7 @@ func (d *AbiDecoder) AddressArray(argIndex int) ([]string, error) {
 	addresses := make([]string, count)
 	for i := 0; i < count; i++ {
 		word := elements[i*abiWordLength : (i+1)*abiWordLength]
-		addresses[i] = "0x" + EIP55Checksum(hex.EncodeToString(word[abiWordLength-abiAddressLength:]))
+		addresses[i] = AddressFromBytes(word[abiWordLength-abiAddressLength:])
 	}
 
 	return addresses, nil

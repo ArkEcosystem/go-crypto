@@ -19,7 +19,7 @@ const (
 	AbiSignatureRegisterUsername       = "registerUsername(string)"
 	AbiSignatureResignUsername         = "resignUsername()"
 	AbiSignatureMultipayment           = "pay(address[],uint256[])"
-	AbiSignatureErc20Transfer          = "transfer(address,uint256)"
-	AbiSignatureErc20Approve           = "approve(address,uint256)"
-	AbiSignatureErc20BatchTransferFrom = "batchTransferFrom(address,address[],uint256[])"
+	AbiSignatureERC20Transfer          = "transfer(address,uint256)"
+	AbiSignatureERC20Approve           = "approve(address,uint256)"
+	AbiSignatureERC20BatchTransferFrom = "batchTransferFrom(address,address[],uint256[])"
 )

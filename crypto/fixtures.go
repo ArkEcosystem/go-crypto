@@ -46,8 +46,6 @@ func GetMessageFixture() TestingMessageFixture {
 	return fixture
 }
 
-
-
 func GetBLSValidatorFixture() BLSValidatorFixture {
 	data := GetFixture("bls_validator")
 
@@ -64,12 +62,6 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 	_ = json.Unmarshal([]byte(data), &fixtures)
 
 	return fixtures
-}
-
-type TestingFixture struct {
-	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
-	Transaction Transaction `json:"transaction"`
-	SerializedHex string `json:"serializedHex"`
 }
 
 type TestingIdentityFixture struct {

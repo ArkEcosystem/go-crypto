@@ -158,6 +158,34 @@ func TestAbiEncodeDecodeAddressArrayRoundTrip(t *testing.T) {
 	}
 }
 
+// TestAbiEncodeDecodeEmptyArrayRoundTrip exercises the zero-element case,
+// where the array's length prefix is abiEncodeSmallUintWord(0) — the exact
+// edge case at the center of the abiEncodeSmallUintWord/abiEncodeUintWord
+// split (a zero-length big.Int encodes as an empty byte slice, not a
+// single zero byte).
+func TestAbiEncodeDecodeEmptyArrayRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	addressesArg, err := AbiAddressArray([]string{})
+	require.NoError(err)
+	amountsArg, err := AbiUint256Array([]*big.Int{})
+	require.NoError(err)
+
+	encoded := AbiEncodeFunctionCall("pay(address[],uint256[])", addressesArg, amountsArg)
+
+	decoder, err := NewAbiDecoder(encoded, "pay(address[],uint256[])", 2)
+	require.NoError(err)
+
+	decodedAddresses, err := decoder.AddressArray(0)
+	require.NoError(err)
+	assert.Equal(0, len(decodedAddresses))
+
+	decodedAmounts, err := decoder.Uint256Array(1)
+	require.NoError(err)
+	assert.Equal(0, len(decodedAmounts))
+}
+
 func TestAbiEncodeInvalidAddressErrors(t *testing.T) {
 	assert := assert.New(t)
 

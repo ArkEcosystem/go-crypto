@@ -150,8 +150,10 @@ func (l *RlpList) DecodeRLP(data []byte) (int, error) {
 	}
 
 	body := data[uint64(prefixLen) : uint64(prefixLen)+dataLen]
+	preallocated := len(*l)
 
-	for i := 0; len(body) > 0; i++ {
+	i := 0
+	for ; len(body) > 0; i++ {
 		var item RlpItem
 		if i < len(*l) {
 			item = (*l)[i]
@@ -166,6 +168,13 @@ func (l *RlpList) DecodeRLP(data []byte) (int, error) {
 		}
 
 		body = body[consumed:]
+	}
+
+	// If the source list has fewer elements than the pre-typed schema the
+	// caller supplied, some of those items would otherwise be silently left
+	// at their zero value (e.g. a *RlpBigInt with a nil X) instead of erroring.
+	if i < preallocated {
+		return 0, ErrRlpUnexpectedEndOfData
 	}
 
 	return prefixLen + int(dataLen), nil

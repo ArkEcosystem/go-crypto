@@ -14,46 +14,43 @@ import (
 	"github.com/fatih/structs"
 )
 
+// SignMessage signs an arbitrary message with the private key derived from
+// passphrase.
+//
+// NOTE: this still hashes the message with plain sha256, carried over
+// unchanged from before the Mainsail migration. Ethereum's personal_sign
+// convention (keccak256("\x19Ethereum Signed Message:\n" + len(message) +
+// message)) is a separate, not-yet-made design change.
 func SignMessage(message string, passphrase string) (*Message, error) {
 	privateKey, err := PrivateKeyFromPassphrase(passphrase)
-
 	if err != nil {
 		return nil, err
 	}
 
-	hash := sha256.New()
-	_, err = hash.Write([]byte(message))
-
-	if err != nil {
-		return nil, err
-	}
-
-	signature, err := privateKey.Sign(hash.Sum(nil))
-
-	if err != nil {
-		return nil, err
-	}
+	hash := sha256.Sum256([]byte(message))
+	sig := privateKey.Sign(hash[:])
 
 	return &Message{
 		PublicKey: HexEncode(privateKey.PublicKey.Serialize()),
-		Signature: HexEncode(signature),
+		Signature: HexEncode(sig.Bytes()),
 		Message:   message,
 	}, nil
 }
 
 func (message *Message) Verify() (bool, error) {
-	publicKey, _ := PublicKeyFromBytes(HexDecode(message.PublicKey))
-
-	hash := sha256.New()
-	_, err := hash.Write([]byte(message.Message))
-
+	publicKey, err := PublicKeyFromBytes(HexDecode(message.PublicKey))
 	if err != nil {
 		return false, err
 	}
 
-	verified, _ := publicKey.Verify(HexDecode(message.Signature), hash.Sum(nil))
+	sig, err := EcdsaSignatureFromBytes(HexDecode(message.Signature))
+	if err != nil {
+		return false, err
+	}
 
-	return verified, nil
+	hash := sha256.Sum256([]byte(message.Message))
+
+	return publicKey.Verify(hash[:], sig)
 }
 
 func (message *Message) ToMap() map[string]interface{} {

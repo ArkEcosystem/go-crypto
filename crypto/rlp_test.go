@@ -203,6 +203,22 @@ func TestRlpDecodeListAppendsExtraItems(t *testing.T) {
 	assert.Equal(RlpBytes{0x03}, *(*decoded)[2].(*RlpBytes))
 }
 
+// TestRlpDecodeListShorterThanSchemaErrors confirms a list decoded into MORE
+// pre-typed slots than are actually present in the data errors out, rather
+// than silently leaving the unfilled slots (e.g. a *RlpBigInt with a nil X)
+// at their zero value for the caller to trip over later.
+func TestRlpDecodeListShorterThanSchemaErrors(t *testing.T) {
+	assert := assert.New(t)
+
+	list := NewRlpList(&RlpBytes{0x01}, &RlpBytes{0x02})
+	encoded, err := RlpEncode(list)
+	assert.NoError(err)
+
+	decoded := NewRlpList(&RlpBytes{}, &RlpBytes{}, &RlpBytes{}, &RlpBytes{})
+	_, err = RlpDecode(encoded, decoded)
+	assert.ErrorIs(err, ErrRlpUnexpectedEndOfData)
+}
+
 func TestRlpDecodeEmptyDataError(t *testing.T) {
 	assert := assert.New(t)
 
