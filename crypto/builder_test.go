@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -17,9 +10,6 @@ import (
 
 const testPassphrase = "this is a top secret passphrase"
 
-// signSerializeDeserialize signs transaction with testPassphrase, round-trips
-// it through Serialize/DeserializeTransaction (which also runs
-// DecodeTransactionArgs), and returns the deserialized result for assertion.
 func signSerializeDeserialize(t *testing.T, transaction *Transaction) *Transaction {
 	t.Helper()
 	require := require.New(t)
@@ -299,6 +289,3 @@ func TestBuildTokenTransferRoundTrip(t *testing.T) {
 	assert.True(IsTokenTransfer(deserialized.Data))
 	assert.Equal(token, deserialized.To)
 }
-
-// Dispatch/type-identifier tests (DecodeTransactionArgs, IsVote, IsUnvote,
-// ...) live in transaction_types_test.go, alongside the code they cover.

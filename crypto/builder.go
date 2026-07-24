@@ -128,9 +128,6 @@ var (
 	usernameDoubleUnderscoreRegexp = regexp.MustCompile(`__`)
 )
 
-// validateUsername mirrors php-crypto's Helpers::isValidUsername exactly:
-// 1-20 characters, lowercase letters/digits/underscore only, no leading or
-// trailing underscore, no consecutive underscores.
 func validateUsername(username string) error {
 	if len(username) < 1 || len(username) > 20 {
 		return fmt.Errorf("%w: must be between 1 and 20 characters long, got %d", ErrInvalidUsername, len(username))
@@ -168,10 +165,6 @@ func BuildUsernameResignation() *Transaction {
 	return transaction
 }
 
-// addresses/amounts must be the same length, with at least one recipient.
-// The transaction's native Value is set to the sum of amounts, matching
-// php-crypto/typescript-crypto (the multipayment contract call is payable
-// and expects the attached value to cover the total being dispersed).
 func BuildMultiPayment(addresses []string, amounts []*big.Int) (*Transaction, error) {
 	if len(addresses) != len(amounts) {
 		return nil, fmt.Errorf("crypto: multi-payment addresses and amounts must be the same length, got %d and %d", len(addresses), len(amounts))
@@ -204,8 +197,6 @@ func BuildMultiPayment(addresses []string, amounts []*big.Int) (*Transaction, er
 	return transaction, nil
 }
 
-// Used directly for calls with no dedicated builder, and as the underlying
-// mechanism for BuildBatchTransfer/BuildTokenApprove/BuildTokenTransfer below.
 func BuildEvmCall(to string, data []byte) (*Transaction, error) {
 	if _, err := AddressToBytes(to); err != nil {
 		return nil, err
@@ -218,7 +209,6 @@ func BuildEvmCall(to string, data []byte) (*Transaction, error) {
 	return transaction, nil
 }
 
-// recipients/amounts must be the same length, with at least one recipient.
 func BuildBatchTransfer(tokenAddress string, recipients []string, amounts []*big.Int) (*Transaction, error) {
 	if len(recipients) != len(amounts) {
 		return nil, fmt.Errorf("crypto: batch transfer recipients and amounts must be the same length, got %d and %d", len(recipients), len(amounts))

@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -100,12 +93,6 @@ func TestIsUsernameResignation(t *testing.T) {
 	assert.False(IsUsernameResignation(AbiEncodeFunctionCall(AbiSignatureRegisterUsername, AbiString("test_user"))))
 }
 
-// TestIsValidatorRegistrationAndIsUpdateValidatorDoNotCrossMatch exercises
-// exactly the ambiguous pair discussed at length while designing this file:
-// registerValidator(bytes,bytes) and updateValidator(bytes,bytes) share an
-// identical argument shape, and here even identical argument *values* — only
-// the selector differs, and that's the only thing these predicates may key
-// off of.
 func TestIsValidatorRegistrationAndIsUpdateValidatorDoNotCrossMatch(t *testing.T) {
 	assert := assert.New(t)
 
@@ -151,9 +138,6 @@ func TestIsBatchTransfer(t *testing.T) {
 	assert.False(IsBatchTransfer(AbiEncodeFunctionCall(AbiSignatureVote, mustAbiAddress(t, testAddress(0x01)))))
 }
 
-// TestIsApproveAndIsRevoke covers the one predicate pair that shares a
-// selector AND an argument shape (approve(address,uint256)) — the decoded
-// amount is the only thing that tells them apart.
 func TestIsApproveAndIsRevoke(t *testing.T) {
 	assert := assert.New(t)
 
@@ -167,10 +151,6 @@ func TestIsApproveAndIsRevoke(t *testing.T) {
 	assert.False(IsApprove(revokeData))
 }
 
-// TestIsFunctionsHandleMalformedDataWithoutPanicking confirms every Is*
-// predicate degrades to false on garbage input rather than panicking — these
-// functions are meant to be safe to call on arbitrary calldata from
-// untrusted sources.
 func TestIsFunctionsHandleMalformedDataWithoutPanicking(t *testing.T) {
 	assert := assert.New(t)
 
@@ -192,9 +172,6 @@ func TestIsFunctionsHandleMalformedDataWithoutPanicking(t *testing.T) {
 	})
 }
 
-// TestDecodeTransactionArgsPopulatesSemanticFields exercises the dispatch
-// directly on hand-built Data, isolated from the RLP/ECDSA layers a full
-// sign→serialize→deserialize round trip would also involve.
 func TestDecodeTransactionArgsPopulatesSemanticFields(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
@@ -209,10 +186,6 @@ func TestDecodeTransactionArgsPopulatesSemanticFields(t *testing.T) {
 	assert.Equal(validatorAddress, transaction.Vote)
 }
 
-// TestDecodeTransactionArgsMalformedKnownSelectorErrors confirms the
-// deliberate divergence from php-crypto: once Data's leading 4 bytes match a
-// known function's selector, a subsequent decode failure is a hard error,
-// not a silent fallback to the next candidate.
 func TestDecodeTransactionArgsMalformedKnownSelectorErrors(t *testing.T) {
 	assert := assert.New(t)
 
@@ -226,9 +199,6 @@ func TestDecodeTransactionArgsMalformedKnownSelectorErrors(t *testing.T) {
 	assert.Error(err)
 }
 
-// TestDecodeTransactionArgsNoOpForUnrecognizedData confirms a transfer or
-// generic contract call (no known selector) leaves every semantic field
-// untouched, rather than erroring or guessing.
 func TestDecodeTransactionArgsNoOpForUnrecognizedData(t *testing.T) {
 	assert := assert.New(t)
 

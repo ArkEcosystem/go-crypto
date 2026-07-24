@@ -8,11 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestTransactionSignSerializeDeserializeVerifyRoundTrip proves the full
-// Mainsail envelope pipeline end to end: build a generic (EvmCall-shaped)
-// transaction, sign it, serialize it, deserialize the wire bytes back,
-// confirm every field survived the round trip, and confirm the recovered
-// sender and the signature both verify correctly.
 func TestTransactionSignSerializeDeserializeVerifyRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
@@ -58,9 +53,6 @@ func TestTransactionSignSerializeDeserializeVerifyRoundTrip(t *testing.T) {
 	assert.True(deserializedVerified)
 }
 
-// TestTransactionVerifyFailsForWrongSigner confirms Verify rejects a
-// signature that does not match the claimed SenderPublicKey — the negative
-// case a signature-verification pipeline must reliably catch.
 func TestTransactionVerifyFailsForWrongSigner(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
@@ -80,10 +72,6 @@ func TestTransactionVerifyFailsForWrongSigner(t *testing.T) {
 	assert.False(verified)
 }
 
-// TestTransactionSerializeUnsignedMatchesSigningHash confirms that before a
-// transaction is signed (no R/S set), Serialize(false) and Serialize(true)
-// produce identical output — both must fall back to the EIP-155
-// [chainId, 0, 0] placeholder, since there is no signature yet to embed.
 func TestTransactionSerializeUnsignedMatchesSigningHash(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
