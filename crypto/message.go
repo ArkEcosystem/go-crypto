@@ -1,18 +1,18 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
-	"crypto/sha256"
 	"encoding/json"
+	"strconv"
 
 	"github.com/fatih/structs"
 )
+
+const personalMessagePrefix = "\x19Ethereum Signed Message:\n"
+
+func personalSignHash(message string) []byte {
+	prefixed := personalMessagePrefix + strconv.Itoa(len(message)) + message
+	return keccak256([]byte(prefixed))
+}
 
 func SignMessage(message string, passphrase string) (*Message, error) {
 	privateKey, err := PrivateKeyFromPassphrase(passphrase)
@@ -20,8 +20,7 @@ func SignMessage(message string, passphrase string) (*Message, error) {
 		return nil, err
 	}
 
-	hash := sha256.Sum256([]byte(message))
-	sig := privateKey.Sign(hash[:])
+	sig := privateKey.Sign(personalSignHash(message))
 
 	return &Message{
 		PublicKey: HexEncode(privateKey.PublicKey.Serialize()),
@@ -41,9 +40,7 @@ func (message *Message) Verify() (bool, error) {
 		return false, err
 	}
 
-	hash := sha256.Sum256([]byte(message.Message))
-
-	return publicKey.Verify(hash[:], sig)
+	return publicKey.Verify(personalSignHash(message.Message), sig)
 }
 
 func (message *Message) ToMap() map[string]interface{} {

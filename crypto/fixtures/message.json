@@ -1,8 +1,8 @@
 {
     "data": {
-        "publickey": "034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
-        "signature": "cdc26c4d137dbbad22ec94fee0bb7d7c1864291aec69c5d30a2d585efb2aa5e349e5497bb94221d8394e56a04e9b39cf9960c73b8212f46d2f03597cd73ebd33",
-        "message": "Hello World"
+        "publickey": "0243333347c8cbf4e3cbc7a96964181d02a2b0c854faa2fef86b4b8d92afcf473d",
+        "signature": "2bdd0c58ff8a25f456065fb731c73308a25d0a09f351f23e3c7dd3882776d33d626b0cafc0b99dd7504b24f6ecd2e036a267c8e5e005f36dcbc03b2e33fa7fc31c",
+        "message": "Hello, world!"
     },
-    "passphrase": "this is a top secret passphrase"
+    "passphrase": "found lobster oblige describe ready addict body brave live vacuum display salute lizard combine gift resemble race senior quality reunion proud tell adjust angle"
 }
