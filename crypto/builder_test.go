@@ -10,9 +10,6 @@ import (
 
 const testPassphrase = "this is a top secret passphrase"
 
-// signSerializeDeserialize signs transaction with testPassphrase, round-trips
-// it through Serialize/DeserializeTransaction (which also runs
-// DecodeTransactionArgs), and returns the deserialized result for assertion.
 func signSerializeDeserialize(t *testing.T, transaction *Transaction) *Transaction {
 	t.Helper()
 	require := require.New(t)
