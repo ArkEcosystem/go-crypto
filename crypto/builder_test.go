@@ -289,6 +289,3 @@ func TestBuildTokenTransferRoundTrip(t *testing.T) {
 	assert.True(IsTokenTransfer(deserialized.Data))
 	assert.Equal(token, deserialized.To)
 }
-
-// Dispatch/type-identifier tests (DecodeTransactionArgs, IsVote, IsUnvote,
-// ...) live in transaction_types_test.go, alongside the code they cover.
