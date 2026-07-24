@@ -6,11 +6,6 @@ import (
 	"math/big"
 )
 
-// Deliberately unlike php-crypto (which silently swallows any decode error
-// and falls through to the next candidate, even after a selector match):
-// once transaction.Data's leading 4 bytes match a known function's selector,
-// any further decode failure is treated as a genuinely malformed transaction
-// of that kind and returned as an error, rather than silently ignored.
 func DecodeTransactionArgs(transaction *Transaction) error {
 	type candidate struct {
 		signature string
@@ -124,23 +119,6 @@ func applyMultiPayment(transaction *Transaction, decoder *AbiDecoder) error {
 	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// TRANSACTION TYPE IDENTIFIER /////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//
-// The functions below mirror typescript-crypto's TransactionTypeIdentifier:
-// standalone, public, stateless predicates over raw calldata, computed fresh
-// on every call — no stored/cached classification anywhere. This is the
-// pattern actually exercised by real consumers of the sibling SDKs (e.g.
-// arkvault calls TransactionTypeIdentifier.isTokenTransfer(...) directly on
-// data it already has), as opposed to the full class-based Deserializer
-// dispatch, which nothing outside the SDKs themselves calls.
-//
-// IsTransfer matches typescript-crypto's own rule (empty calldata), which is
-// a different check than the value-based rule Deserializer.deserialize uses
-// internally (value != 0) — that inconsistency exists in the reference
-// implementation itself, not introduced here.
-
 func IsTransfer(data []byte) bool {
 	return len(data) == 0
 }
@@ -186,8 +164,6 @@ func IsBatchTransfer(data []byte) bool {
 	return err == nil
 }
 
-// IsApprove and IsRevoke both match approve(address,uint256); only the
-// decoded amount (positive vs zero) tells them apart.
 func IsApprove(data []byte) bool {
 	amount, ok := decodedApproveAmount(data)
 	return ok && amount.Sign() > 0
