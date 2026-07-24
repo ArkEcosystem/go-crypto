@@ -8,240 +8,95 @@
 package crypto
 
 import (
-	"encoding/binary"
+	"errors"
+	"math/big"
 )
 
-const compactPubKeyLen = 33 // bytes
-const addressLen = 20 // bytes
+var (
+	ErrDeserializeTruncated = errors.New("deserialize: transaction data is truncated")
+	ErrDeserializeInvalidTo = errors.New("deserialize: \"to\" field is not a valid address length")
+	ErrDeserializeInvalidV  = errors.New("deserialize: v field does not decode to a valid recovery id")
+)
 
-func deserializeAddress(serialized []byte, offset int) (address string, offsetAfter int) {
-	if len(serialized[offset:]) >= addressLen {
-		addressBytes := serialized[offset : offset+addressLen]
-		address = "0x" + EIP55Checksum(HexEncode(addressBytes))
-		offsetAfter = offset + addressLen
-	} else {
-		address = ""
-		offsetAfter = offset
-	}
-	return
-}
+// DeserializeTransaction decodes a hex-encoded RLP transaction envelope
+// ([nonce, gasPrice, gasLimit, to, value, data, v, r, s]), reverses the
+// EIP-155 v encoding back to a raw recovery id, computes the transaction
+// hash, and recovers the sender's public key and address from the signature.
+func DeserializeTransaction(serializedHex string) (*Transaction, error) {
+	serialized := HexDecode(serializedHex)
 
-func DeserializeTransaction(serialized string) *Transaction {
-	transaction := &Transaction{}
-	transaction.Serialized = HexDecode(serialized)
+	list := NewRlpList(
+		&RlpBigInt{}, &RlpBigInt{}, &RlpBigInt{},
+		&RlpBytes{}, &RlpBigInt{}, &RlpBytes{},
+		&RlpBigInt{}, &RlpBytes{}, &RlpBytes{},
+	)
 
-	typeSpecificOffset := deserializeHeader(transaction)
-	transaction = deserializeTypeSpecific(typeSpecificOffset, transaction)
-	transaction = deserializeCommon(transaction)
-
-	return transaction
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// GENERIC DESERIALISING ///////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-func deserializeHeader(transaction *Transaction) int {
-	transaction.Version = transaction.Serialized[1:2][0]
-	transaction.Network = transaction.Serialized[2:3][0]
-	transaction.TypeGroup = binary.LittleEndian.Uint32(transaction.Serialized[3:7])
-	transaction.Type = binary.LittleEndian.Uint16(transaction.Serialized[7:9])
-	transaction.Nonce = binary.LittleEndian.Uint64(transaction.Serialized[9:17])
-	transaction.SenderPublicKey = HexEncode(transaction.Serialized[17:50])
-	transaction.Fee = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[50:58]))
-
-	vendorFieldLength := transaction.Serialized[58:59][0]
-
-	if vendorFieldLength > 0 {
-		transaction.VendorField = string(transaction.Serialized[59:59 + vendorFieldLength])
+	if _, err := RlpDecode(serialized, list); err != nil {
+		return nil, err
 	}
 
-	typeSpecificOffset := int(59 + vendorFieldLength)
-
-	return typeSpecificOffset
-}
-
-func deserializeTypeSpecific(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	switch transaction.Type {
-	case TRANSACTION_TYPES.Transfer:
-		transaction = deserializeTransfer(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.ValidatorRegistration:
-		transaction = deserializeValidatorRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.Vote:
-		transaction = deserializeVote(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.MultiSignatureRegistration:
-		transaction = deserializeMultiSignatureRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.MultiPayment:
-		transaction = deserializeMultiPayment(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.ValidatorResignation:
-		transaction = deserializeValidatorResignation(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.UsernameRegistration:
-		transaction = deserializeUsernameRegistration(typeSpecificOffset, transaction)
-	case TRANSACTION_TYPES.UsernameResignation:
-		transaction = deserializeUsernameResignation(typeSpecificOffset, transaction)
+	items := *list
+	if len(items) < 9 {
+		return nil, ErrDeserializeTruncated
 	}
 
-	return transaction
-}
-
-func deserializeCommon(transaction *Transaction) *Transaction {
-	if transaction.Id == "" {
-		transaction.Id = transaction.GetId()
+	toBytes := []byte(*items[3].(*RlpBytes))
+	if len(toBytes) != 0 && len(toBytes) != AddressByteLength {
+		return nil, ErrDeserializeInvalidTo
 	}
 
-	return transaction
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TYPE SPECIFIC DESERIALISING /////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-func deserializeTransfer(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-	
-	transaction.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o : o+8]))
-	o += 8
-	
-	transaction.Expiration = binary.LittleEndian.Uint32(transaction.Serialized[o : o+4])
-	o += 4
-	
-	address, newOffset := deserializeAddress(transaction.Serialized, o)
-	
-	transaction.RecipientId = address
-	o = newOffset
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeUsernameRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	usernameLength := int(transaction.Serialized[o])
-	o++
-
-	username := string(transaction.Serialized[o : o+usernameLength])
-	o += usernameLength
-
-	transaction.Asset = &TransactionAsset{
-		Username: &UsernameAsset{
-			Username: username,
-		},
+	transaction := &Transaction{
+		Nonce:      items[0].(*RlpBigInt).X,
+		GasPrice:   items[1].(*RlpBigInt).X,
+		GasLimit:   items[2].(*RlpBigInt).X,
+		Value:      items[4].(*RlpBigInt).X,
+		Data:       []byte(*items[5].(*RlpBytes)),
+		Serialized: serialized,
 	}
 
-	return transaction.ParseSignatures(o)
+	if len(toBytes) > 0 {
+		transaction.To = AddressFromBytes(toBytes)
+	}
+
+	chainId := big.NewInt(int64(GetNetwork().ChainId))
+	recoveryId, err := recoveryIdFromEip155V(items[6].(*RlpBigInt).X, chainId)
+	if err != nil {
+		return nil, err
+	}
+	transaction.V = recoveryId
+	transaction.R = padCurveBytes([]byte(*items[7].(*RlpBytes)))
+	transaction.S = padCurveBytes([]byte(*items[8].(*RlpBytes)))
+
+	hash, err := transaction.GetHash()
+	if err != nil {
+		return nil, err
+	}
+	transaction.Hash = hash
+
+	if err := transaction.RecoverSender(); err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
 }
 
+// recoveryIdFromEip155V reverses EIP-155's v = recoveryId + chainId*2 + 35,
+// rejecting the result unless it is a valid ECDSA recovery id (0-3). This
+// guards against a malformed or adversarial v field producing an out-of-range
+// or unrepresentable value that would otherwise silently corrupt or panic on
+// the big.Int-to-int conversion.
+func recoveryIdFromEip155V(vField, chainId *big.Int) (int, error) {
+	recoveryId := new(big.Int).Sub(vField, new(big.Int).Mul(chainId, big.NewInt(2)))
+	recoveryId.Sub(recoveryId, big.NewInt(35))
 
-func deserializeValidatorRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	publicKeyLength := 48
-
-
-	transaction.Asset = &TransactionAsset{
-		Validator: &ValidatorAsset{
-			ValidatorPublicKey: HexEncode(transaction.Serialized[o:o + publicKeyLength]),
-		},
-	}
-	o += publicKeyLength
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeVote(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	// Read the number of votes
-	numVotes := int(transaction.Serialized[o])
-	o++
-
-	transaction.Asset = &TransactionAsset{}
-	transaction.Asset.Votes = make([]string, 0, numVotes)
-
-	// Read the votes
-	for i := 0; i < numVotes; i++ {
-		voteBytes := transaction.Serialized[o : o+compactPubKeyLen]
-		o += compactPubKeyLen
-
-		transaction.Asset.Votes = append(transaction.Asset.Votes, HexEncode(voteBytes))
+	if !recoveryId.IsInt64() {
+		return 0, ErrDeserializeInvalidV
 	}
 
-	// Read the number of unvotes
-	numUnvotes := int(transaction.Serialized[o])
-	o++
-
-	transaction.Asset.Unvotes = make([]string, 0, numUnvotes)
-
-	// Read the unvotes
-	for i := 0; i < numUnvotes; i++ {
-		unvoteBytes := transaction.Serialized[o : o+compactPubKeyLen]
-		o += compactPubKeyLen
-
-		transaction.Asset.Unvotes = append(transaction.Asset.Unvotes, HexEncode(unvoteBytes))
+	n := recoveryId.Int64()
+	if n < 0 || n > 3 {
+		return 0, ErrDeserializeInvalidV
 	}
 
-	return transaction.ParseSignatures(o)
-}
-
-
-func deserializeMultiSignatureRegistration(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	transaction.Asset = &TransactionAsset{
-		MultiSignature: &MultiSignatureRegistrationAsset{
-			Min: transaction.Serialized[o],
-		},
-	}
-	o++
-
-	count := int(transaction.Serialized[o])
-	o++
-
-	for i := 0; i < count; i++ {
-		keyHex := HexEncode(transaction.Serialized[o:o + compactPubKeyLen])
-		o += compactPubKeyLen
-
-		transaction.Asset.MultiSignature.PublicKeys =
-			append(transaction.Asset.MultiSignature.PublicKeys, keyHex)
-	}
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeMultiPayment(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	o := typeSpecificOffset
-
-	numRecipients := binary.LittleEndian.Uint16(transaction.Serialized[o:o + 2])
-	o += 2
-
-	transaction.Asset = &TransactionAsset{}
-
-	for i := uint16(0); i < numRecipients; i++ {
-		payment := &MultiPaymentAsset{}
-
-		payment.Amount = FlexToshi(binary.LittleEndian.Uint64(transaction.Serialized[o:o + 8]))
-		o += 8
-
-		payment.RecipientId, o = deserializeAddress(transaction.Serialized, o)
-
-		transaction.Asset.Payments = append(transaction.Asset.Payments, payment)
-	}
-
-	var sum uint64
-
-	for _, payment := range transaction.Asset.Payments {
-		sum += uint64(payment.Amount)
-	}
-		
-	transaction.Amount = FlexToshi(sum)
-
-	return transaction.ParseSignatures(o)
-}
-
-func deserializeValidatorResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	return transaction.ParseSignatures(typeSpecificOffset)
-}
-
-func deserializeUsernameResignation(typeSpecificOffset int, transaction *Transaction) *Transaction {
-	return transaction.ParseSignatures(typeSpecificOffset)
+	return int(n), nil
 }
