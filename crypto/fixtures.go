@@ -1,21 +1,14 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 func GetFile(path string) string {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 
 	if err != nil {
 		log.Fatalf("Cannot read file %s: %s", path, err)
@@ -64,6 +57,15 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 	return fixtures
 }
 
+func GetTransactionFixture(name string) TestingTransactionFixture {
+	data := GetFile(fmt.Sprintf("./fixtures/transactions/%s.json", name))
+
+	var fixture TestingTransactionFixture
+	_ = json.Unmarshal([]byte(data), &fixture)
+
+	return fixture
+}
+
 type TestingIdentityFixture struct {
 	Data struct {
 		PrivateKey string `json:"privateKey,omitempty"`
@@ -92,4 +94,23 @@ type BLSKeyFixture struct {
 	BLSPublicKey  string `json:"bls_public_key"`
 	BLSPrivateKey string `json:"bls_private_key"`
 	Passphrase    string `json:"passphrase"`
+}
+
+type TestingTransactionFixture struct {
+	Data struct {
+		Nonce           string `json:"nonce"`
+		GasPrice        string `json:"gasPrice"`
+		GasLimit        string `json:"gasLimit"`
+		To              string `json:"to"`
+		Value           string `json:"value"`
+		Data            string `json:"data"`
+		Network         int    `json:"network"`
+		V               int    `json:"v"`
+		R               string `json:"r"`
+		S               string `json:"s"`
+		SenderPublicKey string `json:"senderPublicKey"`
+		From            string `json:"from"`
+		Hash            string `json:"hash"`
+	} `json:"data"`
+	Serialized string `json:"serialized"`
 }
