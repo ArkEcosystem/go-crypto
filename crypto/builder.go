@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -13,12 +6,8 @@ import (
 	"fmt"
 	"math/big"
 	"regexp"
-
-	blst "github.com/supranational/blst/bindings/go"
 )
 
-// Default gas parameters used by NewTransaction, matching php-crypto/
-// typescript-crypto's AbstractTransactionBuilder defaults.
 var (
 	DefaultGasPrice = big.NewInt(5)
 	DefaultGasLimit = big.NewInt(1_000_000)
@@ -69,16 +58,8 @@ func BuildUnvote() *Transaction {
 	return transaction
 }
 
-// NOTE: BLS Proof-of-Possession is not yet implemented — the proof argument
-// is encoded as empty bytes. This is a known, documented gap: the resulting
-// transaction carries a validator public key but no proof, and will likely
-// not validate on an actual Mainsail chain until PoP support is added.
-func BuildValidatorRegistration(validatorPublicKey string, stake *big.Int) (*Transaction, error) {
-	if err := validateBLSPublicKey(validatorPublicKey); err != nil {
-		return nil, err
-	}
-
-	pubKeyBytes, err := hex.DecodeString(validatorPublicKey)
+func BuildValidatorRegistration(validatorPassphrase string, stake *big.Int) (*Transaction, error) {
+	pop, err := FromMnemonic(validatorPassphrase)
 	if err != nil {
 		return nil, err
 	}
@@ -86,28 +67,24 @@ func BuildValidatorRegistration(validatorPublicKey string, stake *big.Int) (*Tra
 	transaction := NewTransaction()
 	transaction.To = ContractConsensus
 	transaction.Value = bigIntOrZero(stake)
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureRegisterValidator, AbiBytes(pubKeyBytes), AbiBytes([]byte{}))
-	transaction.ValidatorPublicKey = validatorPublicKey
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureRegisterValidator, AbiBytes(pop.PK), AbiBytes(pop.POP))
+	transaction.ValidatorPublicKey = hex.EncodeToString(pop.PK)
+	transaction.ValidatorProof = hex.EncodeToString(pop.POP)
 
 	return transaction, nil
 }
 
-// NOTE: as with BuildValidatorRegistration, BLS Proof-of-Possession is not
-// yet implemented; the proof argument is encoded as empty bytes.
-func BuildValidatorUpdate(validatorPublicKey string) (*Transaction, error) {
-	if err := validateBLSPublicKey(validatorPublicKey); err != nil {
-		return nil, err
-	}
-
-	pubKeyBytes, err := hex.DecodeString(validatorPublicKey)
+func BuildValidatorUpdate(validatorPassphrase string) (*Transaction, error) {
+	pop, err := FromMnemonic(validatorPassphrase)
 	if err != nil {
 		return nil, err
 	}
 
 	transaction := NewTransaction()
 	transaction.To = ContractConsensus
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureUpdateValidator, AbiBytes(pubKeyBytes), AbiBytes([]byte{}))
-	transaction.ValidatorPublicKey = validatorPublicKey
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureUpdateValidator, AbiBytes(pop.PK), AbiBytes(pop.POP))
+	transaction.ValidatorPublicKey = hex.EncodeToString(pop.PK)
+	transaction.ValidatorProof = hex.EncodeToString(pop.POP)
 
 	return transaction, nil
 }
@@ -277,24 +254,4 @@ func BuildTokenTransfer(tokenAddress string, recipient string, amount *big.Int) 
 	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20Transfer, recipientArg, amountArg)
 
 	return transaction, nil
-}
-
-func validateBLSPublicKey(publicKey string) error {
-	if len(publicKey) != 96 {
-		return errors.New("invalid BLS public key length")
-	}
-
-	pubKeyBytes, err := hex.DecodeString(publicKey)
-	if err != nil {
-		return errors.New("invalid BLS public key hex format")
-	}
-
-	var pubKey blst.P1Affine
-	pubKey.Deserialize(pubKeyBytes)
-
-	if !pubKey.InG1() {
-		return errors.New("invalid BLS public key: not in G1 group or invalid structure")
-	}
-
-	return nil
 }
