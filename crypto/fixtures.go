@@ -64,12 +64,6 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 	return fixtures
 }
 
-type TestingFixture struct {
-	MultiSignatureAsset MultiSignatureRegistrationAsset `json:"multiSignatureAsset"`
-	Transaction         Transaction                     `json:"transaction"`
-	SerializedHex       string                          `json:"serializedHex"`
-}
-
 type TestingIdentityFixture struct {
 	Data struct {
 		PrivateKey string `json:"privateKey,omitempty"`

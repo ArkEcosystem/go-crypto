@@ -1,323 +1,291 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
-	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func transferWithPassphrase(t *testing.T) *Transaction {
-	return BuildTransfer(
-		&Transaction{
-			Amount:      FlexToshi(133380000000),
-			Expiration:  4333222,
-			Fee:         FlexToshi(10),
-			Network:     30,
-			Nonce:       6,
-			RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
-		},
-		"my super secret passphrase",
-		"",
-	)
+const testPassphrase = "this is a top secret passphrase"
+
+func signSerializeDeserialize(t *testing.T, transaction *Transaction) *Transaction {
+	t.Helper()
+	require := require.New(t)
+
+	require.NoError(transaction.Sign(testPassphrase))
+
+	verified, err := transaction.Verify()
+	require.NoError(err)
+	require.True(verified)
+
+	deserialized, err := DeserializeTransaction(HexEncode(transaction.Serialized))
+	require.NoError(err)
+
+	deserializedVerified, err := deserialized.Verify()
+	require.NoError(err)
+	require.True(deserializedVerified)
+
+	return deserialized
 }
 
-func transferWithSecondPassphrase(t *testing.T) *Transaction {
-	secondPassPhrase := "This is a top secret second passphrase"
+func TestBuildTransferRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
 
-	transaction := BuildTransfer(
-		&Transaction{
-			Amount:       FlexToshi(133380000000),
-			Nonce:        5,
-			RecipientId:  "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
-			VendorField:  "This is a transaction from Go",
-		},
-		"This is a top secret passphrase",
-		secondPassPhrase,
-	)
+	recipient := testAddress(0x01)
+	transaction, err := BuildTransfer(recipient, big.NewInt(1_000_000))
+	require.NoError(err)
 
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsTransfer(deserialized.Data))
+	assert.Equal(recipient, deserialized.To)
+	assert.Equal(0, big.NewInt(1_000_000).Cmp(deserialized.Value))
+}
+
+func TestBuildTransferInvalidRecipientErrors(t *testing.T) {
 	assert := assert.New(t)
 
-	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
-	assert.True(transaction.SecondVerify(secondPublicKey))
-
-	return transaction
+	_, err := BuildTransfer("not-an-address", big.NewInt(1))
+	assert.ErrorIs(err, ErrInvalidAddress)
 }
 
-func transferMultiSignature(t *testing.T) *Transaction {
-	transaction := &Transaction{
-		Amount:       FlexToshi(200000000),
-		Expiration:   4333222,
-		Fee:          FlexToshi(10),
-		Network:      30,
-		Nonce:        6,
-		RecipientId:  "0xb693449AdDa7EFc015D87944EAE8b7C37EB1690A",
-	}
+func TestBuildVoteRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
 
-	transaction = BuildTransferMultiSignature(transaction, 0, "multisig participant 1")
-	transaction = BuildTransferMultiSignature(transaction, 1, "multisig participant 2")
+	validator := testAddress(0x02)
+	transaction, err := BuildVote(validator)
+	require.NoError(err)
 
-	return transaction
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsVote(deserialized.Data))
+	assert.Equal(ContractConsensus, deserialized.To)
+	assert.Equal(validator, deserialized.Vote)
 }
 
-func validatorRegistrationWithPassphrase(t *testing.T) *Transaction {
-	return BuildValidatorRegistration(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Validator: &ValidatorAsset{
-					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
-				},
-			},
-			Nonce: 5,
-		},
-		"lumber desk thought industry island man slow vendor pact fragile enact season",
-		"",
-	)
-}
-
-func validatorRegistrationWithSecondPassphrase(t *testing.T) *Transaction {
-	secondPassPhrase := "This is a top secret second passphrase"
-
-	transaction := BuildValidatorRegistration(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Validator: &ValidatorAsset{
-					ValidatorPublicKey: "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		secondPassPhrase,
-	)
-
+func TestBuildUnvoteRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 
-	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
-	assert.True(transaction.SecondVerify(secondPublicKey))
+	transaction := BuildUnvote()
+	deserialized := signSerializeDeserialize(t, transaction)
 
-	return transaction
+	assert.True(IsUnvote(deserialized.Data))
+	assert.Equal(ContractConsensus, deserialized.To)
 }
 
-func usernameRegistrationWithPassphrase(t *testing.T) *Transaction {
-	return BuildUsernameRegistration(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Username: &UsernameAsset{
-					Username: "test",
-				},
-			},
-			Nonce: 5,
-		},
-		"your secret passphrase",
-		"",
-	)
+func TestBuildValidatorRegistrationRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	blsPublicKey := "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118"
+
+	transaction, err := BuildValidatorRegistration(blsPublicKey, big.NewInt(2_500_000_000))
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsValidatorRegistration(deserialized.Data))
+	assert.Equal(ContractConsensus, deserialized.To)
+	assert.Equal(blsPublicKey, deserialized.ValidatorPublicKey)
+	assert.Equal(0, big.NewInt(2_500_000_000).Cmp(deserialized.Value))
 }
 
-func usernameResignationWithPassphrase(t *testing.T) *Transaction {
-	return BuildUsernameResignation(
-		&Transaction{
-			Nonce: 5,
-		},
-		"your secret passphrase",
-		"",
-	)
-}
-
-
-func voteWithPassphrase(t *testing.T) *Transaction {
-	return BuildVote(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
-
-func voteWithSecondPassphrase(t *testing.T) *Transaction {
-	secondPassPhrase := "This is a top secret second passphrase"
-
-	transaction := BuildVote(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Votes: []string{"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192"},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		secondPassPhrase,
-	)
-
+func TestBuildValidatorRegistrationInvalidKeyErrors(t *testing.T) {
 	assert := assert.New(t)
 
-	secondPublicKey, _ := PublicKeyFromPassphrase(secondPassPhrase)
-	assert.True(transaction.SecondVerify(secondPublicKey))
-
-	return transaction
+	_, err := BuildValidatorRegistration("too-short", nil)
+	assert.Error(err)
 }
 
-func unvoteVoteWithPassphrase(t *testing.T) *Transaction {
-	return BuildVote(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Votes: []string{
-					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed193",
-				},
-				Unvotes: []string{
-					"034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
+func TestBuildValidatorUpdateRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	blsPublicKey := "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118"
+
+	transaction, err := BuildValidatorUpdate(blsPublicKey)
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsUpdateValidator(deserialized.Data))
+	assert.Equal(blsPublicKey, deserialized.ValidatorPublicKey)
 }
 
-func multiSignatureRegistrationWithPassphrase(t *testing.T) *Transaction {
-	return BuildMultiSignatureRegistration(
-		&Transaction{
-			Asset: &TransactionAsset{
-				MultiSignature: &MultiSignatureRegistrationAsset{
-					Min: 2,
-					PublicKeys: []string{
-						"03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-						"03b02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-						"03c02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933",
-					},
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
+func TestBuildValidatorResignationRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+
+	transaction := BuildValidatorResignation()
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsValidatorResignation(deserialized.Data))
+	assert.Equal(ContractConsensus, deserialized.To)
 }
 
-func multiPaymentWithPassphrase(t *testing.T) *Transaction {
-	return BuildMultiPayment(
-		&Transaction{
-			Asset: &TransactionAsset{
-				Payments: []*MultiPaymentAsset{
-					{Amount: FlexToshi(111222), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
-					{Amount: FlexToshi(222333), RecipientId: "0xb693449AdDa7EFc015D87944EAE8b7C37EB1690A"},
-					{Amount: FlexToshi(333444), RecipientId: "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01"},
-				},
-			},
-			Nonce: 5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
+func TestBuildUsernameRegistrationRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	transaction, err := BuildUsernameRegistration("simple_tx_tester")
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsUsernameRegistration(deserialized.Data))
+	assert.Equal(ContractUsernames, deserialized.To)
+	assert.Equal("simple_tx_tester", deserialized.Username)
 }
 
-func validatorResignationWithPassphrase(t *testing.T) *Transaction {
-	return BuildValidatorResignation(
-		&Transaction{
-			Amount:  FlexToshi(0),
-			Nonce:   5,
-		},
-		"This is a top secret passphrase",
-		"",
-	)
-}
+func TestBuildUsernameRegistrationValidation(t *testing.T) {
+	assert := assert.New(t)
 
-
-func TestBuild(t *testing.T) {
-	for builderName, buildTransaction := range map[string]func(*testing.T) *Transaction{
-		"TransferWithPassphrase":                  transferWithPassphrase,
-		"TransferWithSecondPassphrase":            transferWithSecondPassphrase,
-		"ValidatorRegistrationWithPassphrase":     validatorRegistrationWithPassphrase,
-		"ValidatorRegistrationWithSecondPassphrase": validatorRegistrationWithSecondPassphrase,
-		"VoteWithPassphrase":                      voteWithPassphrase,
-		"UsernameRegistrationWithPassphrase":      usernameRegistrationWithPassphrase,
-		"UsernameResignationWithPassphrase":       usernameResignationWithPassphrase,
-		"VoteWithSecondPassphrase":                voteWithSecondPassphrase,
-		"UnvoteVoteWithPassphrase":                unvoteVoteWithPassphrase,
-		"MultiSignatureRegistrationWithPassphrase": multiSignatureRegistrationWithPassphrase,
-		"MultiPaymentWithPassphrase":              multiPaymentWithPassphrase,
-		"ValidatorResignationWithPassphrase":      validatorResignationWithPassphrase,
-	} {
-		// Iterate only over Schnorr signature type
-		for signatureTypeString, signatureType := range map[string]int{
-			"Schnorr": SIGNATURE_TYPE_SCHNORR,
-		} {
-			CONFIG_SIGNATURE_TYPE = signatureType
-
-			test := func(t *testing.T) {
-				transaction := buildTransaction(t)
-				
-				assert := assert.New(t)
-
-				assert.True(transaction.Verify())
-			}
-
-			t.Run(fmt.Sprintf("%s-%s", builderName, signatureTypeString), test)
-		}
+	cases := []string{
+		"",                              // too short
+		"this_username_is_way_too_long", // too long
+		"Invalid",                       // uppercase
+		"_leading",                      // leading underscore
+		"trailing_",                     // trailing underscore
+		"double__underscore",            // consecutive underscores
 	}
 
-	// Test multisignature transfer separately
-	test := func(t *testing.T) {
-		transaction := transferMultiSignature(t)
-
-		assert := assert.New(t)
-
-		multiSignatureAsset := &MultiSignatureRegistrationAsset{
-			Min: 2,
-			PublicKeys: []string{
-				"037eaa8cb236c40a08fcb9d6220743ee6ae1b5c40e8a77a38f286516c3ff663901",
-				"0301fd417566397113ba8c55de2f093a572744ed1829b37b56a129058000ef7bce",
-			},
-		}
-
-		assert.True(transaction.Verify(multiSignatureAsset))
+	for _, username := range cases {
+		_, err := BuildUsernameRegistration(username)
+		assert.ErrorIs(err, ErrInvalidUsername, "username %q should be rejected", username)
 	}
-
-	t.Run("TransferMultiSignature-Schnorr", test)
 }
 
+func TestBuildUsernameResignationRoundTrip(t *testing.T) {
+	assert := assert.New(t)
 
-func TestBuildValidatorRegistrationWithInvalidKeyLength(t *testing.T) {
-	assert.PanicsWithValue(t, "Invalid BLS public key: invalid BLS public key length", func() {
-		BuildValidatorRegistration(
-			&Transaction{
-				Asset: &TransactionAsset{
-					Validator: &ValidatorAsset{
-						ValidatorPublicKey: "b08058db53e2665c84a40f5152e76dd2b65212",
-					},
-				},
-				Nonce: 5,
-			},
-			"lumber desk thought industry island man slow vendor pact fragile enact season",
-			"",
-		)
-	})
+	transaction := BuildUsernameResignation()
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsUsernameResignation(deserialized.Data))
+	assert.Equal(ContractUsernames, deserialized.To)
 }
 
-func TestBuildValidatorRegistrationWithInvalidKey(t *testing.T) {
-	assert.PanicsWithValue(t, "Invalid BLS public key: invalid BLS public key hex format", func() {
-		BuildValidatorRegistration(
-			&Transaction{
-				Asset: &TransactionAsset{
-					Validator: &ValidatorAsset{
-						ValidatorPublicKey: "j08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118",
-					},
-				},
-				Nonce: 5,
-			},
-			"lumber desk thought industry island man slow vendor pact fragile enact season",
-			"",
-		)
-	})
+func TestBuildMultiPaymentRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	addresses := []string{testAddress(0x01), testAddress(0x02)}
+	amounts := []*big.Int{big.NewInt(111222), big.NewInt(222333)}
+
+	transaction, err := BuildMultiPayment(addresses, amounts)
+	require.NoError(err)
+
+	assert.Equal(0, big.NewInt(333555).Cmp(transaction.Value)) // sum of amounts
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsMultiPayment(deserialized.Data))
+	assert.Equal(ContractMultipayment, deserialized.To)
+	assert.Equal(addresses, deserialized.PaymentAddresses)
+	require.Equal(len(amounts), len(deserialized.PaymentAmounts))
+	for i, amount := range amounts {
+		assert.Equal(0, amount.Cmp(deserialized.PaymentAmounts[i]))
+	}
+}
+
+func TestBuildMultiPaymentMismatchedLengthsErrors(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := BuildMultiPayment([]string{testAddress(0x01)}, []*big.Int{})
+	assert.Error(err)
+}
+
+func TestBuildMultiPaymentEmptyErrors(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := BuildMultiPayment(nil, nil)
+	assert.Error(err)
+}
+
+func TestBuildEvmCallRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	to := testAddress(0x03)
+	data := []byte{0xde, 0xad, 0xbe, 0xef}
+
+	transaction, err := BuildEvmCall(to, data)
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	// Arbitrary/unrecognized calldata: none of the known predicates match.
+	assert.False(IsVote(deserialized.Data))
+	assert.False(IsUnvote(deserialized.Data))
+	assert.False(IsValidatorRegistration(deserialized.Data))
+	assert.False(IsUsernameRegistration(deserialized.Data))
+	assert.False(IsMultiPayment(deserialized.Data))
+	assert.Equal(to, deserialized.To)
+	assert.Equal(data, deserialized.Data)
+}
+
+func TestBuildBatchTransferRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	token := testAddress(0x04)
+	recipients := []string{testAddress(0x01), testAddress(0x02)}
+	amounts := []*big.Int{big.NewInt(100), big.NewInt(200)}
+
+	transaction, err := BuildBatchTransfer(token, recipients, amounts)
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsBatchTransfer(deserialized.Data))
+	assert.Equal(ContractBatchTransfer, deserialized.To)
+}
+
+func TestBuildTokenApproveRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	token := testAddress(0x05)
+	spender := testAddress(0x06)
+
+	transaction, err := BuildTokenApprove(token, spender, big.NewInt(500))
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsApprove(deserialized.Data))
+	assert.False(IsRevoke(deserialized.Data))
+	assert.Equal(token, deserialized.To)
+}
+
+func TestBuildTokenApproveZeroAmountIsRevoke(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	transaction, err := BuildTokenApprove(testAddress(0x05), testAddress(0x06), big.NewInt(0))
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsRevoke(deserialized.Data))
+	assert.False(IsApprove(deserialized.Data))
+}
+
+func TestBuildTokenTransferRoundTrip(t *testing.T) {
+	assert := assert.New(t)
+	require := require.New(t)
+
+	token := testAddress(0x07)
+	recipient := testAddress(0x08)
+
+	transaction, err := BuildTokenTransfer(token, recipient, big.NewInt(750))
+	require.NoError(err)
+
+	deserialized := signSerializeDeserialize(t, transaction)
+
+	assert.True(IsTokenTransfer(deserialized.Data))
+	assert.Equal(token, deserialized.To)
 }

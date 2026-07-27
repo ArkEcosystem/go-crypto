@@ -1,0 +1,337 @@
+package crypto
+
+import (
+	"bytes"
+	"errors"
+	"math/big"
+
+	"golang.org/x/crypto/sha3"
+)
+
+const abiWordLength = 32
+const abiSelectorLength = 4
+const abiAddressLength = 20
+
+var (
+	ErrAbiInvalidAddress      = errors.New("abi: invalid address")
+	ErrAbiValueTooLarge       = errors.New("abi: value exceeds one word (32 bytes)")
+	ErrAbiNegativeUint        = errors.New("abi: uint256 must be non-negative")
+	ErrAbiUnexpectedEndOfData = errors.New("abi: unexpected end of data")
+	ErrAbiSelectorMismatch    = errors.New("abi: function selector does not match")
+	ErrAbiInvalidOffset       = errors.New("abi: dynamic value offset is invalid")
+)
+
+func AbiFunctionSelector(signature string) []byte {
+	hash := sha3.NewLegacyKeccak256()
+	hash.Write([]byte(signature))
+	return hash.Sum(nil)[:abiSelectorLength]
+}
+
+type AbiArg struct {
+	Encoded []byte
+	Dynamic bool
+}
+
+func AbiEncodeFunctionCall(signature string, args ...AbiArg) []byte {
+	head := make([]byte, 0, len(args)*abiWordLength)
+	tail := []byte{}
+	headLen := len(args) * abiWordLength
+
+	for _, arg := range args {
+		if arg.Dynamic {
+			offset := headLen + len(tail)
+			head = append(head, abiEncodeSmallUintWord(offset)...)
+			tail = append(tail, arg.Encoded...)
+		} else {
+			head = append(head, arg.Encoded...)
+		}
+	}
+
+	result := make([]byte, 0, abiSelectorLength+len(head)+len(tail))
+	result = append(result, AbiFunctionSelector(signature)...)
+	result = append(result, head...)
+	result = append(result, tail...)
+
+	return result
+}
+
+// address must be a "0x"-prefixed, 40-hex-char string.
+func AbiAddress(address string) (AbiArg, error) {
+	encoded, err := abiEncodeAddress(address)
+	if err != nil {
+		return AbiArg{}, err
+	}
+	return AbiArg{Encoded: encoded, Dynamic: false}, nil
+}
+
+func AbiUint256(x *big.Int) (AbiArg, error) {
+	if x == nil || x.Sign() < 0 {
+		return AbiArg{}, ErrAbiNegativeUint
+	}
+
+	encoded, err := abiEncodeUintWord(x)
+	if err != nil {
+		return AbiArg{}, err
+	}
+
+	return AbiArg{Encoded: encoded, Dynamic: false}, nil
+}
+
+func AbiBytes(data []byte) AbiArg {
+	return AbiArg{Encoded: abiEncodeDynamicBytes(data), Dynamic: true}
+}
+
+func AbiString(s string) AbiArg {
+	return AbiArg{Encoded: abiEncodeDynamicBytes([]byte(s)), Dynamic: true}
+}
+
+func AbiAddressArray(addresses []string) (AbiArg, error) {
+	body := make([]byte, 0, len(addresses)*abiWordLength)
+
+	for _, address := range addresses {
+		word, err := abiEncodeAddress(address)
+		if err != nil {
+			return AbiArg{}, err
+		}
+		body = append(body, word...)
+	}
+
+	encoded := append(abiEncodeSmallUintWord(len(addresses)), body...)
+
+	return AbiArg{Encoded: encoded, Dynamic: true}, nil
+}
+
+func AbiUint256Array(values []*big.Int) (AbiArg, error) {
+	body := make([]byte, 0, len(values)*abiWordLength)
+
+	for _, v := range values {
+		if v == nil || v.Sign() < 0 {
+			return AbiArg{}, ErrAbiNegativeUint
+		}
+
+		word, err := abiEncodeUintWord(v)
+		if err != nil {
+			return AbiArg{}, err
+		}
+		body = append(body, word...)
+	}
+
+	encoded := append(abiEncodeSmallUintWord(len(values)), body...)
+
+	return AbiArg{Encoded: encoded, Dynamic: true}, nil
+}
+
+// Callers must ensure len(b) <= abiWordLength.
+func abiPadWordLeft(b []byte) []byte {
+	word := make([]byte, abiWordLength)
+	copy(word[abiWordLength-len(b):], b)
+	return word
+}
+
+func abiEncodeUintWord(x *big.Int) ([]byte, error) {
+	b := x.Bytes()
+	if len(b) > abiWordLength {
+		return nil, ErrAbiValueTooLarge
+	}
+
+	return abiPadWordLeft(b), nil
+}
+
+// abiEncodeSmallUintWord encodes a non-negative, internally-computed
+// offset/length/count. Safe by construction, not just in practice: an int64's
+// big-endian representation is at most 8 bytes, always well under the
+// 32-byte word size, so there is no failure mode to check for.
+func abiEncodeSmallUintWord(n int) []byte {
+	return abiPadWordLeft(big.NewInt(int64(n)).Bytes())
+}
+
+func abiEncodeAddress(address string) ([]byte, error) {
+	addressBytes, err := AddressToBytes(address)
+	if err != nil {
+		return nil, ErrAbiInvalidAddress
+	}
+
+	word := abiPadWordLeft(addressBytes)
+
+	return word, nil
+}
+
+func abiEncodeDynamicBytes(data []byte) []byte {
+	lengthWord := abiEncodeSmallUintWord(len(data))
+
+	paddedLen := len(data)
+	if rem := paddedLen % abiWordLength; rem != 0 {
+		paddedLen += abiWordLength - rem
+	}
+
+	body := make([]byte, paddedLen)
+	copy(body, data)
+
+	return append(lengthWord, body...)
+}
+
+type AbiDecoder struct {
+	head [][]byte
+	tail []byte
+}
+
+func NewAbiDecoder(data []byte, signature string, argCount int) (*AbiDecoder, error) {
+	if len(data) < abiSelectorLength {
+		return nil, ErrAbiUnexpectedEndOfData
+	}
+	if !bytes.Equal(data[:abiSelectorLength], AbiFunctionSelector(signature)) {
+		return nil, ErrAbiSelectorMismatch
+	}
+
+	body := data[abiSelectorLength:]
+	if len(body) < argCount*abiWordLength {
+		return nil, ErrAbiUnexpectedEndOfData
+	}
+
+	head := make([][]byte, argCount)
+	for i := 0; i < argCount; i++ {
+		head[i] = body[i*abiWordLength : (i+1)*abiWordLength]
+	}
+
+	return &AbiDecoder{head: head, tail: body}, nil
+}
+
+func (d *AbiDecoder) Address(argIndex int) (string, error) {
+	word, err := d.headWord(argIndex)
+	if err != nil {
+		return "", err
+	}
+
+	return AddressFromBytes(word[abiWordLength-abiAddressLength:]), nil
+}
+
+func (d *AbiDecoder) Uint256(argIndex int) (*big.Int, error) {
+	word, err := d.headWord(argIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	return new(big.Int).SetBytes(word), nil
+}
+
+func (d *AbiDecoder) Bytes(argIndex int) ([]byte, error) {
+	tailData, err := d.dynamicTail(argIndex)
+	if err != nil {
+		return nil, err
+	}
+	if len(tailData) < abiWordLength {
+		return nil, ErrAbiUnexpectedEndOfData
+	}
+
+	lengthWord := tailData[:abiWordLength]
+	tailData = tailData[abiWordLength:]
+
+	length, err := abiWordToBoundedInt(lengthWord, len(tailData))
+	if err != nil {
+		return nil, err
+	}
+
+	return append([]byte{}, tailData[:length]...), nil
+}
+
+func (d *AbiDecoder) String(argIndex int) (string, error) {
+	data, err := d.Bytes(argIndex)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func (d *AbiDecoder) AddressArray(argIndex int) ([]string, error) {
+	tailData, err := d.dynamicTail(argIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	count, elements, err := abiArrayElements(tailData)
+	if err != nil {
+		return nil, err
+	}
+
+	addresses := make([]string, count)
+	for i := 0; i < count; i++ {
+		word := elements[i*abiWordLength : (i+1)*abiWordLength]
+		addresses[i] = AddressFromBytes(word[abiWordLength-abiAddressLength:])
+	}
+
+	return addresses, nil
+}
+
+func (d *AbiDecoder) Uint256Array(argIndex int) ([]*big.Int, error) {
+	tailData, err := d.dynamicTail(argIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	count, elements, err := abiArrayElements(tailData)
+	if err != nil {
+		return nil, err
+	}
+
+	values := make([]*big.Int, count)
+	for i := 0; i < count; i++ {
+		values[i] = new(big.Int).SetBytes(elements[i*abiWordLength : (i+1)*abiWordLength])
+	}
+
+	return values, nil
+}
+
+func abiArrayElements(tailData []byte) (int, []byte, error) {
+	if len(tailData) < abiWordLength {
+		return 0, nil, ErrAbiUnexpectedEndOfData
+	}
+
+	elements := tailData[abiWordLength:]
+
+	count, err := abiWordToBoundedInt(tailData[:abiWordLength], len(elements)/abiWordLength)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return count, elements, nil
+}
+
+func (d *AbiDecoder) headWord(argIndex int) ([]byte, error) {
+	if argIndex < 0 || argIndex >= len(d.head) {
+		return nil, ErrAbiUnexpectedEndOfData
+	}
+	return d.head[argIndex], nil
+}
+
+func (d *AbiDecoder) dynamicTail(argIndex int) ([]byte, error) {
+	word, err := d.headWord(argIndex)
+	if err != nil {
+		return nil, err
+	}
+
+	offset, err := abiWordToBoundedInt(word, len(d.tail))
+	if err != nil {
+		return nil, ErrAbiInvalidOffset
+	}
+
+	return d.tail[offset:], nil
+}
+
+// abiWordToBoundedInt reads a 32-byte ABI word as a length/offset/count value,
+// rejecting it unless it is non-negative and no greater than maxLen. This
+// guards against a malformed or adversarial word causing big.Int.Int64()
+// overflow, or a value that would later be used as an allocation size or
+// slice bound before the available data has been confirmed to support it.
+func abiWordToBoundedInt(word []byte, maxLen int) (int, error) {
+	v := new(big.Int).SetBytes(word)
+	if !v.IsInt64() {
+		return 0, ErrAbiInvalidOffset
+	}
+
+	n := v.Int64()
+	if n < 0 || n > int64(maxLen) {
+		return 0, ErrAbiInvalidOffset
+	}
+
+	return int(n), nil
+}

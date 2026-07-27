@@ -8,211 +8,275 @@
 package crypto
 
 import (
-	"errors"
-
 	"encoding/hex"
+	"errors"
+	"fmt"
+	"math/big"
+	"regexp"
 
 	blst "github.com/supranational/blst/bindings/go"
 )
 
-func buildSignedTransaction(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	transaction.Sign(passphrase)
+// Default gas parameters used by NewTransaction, matching php-crypto/
+// typescript-crypto's AbstractTransactionBuilder defaults.
+var (
+	DefaultGasPrice = big.NewInt(5)
+	DefaultGasLimit = big.NewInt(1_000_000)
+)
 
-	if len(secondPassphrase) > 0 {
-		transaction.SecondSign(secondPassphrase)
+// Concrete transaction-type builders (BuildTransfer, BuildVote, etc.) are
+// layered on top of this.
+func NewTransaction() *Transaction {
+	return &Transaction{
+		Nonce:    big.NewInt(1),
+		GasPrice: DefaultGasPrice,
+		GasLimit: DefaultGasLimit,
+		Value:    big.NewInt(0),
+	}
+}
+
+func BuildTransfer(to string, value *big.Int) (*Transaction, error) {
+	if _, err := AddressToBytes(to); err != nil {
+		return nil, err
 	}
 
-	transaction.Id = transaction.GetId()
+	transaction := NewTransaction()
+	transaction.To = to
+	transaction.Value = bigIntOrZero(value)
+
+	return transaction, nil
+}
+
+func BuildVote(validatorAddress string) (*Transaction, error) {
+	voteArg, err := AbiAddress(validatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = ContractConsensus
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureVote, voteArg)
+	transaction.Vote = validatorAddress
+
+	return transaction, nil
+}
+
+func BuildUnvote() *Transaction {
+	transaction := NewTransaction()
+	transaction.To = ContractConsensus
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureUnvote)
 
 	return transaction
 }
 
-func buildMultiSignedTransaction(transaction *Transaction, signerIndex int, passphrase string) *Transaction {
-	transaction.SignMulti(signerIndex, passphrase)
+// NOTE: BLS Proof-of-Possession is not yet implemented — the proof argument
+// is encoded as empty bytes. This is a known, documented gap: the resulting
+// transaction carries a validator public key but no proof, and will likely
+// not validate on an actual Mainsail chain until PoP support is added.
+func BuildValidatorRegistration(validatorPublicKey string, stake *big.Int) (*Transaction, error) {
+	if err := validateBLSPublicKey(validatorPublicKey); err != nil {
+		return nil, err
+	}
 
-	transaction.Id = transaction.GetId()
+	pubKeyBytes, err := hex.DecodeString(validatorPublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = ContractConsensus
+	transaction.Value = bigIntOrZero(stake)
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureRegisterValidator, AbiBytes(pubKeyBytes), AbiBytes([]byte{}))
+	transaction.ValidatorPublicKey = validatorPublicKey
+
+	return transaction, nil
+}
+
+// NOTE: as with BuildValidatorRegistration, BLS Proof-of-Possession is not
+// yet implemented; the proof argument is encoded as empty bytes.
+func BuildValidatorUpdate(validatorPublicKey string) (*Transaction, error) {
+	if err := validateBLSPublicKey(validatorPublicKey); err != nil {
+		return nil, err
+	}
+
+	pubKeyBytes, err := hex.DecodeString(validatorPublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = ContractConsensus
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureUpdateValidator, AbiBytes(pubKeyBytes), AbiBytes([]byte{}))
+	transaction.ValidatorPublicKey = validatorPublicKey
+
+	return transaction, nil
+}
+
+func BuildValidatorResignation() *Transaction {
+	transaction := NewTransaction()
+	transaction.To = ContractConsensus
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureResignValidator)
 
 	return transaction
 }
 
-func setCommonFields(transaction *Transaction, transactionType uint16) {
-	if transaction.Fee == 0 {
-		transaction.Fee = GetFee(transactionType)
+var (
+	ErrInvalidUsername = errors.New("crypto: invalid username")
+
+	usernameCharsetRegexp          = regexp.MustCompile(`[^a-z0-9_]`)
+	usernameEdgeUnderscoreRegexp   = regexp.MustCompile(`^_|_$`)
+	usernameDoubleUnderscoreRegexp = regexp.MustCompile(`__`)
+)
+
+func validateUsername(username string) error {
+	if len(username) < 1 || len(username) > 20 {
+		return fmt.Errorf("%w: must be between 1 and 20 characters long, got %d", ErrInvalidUsername, len(username))
+	}
+	if usernameCharsetRegexp.MatchString(username) {
+		return fmt.Errorf("%w: can only contain lowercase letters, numbers and underscores", ErrInvalidUsername)
+	}
+	if usernameEdgeUnderscoreRegexp.MatchString(username) {
+		return fmt.Errorf("%w: cannot start or end with an underscore", ErrInvalidUsername)
+	}
+	if usernameDoubleUnderscoreRegexp.MatchString(username) {
+		return fmt.Errorf("%w: cannot contain consecutive underscores", ErrInvalidUsername)
+	}
+	return nil
+}
+
+func BuildUsernameRegistration(username string) (*Transaction, error) {
+	if err := validateUsername(username); err != nil {
+		return nil, err
 	}
 
-	if transaction.Network == 0 {
-		transaction.Network = GetNetwork().Version
+	transaction := NewTransaction()
+	transaction.To = ContractUsernames
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureRegisterUsername, AbiString(username))
+	transaction.Username = username
+
+	return transaction, nil
+}
+
+func BuildUsernameResignation() *Transaction {
+	transaction := NewTransaction()
+	transaction.To = ContractUsernames
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureResignUsername)
+
+	return transaction
+}
+
+func BuildMultiPayment(addresses []string, amounts []*big.Int) (*Transaction, error) {
+	if len(addresses) != len(amounts) {
+		return nil, fmt.Errorf("crypto: multi-payment addresses and amounts must be the same length, got %d and %d", len(addresses), len(amounts))
+	}
+	if len(addresses) == 0 {
+		return nil, errors.New("crypto: multi-payment requires at least one recipient")
 	}
 
-	transaction.SecondSenderPublicKey = ""
-	transaction.SecondSignature = ""
-
-	if transaction.Timestamp == 0 {
-		transaction.Timestamp = GetTime()
+	addressesArg, err := AbiAddressArray(addresses)
+	if err != nil {
+		return nil, err
+	}
+	amountsArg, err := AbiUint256Array(amounts)
+	if err != nil {
+		return nil, err
 	}
 
-	transaction.Type = transactionType
-	transaction.TypeGroup = TRANSACTION_TYPE_GROUPS.Core
-	transaction.Version = 1
-}
-
-/** Set all fields and sign a TransactionTypes.Transfer transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Amount
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   RecipientId
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildTransfer(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.Transfer)
-
-	transaction.Asset = &TransactionAsset{}
-
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
-}
-
-/** Set all fields and sign a multi signature TransactionTypes.Transfer transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Amount
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   RecipientId
- *   Signatures - must be an array (could be empty); a new signature will be appended to it
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildTransferMultiSignature(transaction *Transaction, signerIndex int, passphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.Transfer)
-
-	transaction.Asset = &TransactionAsset{}
-
-	return buildMultiSignedTransaction(transaction, signerIndex, passphrase)
-}
-
-/** Set all fields and sign a TransactionTypes.ValidatorRegistration transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Asset.Delegate.Username
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildValidatorRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.ValidatorRegistration)
-
-	if transaction.Asset != nil && transaction.Asset.Validator != nil {
-		err := validateBLSPublicKey(transaction.Asset.Validator.ValidatorPublicKey)
-		if err != nil {
-			panic("Invalid BLS public key: " + err.Error())
-		}
+	total := big.NewInt(0)
+	for _, amount := range amounts {
+		total.Add(total, amount)
 	}
 
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+	transaction := NewTransaction()
+	transaction.To = ContractMultipayment
+	transaction.Value = total
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureMultipayment, addressesArg, amountsArg)
+	transaction.PaymentAddresses = addresses
+	transaction.PaymentAmounts = amounts
+
+	return transaction, nil
 }
 
-/** Set all fields and sign a TransactionTypes.Vote transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Asset.Votes
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildVote(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.Vote)
-
-	transaction.RecipientId, _ = AddressFromPassphrase(passphrase)
-
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
-}
-
-/** Set all fields and sign a TransactionTypes.MultiSignatureRegistration transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Asset.MultiSignature
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildMultiSignatureRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.MultiSignatureRegistration)
-
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
-}
-
-/** Set all fields and sign a TransactionTypes.MultiPayment transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Asset.Payments
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildMultiPayment(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.MultiPayment)
-
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
-}
-
-/** Set all fields and sign a TransactionTypes.ValidatorResignation transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildValidatorResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.ValidatorResignation)
-
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
-}
-
-
-/** Set all fields and sign a TransactionTypes.UsernameRegistration transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Asset.Username.Username
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
- func BuildUsernameRegistration(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.UsernameRegistration)
-
-	// Validate if Username is set
-	if transaction.Asset != nil && transaction.Asset.Username != nil {
-		if transaction.Asset.Username.Username == "" {
-			panic("Invalid username: username is empty")
-		}
-	} else {
-		panic("Invalid username: no username asset provided")
+func BuildEvmCall(to string, data []byte) (*Transaction, error) {
+	if _, err := AddressToBytes(to); err != nil {
+		return nil, err
 	}
 
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+	transaction := NewTransaction()
+	transaction.To = to
+	transaction.Data = data
+
+	return transaction, nil
 }
 
-/** Set all fields and sign a TransactionTypes.UsernameResignation transaction.
- * Members of the supplied transaction that must be set when calling this function:
- *   Expiration - optional, could be 0 to designate no expiration
- *   Fee - optional, if 0, then it will be set to a default fee
- *   Network - optional, if 0, then it will be set to the configured network
- *   Nonce
- *   Timestamp - optional, if 0, then it will be set to the present time
- *   VendorField - optional */
-func BuildUsernameResignation(transaction *Transaction, passphrase string, secondPassphrase string) *Transaction {
-	setCommonFields(transaction, TRANSACTION_TYPES.UsernameResignation)
+func BuildBatchTransfer(tokenAddress string, recipients []string, amounts []*big.Int) (*Transaction, error) {
+	if len(recipients) != len(amounts) {
+		return nil, fmt.Errorf("crypto: batch transfer recipients and amounts must be the same length, got %d and %d", len(recipients), len(amounts))
+	}
+	if len(recipients) == 0 {
+		return nil, errors.New("crypto: batch transfer requires at least one recipient")
+	}
 
-	return buildSignedTransaction(transaction, passphrase, secondPassphrase)
+	tokenArg, err := AbiAddress(tokenAddress)
+	if err != nil {
+		return nil, err
+	}
+	recipientsArg, err := AbiAddressArray(recipients)
+	if err != nil {
+		return nil, err
+	}
+	amountsArg, err := AbiUint256Array(amounts)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = ContractBatchTransfer
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20BatchTransferFrom, tokenArg, recipientsArg, amountsArg)
+
+	return transaction, nil
+}
+
+func BuildTokenApprove(tokenAddress string, spender string, amount *big.Int) (*Transaction, error) {
+	if _, err := AddressToBytes(tokenAddress); err != nil {
+		return nil, err
+	}
+
+	spenderArg, err := AbiAddress(spender)
+	if err != nil {
+		return nil, err
+	}
+	amountArg, err := AbiUint256(amount)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = tokenAddress
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20Approve, spenderArg, amountArg)
+
+	return transaction, nil
+}
+
+func BuildTokenTransfer(tokenAddress string, recipient string, amount *big.Int) (*Transaction, error) {
+	if _, err := AddressToBytes(tokenAddress); err != nil {
+		return nil, err
+	}
+
+	recipientArg, err := AbiAddress(recipient)
+	if err != nil {
+		return nil, err
+	}
+	amountArg, err := AbiUint256(amount)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction := NewTransaction()
+	transaction.To = tokenAddress
+	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20Transfer, recipientArg, amountArg)
+
+	return transaction, nil
 }
 
 func validateBLSPublicKey(publicKey string) error {
@@ -220,17 +284,14 @@ func validateBLSPublicKey(publicKey string) error {
 		return errors.New("invalid BLS public key length")
 	}
 
-	// Decode the public key from hex
 	pubKeyBytes, err := hex.DecodeString(publicKey)
 	if err != nil {
 		return errors.New("invalid BLS public key hex format")
 	}
 
-	// Deserialize the public key into a blst.P1Affine structure
 	var pubKey blst.P1Affine
 	pubKey.Deserialize(pubKeyBytes)
 
-	// Check if the public key is in G1 group and is valid
 	if !pubKey.InG1() {
 		return errors.New("invalid BLS public key: not in G1 group or invalid structure")
 	}

@@ -13,6 +13,10 @@ import (
 	"strings"
 )
 
+const AddressByteLength = 20
+
+var ErrInvalidAddress = errors.New("invalid address format")
+
 func AddressFromPassphrase(passphrase string) (string, error) {
 	privateKey, err := PrivateKeyFromPassphrase(passphrase)
 	if err != nil {
@@ -21,13 +25,24 @@ func AddressFromPassphrase(passphrase string) (string, error) {
 	return privateKey.ToAddress(), nil
 }
 
-func ValidateAddress(address string) (bool, error) {
-	if !strings.HasPrefix(address, "0x") || len(address) != 42 {
-		return false, errors.New("invalid address format")
+func AddressToBytes(address string) ([]byte, error) {
+	if !strings.HasPrefix(address, "0x") || len(address) != 2+AddressByteLength*2 {
+		return nil, ErrInvalidAddress
 	}
-	_, err := hex.DecodeString(address[2:])
+
+	addressBytes, err := hex.DecodeString(address[2:])
 	if err != nil {
-		return false, err
+		return nil, ErrInvalidAddress
 	}
-	return true, nil
+
+	return addressBytes, nil
+}
+
+func AddressFromBytes(addressBytes []byte) string {
+	return "0x" + EIP55Checksum(hex.EncodeToString(addressBytes))
+}
+
+func ValidateAddress(address string) (bool, error) {
+	_, err := AddressToBytes(address)
+	return err == nil, err
 }
