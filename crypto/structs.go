@@ -52,6 +52,16 @@ type Transaction struct {
 	From            string   `json:"from,omitempty"`
 	Hash            string   `json:"hash,omitempty"`
 	Serialized      []byte   `json:"serialized,omitempty"`
+
+	// The fields below are populated only for the transaction kind they
+	// apply to, by DecodeTransactionArgs during deserialization; all others
+	// are left at their zero value.
+	Vote               string     `json:"vote,omitempty"`
+	ValidatorPublicKey string     `json:"validatorPublicKey,omitempty"`
+	ValidatorProof     string     `json:"validatorProof,omitempty"`
+	Username           string     `json:"username,omitempty"`
+	PaymentAddresses   []string   `json:"paymentAddresses,omitempty"`
+	PaymentAmounts     []*big.Int `json:"paymentAmounts,omitempty"`
 }
 
 type Message struct {
