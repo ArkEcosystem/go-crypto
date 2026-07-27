@@ -7,9 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestSignMessageMatchesPhpTsFixture cross-checks against php-crypto's/
-// typescript-crypto's own message-sign fixture (same message and passphrase),
-// proving the personal_sign hash construction is byte-identical across SDKs.
 func TestSignMessageMatchesPhpTsFixture(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
