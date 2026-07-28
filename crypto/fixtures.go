@@ -64,6 +64,15 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 	return fixtures
 }
 
+func GetBLSMultiLangKeysFixture() map[string][]BLSMultiLangKeyFixture {
+	data := GetFixture("bls_multi_lang")
+
+	var fixtures map[string][]BLSMultiLangKeyFixture
+	_ = json.Unmarshal([]byte(data), &fixtures)
+
+	return fixtures
+}
+
 type TestingIdentityFixture struct {
 	Data struct {
 		PrivateKey string `json:"privateKey,omitempty"`
@@ -93,4 +102,11 @@ type BLSKeyFixture struct {
 	BLSPrivateKey     string `json:"bls_private_key"`
 	ProofOfPossession string `json:"proof_of_possession"`
 	Passphrase        string `json:"passphrase"`
+}
+
+type BLSMultiLangKeyFixture struct {
+	Mnemonic            string `json:"mnemonic"`
+	ValidatorPrivateKey string `json:"validatorPrivateKey"`
+	ValidatorPublicKey  string `json:"validatorPublicKey"`
+	ValidatorPop        string `json:"validatorPop"`
 }

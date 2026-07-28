@@ -3,6 +3,7 @@ package crypto
 import (
 	"encoding/hex"
 	"errors"
+	"strings"
 
 	blst "github.com/supranational/blst/bindings/go"
 	"github.com/tyler-smith/go-bip39"
@@ -40,7 +41,12 @@ func FromMnemonic(passphrase string) (*ProofOfPossessionResult, error) {
 	return BuildProofOfPossession(DeriveBlsPrivateKey(passphrase))
 }
 
+// Ideographic spaces (U+3000, used to separate words in the Japanese BIP-39
+// wordlist) are normalized to U+0020 before hashing — go-bip39's NewSeed
+// does no normalization of its own, so without this, Japanese mnemonics
+// derive a different seed than every other reference BIP-39 implementation.
 func popDeriveChildSk(passphrase string) *blst.SecretKey {
-	seed := bip39.NewSeed(passphrase, "")
+	normalized := strings.ReplaceAll(passphrase, "\u3000", " ")
+	seed := bip39.NewSeed(normalized, "")
 	return blst.KeyGen(seed).DeriveChildEip2333(0)
 }
