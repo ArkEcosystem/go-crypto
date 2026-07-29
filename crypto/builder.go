@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -17,8 +10,6 @@ import (
 	blst "github.com/supranational/blst/bindings/go"
 )
 
-// Default gas parameters used by NewTransaction, matching php-crypto/
-// typescript-crypto's AbstractTransactionBuilder defaults.
 var (
 	DefaultGasPrice = big.NewInt(5)
 	DefaultGasLimit = big.NewInt(1_000_000)
