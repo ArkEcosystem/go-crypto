@@ -57,6 +57,15 @@ func GetBLSKeysFixture() []BLSKeyFixture {
 	return fixtures
 }
 
+func GetBLSMultiLangKeysFixture() map[string][]BLSMultiLangKeyFixture {
+	data := GetFixture("bls_multi_lang")
+
+	var fixtures map[string][]BLSMultiLangKeyFixture
+	_ = json.Unmarshal([]byte(data), &fixtures)
+
+	return fixtures
+}
+
 func GetTransactionFixture(name string) TestingTransactionFixture {
 	data := GetFile(fmt.Sprintf("./fixtures/transactions/%s.json", name))
 
@@ -91,9 +100,10 @@ type BLSValidatorFixture struct {
 }
 
 type BLSKeyFixture struct {
-	BLSPublicKey  string `json:"bls_public_key"`
-	BLSPrivateKey string `json:"bls_private_key"`
-	Passphrase    string `json:"passphrase"`
+	BLSPublicKey      string `json:"bls_public_key"`
+	BLSPrivateKey     string `json:"bls_private_key"`
+	ProofOfPossession string `json:"proof_of_possession"`
+	Passphrase        string `json:"passphrase"`
 }
 
 type TestingTransactionFixture struct {
@@ -113,4 +123,11 @@ type TestingTransactionFixture struct {
 		Hash            string `json:"hash"`
 	} `json:"data"`
 	Serialized string `json:"serialized"`
+}
+
+type BLSMultiLangKeyFixture struct {
+	Mnemonic            string `json:"mnemonic"`
+	ValidatorPrivateKey string `json:"validatorPrivateKey"`
+	ValidatorPublicKey  string `json:"validatorPublicKey"`
+	ValidatorPop        string `json:"validatorPop"`
 }
