@@ -77,43 +77,46 @@ func TestBuildUnvoteRoundTrip(t *testing.T) {
 	assert.Equal(ContractConsensus, deserialized.To)
 }
 
+const (
+	validatorPassphraseFixture                  = "gold favorite math anchor detect march purpose such sausage crucial reform novel connect misery update episode invite salute barely garbage exclude winner visa cruise"
+	validatorPassphraseFixturePublicKey         = "a18dba7811b212bbb2f080d7c69935998ffbe7b38586e2d3e9e12079ea789996d1c69feb158c002aed327f69865be496"
+	validatorPassphraseFixtureProofOfPossession = "a124539f9d469919eb57224cc003d9d5b086a27c6de244abf60b74b35fb749fceab7f4c24b983475cddab7d0876de49c000b5c362f5e3ce18d964f5c2d20d4eadcf7cb77a73d8ee4cd87bad10f7ba0824cea6715d1c045b4f93865a2758b7bfe"
+)
+
 func TestBuildValidatorRegistrationRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	blsPublicKey := "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118"
-
-	transaction, err := BuildValidatorRegistration(blsPublicKey, big.NewInt(2_500_000_000))
+	transaction, err := BuildValidatorRegistration(validatorPassphraseFixture, big.NewInt(2_500_000_000))
 	require.NoError(err)
+
+	assert.Equal(validatorPassphraseFixturePublicKey, transaction.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixtureProofOfPossession, transaction.ValidatorProof)
 
 	deserialized := signSerializeDeserialize(t, transaction)
 
 	assert.True(IsValidatorRegistration(deserialized.Data))
 	assert.Equal(ContractConsensus, deserialized.To)
-	assert.Equal(blsPublicKey, deserialized.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixturePublicKey, deserialized.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixtureProofOfPossession, deserialized.ValidatorProof)
 	assert.Equal(0, big.NewInt(2_500_000_000).Cmp(deserialized.Value))
-}
-
-func TestBuildValidatorRegistrationInvalidKeyErrors(t *testing.T) {
-	assert := assert.New(t)
-
-	_, err := BuildValidatorRegistration("too-short", nil)
-	assert.Error(err)
 }
 
 func TestBuildValidatorUpdateRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	blsPublicKey := "a08058db53e2665c84a40f5152e76dd2b652125a6079130d4c315e728bcf4dd1dfb44ac26e82302331d61977d3141118"
-
-	transaction, err := BuildValidatorUpdate(blsPublicKey)
+	transaction, err := BuildValidatorUpdate(validatorPassphraseFixture)
 	require.NoError(err)
+
+	assert.Equal(validatorPassphraseFixturePublicKey, transaction.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixtureProofOfPossession, transaction.ValidatorProof)
 
 	deserialized := signSerializeDeserialize(t, transaction)
 
 	assert.True(IsUpdateValidator(deserialized.Data))
-	assert.Equal(blsPublicKey, deserialized.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixturePublicKey, deserialized.ValidatorPublicKey)
+	assert.Equal(validatorPassphraseFixtureProofOfPossession, deserialized.ValidatorProof)
 }
 
 func TestBuildValidatorResignationRoundTrip(t *testing.T) {

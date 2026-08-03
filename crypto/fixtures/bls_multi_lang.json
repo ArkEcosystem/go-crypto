@@ -1,0 +1,322 @@
+{
+    "czech": [
+        {
+            "mnemonic": "najisto kazivost vpravo namluvit exkurze lord hladovka svoboda obejmout ukazatel pustina srpen metr ohrozit autobus pobyt omeleta bledule cizost petrolej nikl celkem jelen poezie",
+            "validatorPrivateKey": "6521a909bed1652044b99809b0a3c6999a9bd3a9c760e27e30fbda5931fa76a5",
+            "validatorPublicKey": "0x86e47e024116003fcf4a6b9150de36964d6590eb11b0f4a1607b89e11d99a4f8609e234eb8185ecf2c77edade1c95309",
+            "validatorPop": "0xae1f97166e6e444101184825116f03d1607d4387fcd3c0bc71c4a3d125858a8f236d948cab97c6bc1f9f8b6c487ed8f31439ec47e16321e090989bd20b9a4bab069a807935b2c141c221a04422a8ebe2fe84da839fc10dd665db170e24692069"
+        },
+        {
+            "mnemonic": "louskat seshora hledat zahrada buvol vyrazit opravdu munice strom vyhledat barva vyrazit prorok lord manko hojnost zmizet dovozce lidojed bojovat nikdy hodiny spousta manko",
+            "validatorPrivateKey": "43aafbb031406eec46f79604a5615806c0880e0d8b2d6e722f03d7eba86db4e6",
+            "validatorPublicKey": "0x875032037e45a884e58629825c57d9e381e45ed0df3250b324aaf767fbc5a47a69a06a89af8998ed90a5c061e4cfbe20",
+            "validatorPop": "0xb4d356027006865734b10e05d4b943f3cde3628ca9763f719434a8d99e6f3ce5fae367c9806bfb7e9cdd5784f1b89afc160828fa4ff74ad0496453b7a83dfebf657ac016e601454146458c88fb7b4a5f123d18677f4200cdfa83eb63eee9100a"
+        },
+        {
+            "mnemonic": "pastelka makak panna boubel pazourek zimnice louka prodej videohra chrlit referent smrk bulva varan smilstvo spis vztah potvora postava astma vystavit rampouch odpor duha",
+            "validatorPrivateKey": "3f941bba361aa5273e560cd4de20e747586e430efcb27fe14556f442808a477b",
+            "validatorPublicKey": "0x9684cc2ca48aca7f5827d1bdc33c1e6c8986c390309855221be1a74695986f9d7a9f8fa56e86027ab3e332b6f2a7a34e",
+            "validatorPop": "0x84b871933fe3a610000e581aa3d77c4d168ebc64691cf7ac702541b4eab54b5d0ac790c73e7675e52535274734a5e71b11f2bb16dcc8d366575450bedef56e32e1d4cf584f2795cdb2d4ea773a8931db739905ef91c5bb9db85a63848d3a23cf"
+        },
+        {
+            "mnemonic": "dort okno zajatec tykev komando mlha lucifer astma malina puklina tendence starosta bacil baret mobil odjet propad zjemnit obava petrolej mezera baculka piha hadr",
+            "validatorPrivateKey": "3f09d1651e7a6d1d5f869db241fc94e578b1f3926977985ac96206225e047a3a",
+            "validatorPublicKey": "0xa774065223115fda52052087df0e792a17ba5ae3a1dddddafcd06c347f5905ac9dba5873e24df920c772d9ebe6a1548c",
+            "validatorPop": "0x8dda28ddf6c5589afc42c6cd3cf497e4f6da95343fafb1278154350338528cc624a3389bcc612bc7ecdc6a7fb2c6f4d511a3904170e4ca9fc371949fdbdbec3186dde06fc18644ba41c758a79f3aa4a55c544f550d56799d5f37434a71f21b4b"
+        },
+        {
+            "mnemonic": "levitace truhlice otop ledvina buchta hala madlo jinoch doplnit baterka podzim dareba sluha cejn objasnit zastavit meditace mezera ulovit osten znalost exkurze plivat lucifer",
+            "validatorPrivateKey": "48bf069ca2917eeeee612e6fd50a1f6fb2c28af9167ee04cdd03c21240336d6d",
+            "validatorPublicKey": "0x858055545004fc6ef228bb4f23e2db530949d606f5e91620752a92d330dd59ef455bcb4214a64817adeb543aa2ea1287",
+            "validatorPop": "0xa79748c76577bf84f7ad4003c432bf69896cebcce9da6ba1802025d037b2622db015ba297d34b9677255baafe29b31560acb47d606105a8245c71dbcaefe1bcec10c75995b293d86c1ec72b2dd552ef153e8da890a952908ba0a14628cfdce88"
+        }
+    ],
+    "chinese_simplified": [
+        {
+            "mnemonic": "法 何 又 莫 策 崇 须 裁 牲 者 阳 内 勇 逻 业 规 爆 院 葡 的 疑 传 面 运",
+            "validatorPrivateKey": "3f8e1457866e218d380add85494fddd6ae348e5cdae18b41394921e33baaad71",
+            "validatorPublicKey": "0xa5d586adc473d892ba361823b4a37380da77d1b9e4f44af76550a19270b88fefd4cf6bc1fefeb6d57b65b0d979facc0d",
+            "validatorPop": "0xb87264f324798a225770fc5a25189edaec7e048d686c068051717da80b7b4f35816473ef122612b090b473087f0d1d320208561ed58c2b2b421404fa4e1da101effbe174e3de1faaa780bac43c8c7919d806bcae56daf4022a221c05b1b24949"
+        },
+        {
+            "mnemonic": "脚 哩 衡 片 阁 窗 众 辽 预 韩 普 腐 辅 惨 无 日 氨 罐 方 羊 齐 准 尚 纹",
+            "validatorPrivateKey": "024404c9af88605fbb2ec501d1406a55e087d57d4d0f92e9292ebd88183a472e",
+            "validatorPublicKey": "0x8ba06b7f5a72a2a11f6b314e3575b4924838e613cccc5d9583c92a9707d19ada047ca241e4307655be7e22669ac95c56",
+            "validatorPop": "0x8d32cbb32984ec2a67f16bbd4a6059052c6bd68a1a1541ee06427dc01544f5916c8799984c408f5e52661b31e3c79c910eec0d580a00ba87b1ca1028ea2c59b5396a867ec18d9dd8e0d06d925019e4376fb78f57c124869085f22eb224f3846b"
+        },
+        {
+            "mnemonic": "萄 丝 鲁 剥 稍 礼 妥 湘 役 曲 洲 欲 岗 端 速 邓 逻 团 又 磁 内 烦 寿 闲",
+            "validatorPrivateKey": "35219fbe53eda1b8745d7c59464f3d3c43f47d0bb48d2343bea4cd76b782ab51",
+            "validatorPublicKey": "0x936ce7f333977bcb0895374a5f286832575be4f57a4a624614024cc5167d3b7eee4844b9eb927cdd0d0d89aa30e27837",
+            "validatorPop": "0xa95043477e03abac2e23aa360b2bda57f3d32f1ea7fbcb62be5e0a6d1a504731be10a07449d08452110c553de4d5746510afdebf224955537a65d39f0dbf203303b9786c122c9c246e07a8e11f1df881819bb79990c0af8f60f22c5974dcfc2b"
+        },
+        {
+            "mnemonic": "谋 死 只 版 韩 睡 释 逐 凤 知 春 氯 足 滩 蜡 整 叹 丰 沙 游 填 核 屋 砂",
+            "validatorPrivateKey": "133c8941693353846ddacdc1bf25a2425797ae75cf05a5cc641df97cf09e0ce3",
+            "validatorPublicKey": "0x8bf91fdd97b7e318ffa40a9554eef55101c2af60ce3e9a82cc0a5a5349b73b45293fd8fb4c5c1b038230bfd8eda17af6",
+            "validatorPop": "0xb3660b201bcb7c631b08beeef26ab9c5150528446a9bca206b31a5d0ad5a62c0321cbd4fb140624312ebc1785df7bd2616875e2ba1e285b6129420aa0ce4459dd74b6bee51e8f8f048736a407b006256d23e1371b81c66566ddfd8ba6bb5bed8"
+        },
+        {
+            "mnemonic": "颜 郎 情 冬 煤 既 库 绝 汁 元 泽 涉 嘛 票 风 筛 隆 突 滴 神 临 壮 爷 晶",
+            "validatorPrivateKey": "1c7e0331a7d2a695a1603a85ed2844a9270a53001f4095d30295f612cd2c2628",
+            "validatorPublicKey": "0xa497a5851a04f16167587807a3f2e9ea4764ecda9b434e041b4c1086466370e99f88754c429359b5e8f3f9fcf3727e86",
+            "validatorPop": "0x8874968b524621ccc090d595481eae97b9e5ec2404d4fa50466565c27d8b9b130ec38c12881898c1713bcf93a1ea50740378c70bacf49fdfadcd9172a0ccc4256baa2a9fc12b37c9330a2fa5c283f59f4860f726244bc2749db32e81273e3966"
+        }
+    ],
+    "chinese_traditional": [
+        {
+            "mnemonic": "銷 鑽 隔 責 雅 丁 來 旋 爐 轉 害 睡 狂 太 善 馮 集 籌 蓮 爐 懸 生 試 盜",
+            "validatorPrivateKey": "0602d2cfb5a77b14aa98a996242583148f14ee8043b50cf8cece083a81cc0221",
+            "validatorPublicKey": "0x96cec279ae8aaad8d78f7367532b864d17b129bf3e9019a5581427f10812f32911eb3e3c795eb4bfcfd58d85b6dabdbd",
+            "validatorPop": "0xa08fc77623fe2aa660cb6f16a6c211313bb85ac9a355af579fd9e252cfa26abddf7d112d823a0aded9916a2bf38db83e1752d34f6fb653e8847a3ddd8b075dcb864eb88d09e0c429c35157501672d15ec5dc274fdd2ff6da216d28f271a11bc2"
+        },
+        {
+            "mnemonic": "序 付 撞 盆 憶 汗 幕 懲 會 氏 殿 忍 皺 累 躺 酯 全 陸 起 拜 芳 闊 舊 耐",
+            "validatorPrivateKey": "55458f5510a4eaa27c354efb5e02d24e153af112e19c94c43d559f717cd7f617",
+            "validatorPublicKey": "0xb2ec5958b2ac4f7762e5c131187d39dddbcbeecc3d42cf29778eddf2073d3858e88ae74360973a869d8e3856708bc7b5",
+            "validatorPop": "0xa1bc5c22ee93bc49a60421faa3d81395005f94fb9cb42156aea21c2cb5eac2f12c39356565600cd559ed9e96d37dcad202eb93d1067a8cb08bd98868f4ed236805c2560a4bd7496ce2d5c2696f175e0cd1a1cd70b617ecf47b55cdfa161e8cab"
+        },
+        {
+            "mnemonic": "很 造 衰 姿 整 慘 扇 代 糞 器 蘭 沒 其 啟 半 取 界 績 拍 太 慶 利 調 巧",
+            "validatorPrivateKey": "5c699b7e942eb59dc13fb39a4d704087de03daf9018b6b321f3818a668a8a3a7",
+            "validatorPublicKey": "0xa81d874c17a6ee136782c009414a06bfa2465943b30f450fd0a40e287fbc25617f28a5c5cf02b7b0e847aff8fe32edbf",
+            "validatorPop": "0x92e9fcc48841568ec6501093f88af0964cb0f716d90ce60c748ba4ecc2568cd091ce6fa640ebef0c97c81db9320586ab126681e58921eab1fff2688ff81e5bd51ef199892199e03a424fa1a842920ac161a01276702c2535675c080563c005f3"
+        },
+        {
+            "mnemonic": "砂 宗 哪 鬧 忙 討 播 胺 赤 朋 底 訪 僚 新 握 卵 曰 察 訂 尖 輯 恆 止 忘",
+            "validatorPrivateKey": "12d39f9a39757c7dd5be3bad73e3471962f548633de68df90f6d01a111670425",
+            "validatorPublicKey": "0x885a2e7c0bcac2c36ab54808056bb5ba924c35313d5363eb05af7f1fefb412bae5c905cf45522f3cb3fdf96a88e748a7",
+            "validatorPop": "0xab5d6fb58af1411574c34421a5bb99ac7811e8d2d7d35751ce531a92aabf020094e4beb322bf366914d615386d0cb542137472076cb1dbb85f6f3ca1157f11e19be6ae1a7d7b0097d627015bd94b0d3129b79697f0ae2179a5e16ddd8cad620c"
+        },
+        {
+            "mnemonic": "少 割 宋 誰 潮 爺 稱 報 訊 遺 協 專 騰 恨 手 賴 誣 裂 素 洗 節 線 霍 含",
+            "validatorPrivateKey": "25624f9a90c7d545ba7a69fc74c82ea598ea4cb60b877814468d74b3efd10aff",
+            "validatorPublicKey": "0x8da1045c92f7bc2379017b20520fb9608f2c91de52c7727a3b1b7e882ee6859dcc113a645fcaf21b3f4d2f705edae7a5",
+            "validatorPop": "0x97768e349b4f81ddc46c569d83f0d8c549a19c171d8a25c5850fc5181e5801df39dbf547f81b6a23605ef1d43146568c0dc4ed7752b20ac551763ec0eee7765fff727f21acd4a2fd63e3270ff2f29fa651289343645511425bde1e5048cd3614"
+        }
+    ],
+    "korean": [
+        {
+            "mnemonic": "국왕 연설 혜택 호랑이 막걸리 이월 손길 말기 민주 해안 먹이 특징 여섯 가끔 증상 먹이 곡식 산책 본래 회전 잠자리 오염 매번 행동",
+            "validatorPrivateKey": "6f216814b1b9fcfe5b8185d5b517653e15e4d5ee754deaf4bff7b211063550d6",
+            "validatorPublicKey": "0xaeee5e065035c25b6266592bfc229178bdcb191deda7181127c9d29627c66a9b7fa3719e38baaefc0f531a053e70d206",
+            "validatorPop": "0x81ff1c7b3bb928a0b15122dd07b1399baf41609a00c323e55d72a67db9805ddea637b4bd6bfaf2184f532bdead2e7cdd0888d3b964473945adade0c9816701c699980755e42c313d834beccec56ee4c2e15427af92a9a4d1bb231d7273e0caa7"
+        },
+        {
+            "mnemonic": "소용 수염 대도시 매일 실시 강조 살짝 청년 시청 문화 열정 호남 염려 학기 감소 본질 선풍기 인연 고전 모퉁이 직장 심사 무척 약간",
+            "validatorPrivateKey": "3ca9d88bfb7ab349245fe2bb84c5afd4432644cfdae91721c971c7d5e527e1f4",
+            "validatorPublicKey": "0xa6ec74718fe6a26e9f2a9b2796afd35a1166a4af0d1abaab16934e15132ef470e30d2934d1bf5f7f5aca1310bdab9301",
+            "validatorPop": "0x8e11d01913d4eaee2e1b12b23a8cbb9acf77bf524c17fc4d65e7c97fb132e7757292bf0b8fadf9eae3ce381659f407d004766389f8e0a38f4c14fc0133983a9d98e4e2b6420bd3e30f7c1134c0a84ac86953297ebcb1c9db48ea113b4e76bc16"
+        },
+        {
+            "mnemonic": "스튜디오 감자 막상 튀김 자율 횟수 선풍기 약수 볶음 현대 손질 카메라 패션 살인 합격 이틀 여인 국수 국제 광경 수면 법률 성함 대출",
+            "validatorPrivateKey": "0813cdaac3b3caf757b9042b2d1a41c9056230319a104884f7380e1a31edeec8",
+            "validatorPublicKey": "0xa83902896fb8d0537a0f5336fbd458085724ce7c6cdb01eb4c12c937922ed8769a2064492075f834f96274d2b27dac90",
+            "validatorPop": "0xb2e530a339c934fc3825145b24df71870f1d1c6e5a4df3bace09001034f1691f8e8186bd6cbe49aaeb1f26a802e6304d124d4f2aa4bc0bc356ec4cd9a851c80e1470f743ce241d4b56908cc9421f15ca676f338308a4ad54f56ef4146a27a81c"
+        },
+        {
+            "mnemonic": "민간 장기간 반발 김밥 구속 도대체 부인 흥미 목표 특별 예선 방문 모양 팝송 시장 체력 국내 바람 한때 실천 채점 답변 서점 설탕",
+            "validatorPrivateKey": "4713625e63a40c9d8be9bf5fd1435fea867b8cd2d7d613f510327a5549b4e176",
+            "validatorPublicKey": "0x8d27677ece4df09c45b9d691ca3a48cfa911ddc57b2c65ad4a66497ba4cea2b0b3a47f93d81b44580e58c50bf5b04727",
+            "validatorPop": "0xa154a481d6d6a55a91dd3907503a69d31a30af91fdf7a3592eb9123740ed788dfb9e580d1d3219970b2b7412332af72202f8042a2ae4aaa408c733612299e9cd95ede7590948e96ccb698d39ae03b0e433a14a023cb912d290d1339a368e6ce3"
+        },
+        {
+            "mnemonic": "빨간색 회전 서비스 악수 역사 기독교 주장 예절 승객 간접 청소 횟수 게시판 점차 잠자리 늑대 변동 전기 눈썹 성인 정성 예정 하룻밤 장인",
+            "validatorPrivateKey": "10f0db181425ee01de0a3df528464ac7182f11754eb7737611c2892ee695b80b",
+            "validatorPublicKey": "0x8f06ed86dc6361843cf2ebbf47571e145452e64f41967d43822cf8cab109e665d5183c3c508d9d88893d475113d3e2b8",
+            "validatorPop": "0x96c2f4684047651ae40f26a436ef676502d85929c3cdee8d4e6619204db7f3a977acacbb5f4bc18e93c5e108ade4a317070c98b78789b092d985f91c4cc569a727338a0764d6078b11d00c4b17ac93a196dc770ad0690403a036629e45e943b3"
+        }
+    ],
+    "french": [
+        {
+            "mnemonic": "symbole calepin gicler brioche rouge cabanon carbone hurler serein butoir opportun cocasse défrayer cirer butoir frivole bagage néfaste rejeter galaxie vexer aliéner donateur menacer",
+            "validatorPrivateKey": "107192d3dc98087153d457970bc9a4d4699e103767134574d4af7dade62814ff",
+            "validatorPublicKey": "0x8d1c3cfe91046e6b94da25ac219452c0f9abaccf281e355d4ee761c28c8cc87f8de376b151d291bddb8f98801af9b271",
+            "validatorPop": "0xb7f306dc033e2a329a62dd84fc753e73ad1e05a5a485a14d7e389eb93c8ebcf0fbe085c3816f416c130384e35e7cdd430c51d6e48bc32a24bf20761856557dbb58844e01978fc8693574905f37da3aade681f33c28d6a2a41a4aa9f236f6a403"
+        },
+        {
+            "mnemonic": "grimper effigie divertir draper cabanon chapitre prudence nuire branche émission sénateur atome cumuler perte élaborer ajuster chien gardien déborder héron belote essence affiche frégate",
+            "validatorPrivateKey": "62c55a8f78e0a1361135d2796153edb4c492c0a64f337d5ed9940caa139cfdec",
+            "validatorPublicKey": "0x89e0159d10ac7d9b8a1b44363cc22af0a8686e7259b5404a0990b49fd6f14870293dc00612dabc4fbc664c36b2e09d37",
+            "validatorPop": "0x96b2f03b164e2ef2c785d421e5be35af588f2239fac3e09e026f655666f4d9bfcf5bb7e82a347869e14076f606683faf178b32e654c51ce96a15a8fab3c0a23af3dd00783a3b7f5c80915e4aab0e7baaad34ee49b14eb70a06037723c6c42869"
+        },
+        {
+            "mnemonic": "toboggan atelier photon allouer prologue usage dosage onctueux stipuler grogner culminer rivière période horrible simple digne chute désert curseur hérisson abrasif nocturne employer facette",
+            "validatorPrivateKey": "63beff3c9b144e4657b0a8c7e06bcb8dbdb6129f87b1bf7e9b088e086f753c72",
+            "validatorPublicKey": "0x815eb470bdf93279f329b2c6cb9cc562bb48a5e00b9feafdd1d20dc50a3b5c2d2b58c5fc2b988fc119fb58e8b41a38ea",
+            "validatorPop": "0xa1ccd9e855b5ef39bb0e69bdf05f4f01aea431e490fc5647469db76554433d368b0b09991d4ee522d48712a6442b939d0b5162422512cd2933738b90cf64e2d9902ed928c339f14809568671dcedb7e083e0ee01a6d52112eb1916c8d1129e45"
+        },
+        {
+            "mnemonic": "malice rentrer étoffer fluctuer broder solitude infusion éjecter chocolat jupon bolide opprimer peser éduquer sottise muraille ultrason épilogue relief scélérat épuisant trésor loyal avril",
+            "validatorPrivateKey": "508d83d6facf5c975c026eaf935e6752bf8e4bad2c27060a347b21f40c995211",
+            "validatorPublicKey": "0x983fc5e5b106fbc4e1743b5fc2bcfe1c0a480606332c8f2399c4b7836ef7bb48d52cf966a1ed8188c33ff337cf0fc298",
+            "validatorPop": "0xa3ef835b102095d71526d8b389fbdb21382acb4a3699eda3c3c45fab373c8692c71c666581f4149002dc8a1e89055409077d4d26573f4a8db803f654260b263fa4a8b113bba3876572e8853be6ba6b10c5b825d106fa3c8ddec8019f414166a7"
+        },
+        {
+            "mnemonic": "puzzle article fourmi groupe silicium voile amovible instinct tablier baril lessive lugubre grutier peigne respect public riposter sucre samedi dresser bilan censurer badge fiole",
+            "validatorPrivateKey": "68901c71a048ad1e0a6e173d99431209765274ccb44a424cf2b37812bcb8cb32",
+            "validatorPublicKey": "0xb6d31016d62701a79dd96355f170ac4ead35fe69d5c495fe66a51cd3ba6614701e1bb20dc4b66342bf0cac0cf962ccb3",
+            "validatorPop": "0x95f191017d80db3594edf7f89ecd5cb14df38315a5cdadebd26972472a82ed51ec61f2f298b9b67f2ec8aec8a780bd52075570349306257db974f548768f74a4fb68852b5b014418bb6ddb88abd4516bdc733ed3e20d9902ad38df817604b5fd"
+        }
+    ],
+    "italian": [
+        {
+            "mnemonic": "assaggio deciso esito muscolo usanza fetta velina umorismo pratica dote arsenico volpe gasdotto delirio risibile scelto vapore verticale ricordo principe ausilio frana superbo vivido",
+            "validatorPrivateKey": "3d2cc5cffcf54dde9103d4d27484a8a1f2bcf3e6e2f46ac6f17abda8c14034e0",
+            "validatorPublicKey": "0x89f7c0f46c2c4d773bdb3af22d5395536cb5cd206ed54f5ed4568372c61e30f831999eb07ae2ac302ed67609af5093b9",
+            "validatorPop": "0x8e4b9a844a6ad22a4fd0ca3bcf5a420a647fc23b7415479be677eaee123f7f3e882fc51460c4fba20bb0f4aae3dd12f9163c360e5cea304cf209bd9ba850f0af6718cf77703d8a28a9c30e3153fa0a183254c09f3490ae6bdc9b3bdac23dc50b"
+        },
+        {
+            "mnemonic": "addebito cellulare rassegna ferro selettivo sciroppo pineta sonda sfruttato nessuno veduto proposta pesatore daniela tariffa tizzone modello doblone cosmico rappreso pretesto ambito dentro frugale",
+            "validatorPrivateKey": "38a2c784846063065c35d4b20fbb58e0c94d933914bae7bd0179f8e4b681ed7f",
+            "validatorPublicKey": "0x8bfadd64382716c5dc45bd603ad47486563ca6bb1c628c428c7fc74e417063f1c839ef2c398bbf58aa5d477543427900",
+            "validatorPop": "0xa6587fed763a6d3a31fcc4615ef5da33420cc8f56041031b9b99584b16f1ea6998e804225a803a748a6d40fbe76210b501ae74756233b7fbb80f51287b905a885a6c617ebd3c888a6787b6762a57f30c10d2fbabea5acf65de976ae6ff5f4384"
+        },
+        {
+            "mnemonic": "accusato peloso atono ingrosso drago ingaggio filo frugale legale bordo giocare merenda unicorno sillaba lentezza meschino nuvola invalido incluso lievito cronaca bruno pronome folclore",
+            "validatorPrivateKey": "6d1e23229f017876a276802df01e3b296d26e94ea3b20020a0539a8ad2dfc32e",
+            "validatorPublicKey": "0x8cba3304e81996eb5a4f054b621a7b69a8e100b0a0f6db862786c9353a6c5a42d35322b4fd18de84cca6dbfa4284874c",
+            "validatorPop": "0xb4f914d4990c00c45f96400b00a2b94954a4a9fe2f3b85b553650ef8c50387fe9806400a429d0a1e1ebcaeec3e2986430bb853b0d2c68126be66417f0c3bf786ce7eb22a605482f7d420e9163133a7f667bfb2aa4c037bbd03952a1abe66e11a"
+        },
+        {
+            "mnemonic": "fisico briglia rimorchio dividere risata circa rizoma ammonito civetta orefice toccare pigro notturno plenario cedibile tacciare cardo affetto trachea delirio salgemma peccato orma rivincita",
+            "validatorPrivateKey": "4d760c6bdfdb94485e0632710029973d309ec39eb36f72ed299b7ee8760772e8",
+            "validatorPublicKey": "0xb0a15d79475eaf64f6b3fa0eb04baaeb6b45eba1fd416b6d41d886f31848a2103f743d41d81701e0ee924d07096d0c7f",
+            "validatorPop": "0x8dba6dcb0f9a51911a66c3b0896cec639f370ea40b8a854b234faca680f7b4362d863fc2b628794a485ef4c1892e291d04805b7560b449e6860ebca2560a5847f58406bb7eca0729a042bb1b0aab2afb57cb17e1af6048bff5d97f3cdf40b9b5"
+        },
+        {
+            "mnemonic": "perdonato dormire brama golf laddove globulo pioggia piattino europa mittente disgelo rigettato udire pargolo rastrello oggetto incubo ausilio stirpe sfera croce solido accusato steppa",
+            "validatorPrivateKey": "5a983ba66a4e971c277cb34e44f7c8c6b6f4c689d7b3e9360b743b446dff3b56",
+            "validatorPublicKey": "0xb396b51daef875a1cdb81cf02d4049d13855e713698db8041b54d784927702f92ef09f0806da788162bbb6cb87ba24a3",
+            "validatorPop": "0x905e66bcdb09c30760bb74640e567984f976ad840321f84f4b8ba50651dfe5eba151464e6a11d8cf60bfcfa6bd2a511c0b95945b34c5326fd68bea8c0e6ce11195ace9e2cba5805e3b537ff3aa54b2660ceb897ba1b7fd5760f81d51d6883647"
+        }
+    ],
+    "spanish": [
+        {
+            "mnemonic": "maíz encía sujeto pera tango espada atleta grueso cara abuso nómina elevar fracaso nieto género lino digno fábula oruga oriente pedir vitamina cinco tabla",
+            "validatorPrivateKey": "70b405bad8b30b77d4aff33adddc2c3821a8b30c08bfe99c115abaf08a8ccf6e",
+            "validatorPublicKey": "0xae4fbc7edb17c70d9aa22f3b4fae4866dc53c8c542b2a9049b11f466d63ccf8ed0bd08476b4bcaf1c80403120d8889c0",
+            "validatorPop": "0xa29fd2327fd5950eefb5c592772bdf25b7b8dd4536a7294d6dbabe08263af1080c2c318c791452b43664aeb60da78f761334dd1bb56130382107b7fe504e10d23b2f937c8f5a3cdc51134262ee0c370dc5d6e270d07e5f27f0a4e7419553f0ac"
+        },
+        {
+            "mnemonic": "autor aseo jamón acción flor matar vulgar tejer nuera ronda apoyo mente agua kilo tapete pupa baño astro mazorca útil apoyo bestia ámbar uno",
+            "validatorPrivateKey": "15215ea82f34fbf37eb3ceec76daaf94b0d321e8c07d6c5fb5dcf084ee23cb8e",
+            "validatorPublicKey": "0x8e60ce19dc8ee0ca6dd7f6490cd8d313b0718b92c8784c4f2b6ffcf67e930a3b61ce516963d4138cb49275272e9c847a",
+            "validatorPop": "0xb143f1293a110c0ad56d2425a93ff271ac148a18c7dd63b8cb73984f0ecc32ab41789a9b0e1eea2c299b9147e345fdda08ef72b4ccf95110905d101aadae3e0843918552a244b79ea7792a570e6eafbf4ca1d8ee534cd872ab0286d68f311045"
+        },
+        {
+            "mnemonic": "acné duque palpar abuelo evento tos torpedo fogata islote tocino huida usar observar potro lugar ronco padre lucir hogar fijar hígado evento pago motivo",
+            "validatorPrivateKey": "57a26f91b6d86457c0c7602d259c09e2bbf8e4da7cc79e61719d4910c63425b6",
+            "validatorPublicKey": "0xb9109ecf95afb9e483a44651db450a6a521a260401b53b7b558d25cf25f3cc9218b75200a47c1e3dba93a2b9a8d4d946",
+            "validatorPop": "0x970c2b22e5d3f2c66cf4a039d74eb3a60dcc1e309280f476d9e1c2cdec1d9934871cf20d90a225aa38e79f6bb6cc36dc01cb25ccb4e8dfa17227c9d0930e768643586c6ea8a21950d53b3154a3e22c866c5ac70281f0633aaadae6e10fb5240b"
+        },
+        {
+            "mnemonic": "metro alejar máximo globo usar favor fracaso mes salón realidad sexo elipse margen superar asalto acelga anciano paquete lata cereza rico regreso fatiga fogata",
+            "validatorPrivateKey": "1a22998fffc2d23527c8de6e1f71c87b4fa8a12c3661839d1777e950aaf3ed26",
+            "validatorPublicKey": "0xabc04b56022055f74c91aa321f1bce9cd914f01e67ed3008b2448b0d9041074156d4cf944f502dd975bf9649ae7c9d0e",
+            "validatorPop": "0xb42dc75c320a3a0129f53b54ad8e6002dd8a95b484dcad02a95bcbc47b01d0a8820625c07fd963e32beb634b515383c602eeb074d20ca235778931d2efafb6d505c2196bf4f14dc1c946d88be912e9d22a5eed732bea12958950d6715088a08d"
+        },
+        {
+            "mnemonic": "blanco escribir carbón arder llenar elipse seta opuesto sostén quemar vivir parar percha capitán acabar iris emoción laurel trauma joven seguir ropa lazo haz",
+            "validatorPrivateKey": "06b710058066d5e3b26a4c1891877a7b333a93bb8491d846bd322b77e1f94925",
+            "validatorPublicKey": "0xa1ab26d0ea3ff3d80764b10c5f5afb729457b37c07f4edf86d069148cb132bf7994ed27273fa4a5498d046e43822426f",
+            "validatorPop": "0x8c4400bee02a36e88476a45218cc391fc63c8cd93492d40a6ef9083fbbeed4ffb149d3c7e3761e97fb62426f1d0c08aa1225ed19ef8ddb80b3fe41ee7b7d63a9564f9435b2d292d692806cdecf999409a8ca9a51a331d719d3fee15297404050"
+        }
+    ],
+    "japanese": [
+        {
+            "mnemonic": "いはん　ことし　いじょう　はんい　りれき　てらす　きない　ふかい　けいろ　ぐうせい　かいふく　そっかん　そまる　ごうまん　おおや　だむる　たぬき　せんれい　ろじうら　くうぼ　ことし　たいおう　しほう　こふう",
+            "validatorPrivateKey": "1a051c7dddd9997f5175c50a19688e50774ea71beecbda2755f1a3ed72251573",
+            "validatorPublicKey": "0xa6ac75b094f23b3abb2d53ba413dcc3555e0f114fd6f43f3f461ba5ae1c4d0237ed86ee7ca26b2f6ad3f8830739c8148",
+            "validatorPop": "0x97262119a8a4ba92fe41b50ba19d09a0124c3910bf0f8f063b4784a389129b916a16f95d357541c5b72c11dce8d048b100a03bb7eb242b4101202b27cbc9d20e04937d265dfffc7da71a08313957224d7a5f2d410137f1a24bcb3c9c33ef4a27"
+        },
+        {
+            "mnemonic": "ひんかく　くふう　にっけい　うぶげ　ゆそう　やすたろう　あんがい　てつや　ちあい　いはつ　あわせる　ほかん　ちりょう　ひまん　せびろ　さうな　さくら　うやまう　さばく　ますく　じむしょ　みかん　てのひら　せんきょ",
+            "validatorPrivateKey": "2e3127928e4132fc4a2dcaa545793c8dddce684184a7eb6608d651f2a16db7fb",
+            "validatorPublicKey": "0xaad5e939d95ee279c215d6754064cbfb273753a7b455af53df76fb7c40c443dc97e55d8f32865d65a3db25bd9521c1ae",
+            "validatorPop": "0xabb1ed2deb2c0a4309d9535b38577f5696233bc938a745dc64f072dcf25658d11e60abb127faa74d2553dd21d7a0bda10fc066c52db7e41d011ff0c5c69f31f360f01b883bae752f9a519cd1c5fb93b78a72b05355fd84fe509971fe68dfe626"
+        },
+        {
+            "mnemonic": "たべる　ならび　ひまん　ひめじし　ななおし　ひしょ　れいぞうこ　けまり　うえき　みつかる　ちつじょ　めいえん　しょうかい　こおり　けいれき　だんち　しゃたい　つくる　ていか　まぬけ　もんく　つめたい　おろす　りれき",
+            "validatorPrivateKey": "4d1c867862ad583d3bb2d2d0c0a2ae0545654d17647bbe212f5ebedb7ca42d91",
+            "validatorPublicKey": "0x89ecf8433fb87c0a9be2e8fc634849150335ebe456fc5d9c9bd5c7fa3509b3188c84b0a85f80b6faf99db53794ac0aa7",
+            "validatorPop": "0xb396c3837230d6fbeb092d314e53f726705dff9ad0eb65719308ad81df19e74a5facc0808c53f0a827679fa5b97d1914068942744ac92554bca4ca7c1cc7c99a7113fb556155c5eebe8d0d5bc8fbdb31385ed60711f8e8d86e8e2612f794ed31"
+        },
+        {
+            "mnemonic": "すぼん　あつかう　さとおや　けなみ　とおる　だっしゅつ　てんてき　といれ　いんよう　きくらげ　ふせい　とおく　たれる　とおい　こむぎこ　おたがい　にくまん　ぎっちり　そこそこ　そっと　わしつ　にしき　いろえんぴつ　るすばん",
+            "validatorPrivateKey": "43e6f36d626653ace495db7ec22594bbd4263d41d027b63391022eb4e06f7bd0",
+            "validatorPublicKey": "0x93b14985bdbc07562b00a65af6b2aae357f0db463e74b3074427f7d671a1bc1bb93feff91308846a23d6e31d243e14d1",
+            "validatorPop": "0x860ba861cdb76dda0a61b634fec9f5421f69a66a49b1b92eeafd6ab23d712fe1d831c133749df1bbf7f28bef4a469f55149854a5a70761432c1db15d981834f6f16679c406f61c483439b8bad47907952b173e4261c0f4a7397570553f086fc4"
+        },
+        {
+            "mnemonic": "ほっさ　ふんしつ　いわい　せんさい　せまい　はやし　みてい　まんぞく　ちいさい　なまえ　ざつがく　てあみ　こんれい　はいち　おろす　たいえき　くどく　いたずら　まねく　こたつ　がっこう　おかえり　てんめつ　せんちょう",
+            "validatorPrivateKey": "6e651b09fb37b34f167fbef154b02c21df3b0befa628123a5ca5892b3096482e",
+            "validatorPublicKey": "0x88755c8f172438ee524351f3fbc7df85a536bb6b6a15a0cfcda60ce63eb3003c5cfbb3f7161021500cb6afe08b845fbd",
+            "validatorPop": "0x8a5867a775ee373be5f706dc6619f1527dd2f0ceef0103100a614617deec9d72b2e5d8559599dede83bdc4b044592597055fcf761a2d06fde89c6f817be3d539e5ca39dcb4fad6a48bfc96d3e8ebf873e2a244a039354bfbd642c89f5d9f5f21"
+        }
+    ],
+    "portuguese": [
+        {
+            "mnemonic": "empurrar jangada bajular cratera imenso hidratar prensar outono oriental pires carreira tamborim amolador mexer tinteiro produto tenente pedestre advogado rupestre grelhar populoso indutor igreja",
+            "validatorPrivateKey": "6cd1e26fe4b60cdacec4fbbf4a69be53084ac1bf776f982d5bc3b5ddb1191620",
+            "validatorPublicKey": "0x855fb0ffd9d7c8d97c94093eaba87e31a9ee496a2234c02448d6b2004958306c1d5b9582adc1f982f4ea931569af460e",
+            "validatorPop": "0xa2e75834a16c982391bd423ecd3985eeac8e368507e6038fee8ec8191fe97269e0db822660dd70e353bf960c5fc320d61059366e2d16e2a2a2d9c271026030dec6af4e29f8c446f60b637c33fa7e7322cc6e2a0683831aad96ea37165e4a9bc1"
+        },
+        {
+            "mnemonic": "damasco visto duelar cruzeiro repleto avulso esteira magreza quimono esfumado sono guarani prece pasmo enfeite atarefar selvagem vigorar vestido sinal foguete silicone apanhado focal",
+            "validatorPrivateKey": "5343c9ca5f432b8adb57295480e40e2768ee81ac4bed1c00003314cae960f9a7",
+            "validatorPublicKey": "0x80ec1e2fe666acc1fb58727f71ca59599cf7444266d953de513c893bb242854c72b615bfd7335cc621963f57a62c739f",
+            "validatorPop": "0xadb86bf20d58a9930dac234b49104f51fcdf4264bd504ed7afc735a89830fa3d0590e5255631938af8944d094e16d79e0a514f33c1eee477d377289bc11280c9c12805839b47467b36e1a1cc48e6ab75f2e6d5b0016e9a05b43827acd490f788"
+        },
+        {
+            "mnemonic": "medida genoma solda deboche corvo lucidez ciente genoma papelada muralha atracar expandir honesto guiar donativo careca surdina pantanal carbono vigorar triplo toxina peculiar piranha",
+            "validatorPrivateKey": "0206938e176266422b3c1f21c904e707653f299e516482717ef5f0e566a19ae8",
+            "validatorPublicKey": "0xb0665a81085b96a6c0c459e5dab927a49878c18aaa6e7086efcaeb6f53c5590636d2b41c0834af4884ddc5afc6d9c5c8",
+            "validatorPop": "0xa828d7b90866bb764113b4b669d71328225250d21725b7c4942500c41b41367418511b0dbbc86b17baa171552e218fdf01740d3f1a9fb608dfe42c3a456d85dd588f8b29eeb45440348e4d0b29d31b239383d607a3f4df0ce99bba8053f9be41"
+        },
+        {
+            "mnemonic": "firmeza bovino captador sovado roncar pupilo gralha raiva edital relativo voar ventre censo ilustrar aclive membro negativa copeiro copiador patamar incenso sozinho chover refogar",
+            "validatorPrivateKey": "71195017204610b004b5030d0cee33ac0c7d0bd95b33d89f93c7b61746812936",
+            "validatorPublicKey": "0x813c929f451a522de69e36ff7e94ca3c6d34123e3050110e1a47a215e0beeae8e0eaf438a5dc8851f0a748c4587821b8",
+            "validatorPop": "0xb486b3bd7e6ef57a186b798dbb446e3102fdc396a98b18acad0d2b31eb957925c3b067511755ebedd5705a1ed3fa28ad1883be3d9511f7a691d3e5672590ad665e838968cc0c2f6ba28204683eb1719833fa84cd2e90c6b5eae6fea8b9adfdfa"
+        },
+        {
+            "mnemonic": "abaixo louvar navio matutar duelar cirurgia notar infrator noiva esponja afastar moqueca viveiro envergar litoral tijolo coquetel arara ambiente germinar emulador enlatar esfolar veicular",
+            "validatorPrivateKey": "2d5aa4d2cbfc4c85f889a55b7be68b5d36c7c3d5a960509fa6b809bd319c4a87",
+            "validatorPublicKey": "0xa4670f07064f089d9157197cb6357bd58f099ba81db516cbb8e3642e433e529de843937896463845d615edf009223c4b",
+            "validatorPop": "0xa23094dce8e0af71a400344cfa63fd46735e9db1ca7bd0a0ec034ae1313dbba15f59cb21728852b07f4c956af2982db6116ea39de2e4db3500684f4d822859ab9ee55d6ed84da54e8c5b4fcb20f70fe431fecf0d414cfbd1bcc66516438d1acc"
+        }
+    ],
+    "english": [
+        {
+            "mnemonic": "know blame layer barrel achieve wrap crystal attack mystery manual fragile decline grab tennis model lift hen slush memory wear hobby soup major fluid",
+            "validatorPrivateKey": "16c24bbc9fb2741f47a7ed5f37aeb59ef9444fbadaa3008eecb7964659899099",
+            "validatorPublicKey": "0xaa52febae59e6068a1d9527733553ed9427eee40b42d5ac745371dcc4618c47f11b811cba6beed1fed575fc401a89ba4",
+            "validatorPop": "0xa763308ba9149bca48e7cccd6047e970c249cdaae339f355c60667497a5a803e51749c162bea375edd94574447a7396d0df9c4ef57245bc105f1c9375f79f0dfccfa8df76b9e524529bf556b17bd81e0576fbaa4806355c3629f26f47d01295d"
+        },
+        {
+            "mnemonic": "device cart aware icon joke taste inject goose degree various oven menu obey ride enemy find flush ribbon orbit thank zero protect tail fresh",
+            "validatorPrivateKey": "13f4a2433ac8c56eafd74a242f34ab650c4756bb4ce01fd4cc79d7889777e374",
+            "validatorPublicKey": "0xaf835876f9a6578b6e8fd9dc811d42927eab7fd426a3094d4c98203280137117381857d4d6d083caa2dce34e98c85a91",
+            "validatorPop": "0x8676e292790d03a51f59fc94d86dd572c5d5c0d4ffc8beeb434e0f6e31053631b5076d02ddc544cfbf1f0d1547cf8e1c105f60afd0f9c4dcb1cd96be39259999dabeecf2b60df77ca31e0bc3b406d049ad82ef89e9bd8b4af57547150d3483a5"
+        },
+        {
+            "mnemonic": "during menu novel beach project total place embrace language pumpkin bag trap survey afraid maze gorilla vast bacon hole poverty recipe treat jewel sustain",
+            "validatorPrivateKey": "55bff2f1883b1bbc4a34c8e145af725cf0f93da28edb11f104bd1a688872d9cb",
+            "validatorPublicKey": "0x95f332e9b984babbd76c2d573b6dda8c1ab44732ed078b1a9e7760925c885acb023ec9a58041f6142068320d976a2c2e",
+            "validatorPop": "0xaa23783e6a5a2e03d6db9fe746072fd48834bd6d06b5e22f696b58f4badd6bb9eb1feb92df67f8d0d256cca678f41a970591a9d56fc00e8ebf8866bc775af86caca7ebbbf44d98f36ffb6ffc82c866f471fea1c21c3a75ec128eb42fd4591563"
+        },
+        {
+            "mnemonic": "purse wrist scissors matter blanket stumble square notice dirt bounce cross table earn hockey retreat ridge lake wage comfort truly write select buffalo place",
+            "validatorPrivateKey": "53b0a649d988a38e074596a052a613abd35ca3b0c8dd98d6da4e4765162933f3",
+            "validatorPublicKey": "0xb92f8b7a2c83a9a508039e98caa647f17ef42585b8140b8e2b542b5c32806730e03402d767b2e19f629b90981f6a1020",
+            "validatorPop": "0xb0349a73f2cf56dae41d5b72b2136926c988b43fb3dd89de7248b74eb1ed0463b06de3f7c6bb367b734c0360022946261763c43f7817ab34dc25e043c2209993f1d47495a324c01bc7fb783388dd984be955937ba150cb07c555c1d3529d036f"
+        },
+        {
+            "mnemonic": "salmon bunker faint disagree cruise spin soon spider number pudding drift super behind melody slot top leopard odor cheese tomato roof wonder off filter",
+            "validatorPrivateKey": "3e12e7627f215132fd14003f996844de67f90f51ad5e5c98374f684cb77e0717",
+            "validatorPublicKey": "0x8253ba7a64fbea2746e04274ffbead5c19492af8fb6aecfc84a8348b8d116fb59d9e125d2e713fa73f02b1d9037ab5aa",
+            "validatorPop": "0xa0f8cb0113f6975a434fb1d8e30f15ad3c8d8c9a3862f648f227cb5b5d168843bbae3f3bec10f0db81d1038266891eee0e8261c5e5689098a83cdf86d5fbf3afe1eb1b511bf8c7aea224b1856940471923a223fded43919b01f44c2b85b33005"
+        }
+    ]
+}
