@@ -1,10 +1,3 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
@@ -12,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/ellemouton/schnorr"
+	"github.com/decred/dcrd/dcrec/secp256k1/v4"
+	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -34,12 +27,12 @@ func PublicKeyFromHex(publicKeyHex string) (*PublicKey, error) {
 }
 
 func PublicKeyFromBytes(bytes []byte) (*PublicKey, error) {
-	publicKey, err := btcec.ParsePubKey(bytes, btcec.S256())
+	publicKey, err := secp256k1.ParsePubKey(bytes)
 	if err != nil {
 		return nil, err
 	}
 	isCompressed := false
-	if len(bytes) == btcec.PubKeyBytesLenCompressed {
+	if len(bytes) == secp256k1.PubKeyBytesLenCompressed {
 		isCompressed = true
 	}
 	return &PublicKey{
@@ -102,38 +95,41 @@ func (publicKey *PublicKey) SerializeUncompressed() []byte {
 	return publicKey.PublicKey.SerializeUncompressed()
 }
 
-func (publicKey *PublicKey) Verify(signature []byte, hash []byte) (bool, error) {
-	return publicKey.VerifySchnorr(signature, hash)
+// isCompressed must match how the signer's key was represented when signing
+// (PrivateKey.Sign uses the signing key's own isCompressed value).
+func RecoverPublicKey(hash []byte, sig *EcdsaSignature, isCompressed bool) (*PublicKey, error) {
+	if len(sig.R) != ecdsaCurveByteLength || len(sig.S) != ecdsaCurveByteLength {
+		return nil, fmt.Errorf("RecoverPublicKey: R and S must each be %d bytes", ecdsaCurveByteLength)
+	}
+
+	header := byte(27 + sig.RecoveryId)
+	if isCompressed {
+		header += 4
+	}
+
+	compact := make([]byte, 0, 1+2*ecdsaCurveByteLength)
+	compact = append(compact, header)
+	compact = append(compact, sig.R...)
+	compact = append(compact, sig.S...)
+
+	pubKey, _, err := ecdsa.RecoverCompact(compact, hash)
+	if err != nil {
+		return nil, fmt.Errorf("RecoverPublicKey: %v", err)
+	}
+
+	return &PublicKey{
+		PublicKey:    pubKey,
+		isCompressed: isCompressed,
+		Network:      GetNetwork(),
+	}, nil
 }
 
-func (publicKey *PublicKey) VerifySchnorr(signature []byte, hash []byte) (bool, error) {
-	if len(signature) != 64 {
-		return false, fmt.Errorf("VerifySchnorr: signature is %d bytes, should be 64", len(signature))
-	}
-	if len(hash) != 32 {
-		return false, fmt.Errorf("VerifySchnorr: message hash is %d bytes, should be 32", len(hash))
-	}
-
-	// Parse the signature using the schnorr package
-	sig, err := schnorr.NewSignatureFromBytes(signature)
+// Verify recovers the actual signer from sig and compares it to publicKey.
+func (publicKey *PublicKey) Verify(hash []byte, sig *EcdsaSignature) (bool, error) {
+	recovered, err := RecoverPublicKey(hash, sig, publicKey.isCompressed)
 	if err != nil {
-		return false, fmt.Errorf("VerifySchnorr: failed to parse signature: %v", err)
+		return false, err
 	}
 
-	// Parse the public key using the schnorr package
-	var schnorrPubKey *schnorr.PublicKey
-	if len(publicKey.PublicKey.SerializeCompressed()) == 33 {
-		schnorrPubKey, err = schnorr.ParsePlainPubKey(publicKey.PublicKey.SerializeCompressed())
-	} else {
-		schnorrPubKey, err = schnorr.ParseXOnlyPubKey(publicKey.PublicKey.SerializeCompressed())
-	}
-
-	if err != nil {
-		return false, fmt.Errorf("VerifySchnorr: failed to parse public key: %v", err)
-	}
-
-	// Verify the signature
-	err = sig.Verify(schnorrPubKey, hash) // Assuming `Verify` returns only bool
-
-	return err == nil, err
+	return recovered.PublicKey.IsEqual(publicKey.PublicKey), nil
 }

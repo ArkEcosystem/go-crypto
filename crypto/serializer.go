@@ -1,180 +1,65 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
-	"bytes"
-	"encoding/binary"
-	"log"
-	"strings"
+	"math/big"
 )
 
-func writeNumberAsByte(ser *bytes.Buffer, num interface{}, name string) {
-	numInt := num.(int)
+// Serialize encodes the transaction as an RLP list:
+// [nonce, gasPrice, gasLimit, to, value, data, v, r, s].
+//
+// If skipSignature is true, or no signature has been set on the transaction
+// yet, the v/r/s slots are replaced with the EIP-155 placeholder
+// [chainId, 0, 0] — this is the form that gets keccak256-hashed to produce
+// the hash a signer signs (see Transaction.SigningHash). Once R and S are
+// populated, Serialize(false) embeds the real EIP-155-encoded v
+// (v = recoveryId + chainId*2 + 35) alongside r and s — this is the final
+// wire encoding of a signed transaction.
+func (transaction *Transaction) Serialize(skipSignature bool) ([]byte, error) {
+	var toBytes []byte
+	if transaction.To != "" {
+		var err error
+		toBytes, err = AddressToBytes(transaction.To)
+		if err != nil {
+			return nil, err
+		}
+	}
+	to := RlpBytes(toBytes)
+	data := RlpBytes(transaction.Data)
 
-	if numInt > 0xFF {
-		log.Fatal("Cannot serialize: max supported", name, "is 256. Provided:", num)
+	items := []RlpItem{
+		NewRlpBigInt(bigIntOrZero(transaction.Nonce)),
+		NewRlpBigInt(bigIntOrZero(transaction.GasPrice)),
+		NewRlpBigInt(bigIntOrZero(transaction.GasLimit)),
+		&to,
+		NewRlpBigInt(bigIntOrZero(transaction.Value)),
+		&data,
 	}
 
-	ser.WriteByte(uint8(numInt))
-}
+	chainId := big.NewInt(int64(GetNetwork().ChainId))
 
-func (transaction *Transaction) Serialize(includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) []byte {
-	ser := new(bytes.Buffer)
+	if !skipSignature && len(transaction.R) > 0 && len(transaction.S) > 0 {
+		v := new(big.Int).Add(big.NewInt(int64(transaction.V)), new(big.Int).Mul(chainId, big.NewInt(2)))
+		v.Add(v, big.NewInt(35))
 
-    transaction.serializeHeader(ser)
-    transaction.serializeVendorField(ser)
-    transaction.serializeTypeSpecific(ser)
-    transaction.serializeSignatures(ser, includeSignature, includeSecondSignature, includeMultiSignatures)
-
-    return ser.Bytes()
-}
-
-func (transaction *Transaction) serializeHeader(ser *bytes.Buffer) {
-	ser.WriteByte(uint8(0xFF))
-
-	ser.WriteByte(transaction.Version)
-	
-	if transaction.Network == 0 {
-		ser.WriteByte(GetNetwork().Version)
+		items = append(items,
+			NewRlpBigInt(v),
+			NewRlpBigInt(new(big.Int).SetBytes(transaction.R)),
+			NewRlpBigInt(new(big.Int).SetBytes(transaction.S)),
+		)
 	} else {
-		ser.WriteByte(transaction.Network)
+		items = append(items,
+			NewRlpBigInt(chainId),
+			NewRlpBigInt(big.NewInt(0)),
+			NewRlpBigInt(big.NewInt(0)),
+		)
 	}
 
-	binary.Write(ser, binary.LittleEndian, transaction.TypeGroup)
-	binary.Write(ser, binary.LittleEndian, transaction.Type)
-	binary.Write(ser, binary.LittleEndian, transaction.Nonce)
-	if transaction.SenderPublicKey != "" {
-		ser.Write(HexDecode(transaction.SenderPublicKey))
+	return NewRlpList(items...).EncodeRLP()
+}
+
+func bigIntOrZero(x *big.Int) *big.Int {
+	if x == nil {
+		return big.NewInt(0)
 	}
-	binary.Write(ser, binary.LittleEndian, uint64(transaction.Fee))
-}
-
-func (transaction *Transaction) serializeVendorField(ser *bytes.Buffer) {
-	if transaction.VendorField != "" {
-		writeNumberAsByte(ser, len(transaction.VendorField), "vendorField")
-		ser.Write([]byte(transaction.VendorField))
-	} else {
-		ser.WriteByte(uint8(0x00))
-	}
-}
-
-func (transaction *Transaction) serializeTypeSpecific(ser *bytes.Buffer) {
-	switch transaction.Type {
-	case TRANSACTION_TYPES.Transfer:
-			transaction.serializeTransfer(ser)
-	case TRANSACTION_TYPES.ValidatorRegistration:
-			transaction.serializeValidatorRegistration(ser)
-	case TRANSACTION_TYPES.Vote:
-			transaction.serializeVote(ser)
-	case TRANSACTION_TYPES.MultiSignatureRegistration:
-			transaction.serializeMultiSignatureRegistration(ser)
-	case TRANSACTION_TYPES.MultiPayment:
-			transaction.serializeMultiPayment(ser)
-	case TRANSACTION_TYPES.ValidatorResignation:
-			transaction.serializeValidatorResignation(ser)
-	case TRANSACTION_TYPES.UsernameRegistration:
-			transaction.serializeUsernameRegistration(ser)
-	case TRANSACTION_TYPES.UsernameResignation:
-			transaction.serializeUsernameResignation(ser)
-	}
-}
-
-func (transaction *Transaction) serializeSignatures(ser *bytes.Buffer, includeSignature bool, includeSecondSignature bool, includeMultiSignatures bool) {
-	if includeSignature && transaction.Signature != "" {
-		ser.Write(HexDecode(transaction.Signature))
-	}
-
-	if includeSecondSignature && transaction.SecondSignature != "" {
-		ser.Write(HexDecode(transaction.SecondSignature))
-	}
-
-	if includeMultiSignatures && len(transaction.Signatures) > 0 {
-		ser.Write(HexDecode(strings.Join(transaction.Signatures, "")))
-	}
-}
-
-func stripAddressPrefix(recipientId string) string {
-	address := recipientId[2:]
-	if strings.HasPrefix(address, "0x") {
-			address = address[2:]
-	}
-	return address
-}
-
-
-func (transaction *Transaction) serializeTransfer(ser *bytes.Buffer) {
-	binary.Write(ser, binary.LittleEndian, uint64(transaction.Amount))
-	binary.Write(ser, binary.LittleEndian, transaction.Expiration)
-	
-	address := stripAddressPrefix(transaction.RecipientId)
-	
-	recipientBytes := HexDecode(address)
-
-	ser.Write(recipientBytes)
-}
-
-func (transaction *Transaction) serializeValidatorRegistration(ser *bytes.Buffer) {
-	ser.Write(HexDecode(transaction.Asset.Validator.ValidatorPublicKey))
-}
-
-func (transaction *Transaction) serializeUsernameRegistration(ser *bytes.Buffer) {
-	// Write the length of the username
-	username := transaction.Asset.Username.Username
-	writeNumberAsByte(ser, len(username), "username length")
-
-	// Write the username
-	ser.Write([]byte(username))
-}
-
-func (transaction *Transaction) serializeVote(ser *bytes.Buffer) {
-	// Serialize Votes
-	votes := transaction.Asset.Votes
-	unvotes := transaction.Asset.Unvotes
-
-	// Write the number of votes
-	writeNumberAsByte(ser, len(votes), "number of votes")
-
-	// Write each vote in hexadecimal format
-	for _, vote := range votes {
-		ser.Write(HexDecode(vote))
-	}
-
-	// Write the number of unvotes
-	writeNumberAsByte(ser, len(unvotes), "number of unvotes")
-
-	// Write each unvote in hexadecimal format
-	for _, unvote := range unvotes {
-		ser.Write(HexDecode(unvote))
-	}
-}
-
-func (transaction *Transaction) serializeMultiSignatureRegistration(ser *bytes.Buffer) {
-	publicKeys := transaction.Asset.MultiSignature.PublicKeys
-
-	ser.WriteByte(transaction.Asset.MultiSignature.Min)
-	writeNumberAsByte(ser, len(publicKeys), "number of public keys in multisig")
-	ser.Write(HexDecode(strings.Join(publicKeys, "")))
-}
-
-func (transaction *Transaction) serializeMultiPayment(ser *bytes.Buffer) {
-	binary.Write(ser, binary.LittleEndian, uint16(len(transaction.Asset.Payments)))
-
-	for _, element := range transaction.Asset.Payments {
-		binary.Write(ser, binary.LittleEndian, uint64(element.Amount))
-		ser.Write(HexDecode(stripAddressPrefix(element.RecipientId)))
-	}
-}
-
-func (transaction *Transaction) serializeValidatorResignation(buffer *bytes.Buffer) {
-	// No specific data to serialize for validator resignation, just parse the signatures
-}
-
-func (transaction *Transaction) serializeUsernameResignation(ser *bytes.Buffer) {
-	// No specific data to serialize for username resignation, just parse the signatures
+	return x
 }

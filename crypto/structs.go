@@ -1,140 +1,66 @@
-// This file is part of Ark Go Crypto.
-//
-// (c) Ark Ecosystem <info@ark.io>
-//
-// For the full copyright and license information, please view the LICENSE
-// file that was distributed with this source code.
-
 package crypto
 
 import (
-	"encoding/json"
-	"strconv"
+	"math/big"
 	"time"
 
-	"github.com/btcsuite/btcd/btcec"
+	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	blst "github.com/supranational/blst/bindings/go"
 )
 
-type FlexToshi uint64
-
 type Network struct {
 	Epoch   time.Time
-	Version byte
+	ChainId int
 	Wif     byte
 }
 
 type PrivateKey struct {
-	*btcec.PrivateKey
+	*secp256k1.PrivateKey
 	PublicKey *PublicKey
 }
 
 type PublicKey struct {
-	*btcec.PublicKey
+	*secp256k1.PublicKey
 	isCompressed bool
 	Network      *Network
 }
 
-type TransactionTypes struct {
-	Transfer                    uint16
-	ValidatorRegistration       uint16
-	Vote                        uint16
-	MultiSignatureRegistration  uint16
-	MultiPayment                uint16
-	ValidatorResignation        uint16
-	UsernameRegistration        uint16
-	UsernameResignation         uint16
-}
-
-type TransactionTypeGroups struct {
-	Test uint32
-	Core uint32
-}
-
-type TransactionFees struct {
-	Transfer                    FlexToshi
-	ValidatorRegistration       FlexToshi
-	Vote                        FlexToshi
-	MultiSignatureRegistration  FlexToshi
-	MultiPayment                FlexToshi
-	ValidatorResignation        FlexToshi
-	UsernameRegistration        FlexToshi
-	UsernameResignation         FlexToshi
-}
-
-func (fi *FlexToshi) UnmarshalJSON(b []byte) error {
-	if b[0] != '"' {
-		return json.Unmarshal(b, (*uint64)(fi))
-	}
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-	i, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		return err
-	}
-	*fi = FlexToshi(i)
-	return nil
-}
-
+// Transaction is a Mainsail (EVM-compatible) transaction: an RLP-encoded
+// envelope authenticated with a recoverable ECDSA secp256k1 signature.
+// Nonce/GasPrice/GasLimit/Value are arbitrary-precision to accommodate
+// wei-scale amounts. R and S are each 32 bytes; V is the raw recovery id
+// (0-3), not yet EIP-155 encoded — that encoding is applied at serialize
+// time using the configured network's chain id.
 type Transaction struct {
-	Amount                FlexToshi         `json:"amount,omitempty"`
-	Asset                 *TransactionAsset `json:"asset,omitempty"`
-	Expiration            uint32            `json:"expiration,omitempty"`
-	Fee                   FlexToshi         `json:"fee,omitempty"`
-	Id                    string            `json:"id,omitempty"`
-	Network               byte              `json:"network,omitempty"`
-	Nonce                 uint64            `json:"nonce,omitempty,string"`
-	RecipientId           string            `json:"recipientId,omitempty"`
-	SecondSenderPublicKey string            `json:"secondSenderPublicKey,omitempty"`
-	SecondSignature       string            `json:"secondSignature,omitempty"`
-	SenderPublicKey       string            `json:"senderPublicKey,omitempty"`
-	Serialized            []byte            `json:"serialized,omitempty"`
-	Signature             string            `json:"signature,omitempty"`
-	Signatures            []string          `json:"signatures,omitempty"`
-	Timestamp             int32             `json:"timestamp,omitempty"`
-	Type                  uint16            `json:"type"`
-	TypeGroup             uint32            `json:"typeGroup"`
-	VendorField           string            `json:"vendorField,omitempty"`
-	Version               byte              `json:"version,omitempty"`
+	Nonce           *big.Int `json:"nonce,omitempty"`
+	GasPrice        *big.Int `json:"gasPrice,omitempty"`
+	GasLimit        *big.Int `json:"gasLimit,omitempty"`
+	To              string   `json:"to,omitempty"`
+	Value           *big.Int `json:"value,omitempty"`
+	Data            []byte   `json:"data,omitempty"`
+	V               int      `json:"v"`
+	R               []byte   `json:"r,omitempty"`
+	S               []byte   `json:"s,omitempty"`
+	SenderPublicKey string   `json:"senderPublicKey,omitempty"`
+	From            string   `json:"from,omitempty"`
+	Hash            string   `json:"hash,omitempty"`
+	Serialized      []byte   `json:"serialized,omitempty"`
+
+	// The fields below are populated only for the transaction kind they
+	// apply to, by DecodeTransactionArgs during deserialization; all others
+	// are left at their zero value.
+	Vote               string     `json:"vote,omitempty"`
+	ValidatorPublicKey string     `json:"validatorPublicKey,omitempty"`
+	ValidatorProof     string     `json:"validatorProof,omitempty"`
+	Username           string     `json:"username,omitempty"`
+	PaymentAddresses   []string   `json:"paymentAddresses,omitempty"`
+	PaymentAmounts     []*big.Int `json:"paymentAmounts,omitempty"`
 }
 
 type Message struct {
 	Message   string `json:"message"`
 	PublicKey string `json:"publickey"`
 	Signature string `json:"signature"`
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TRANSACTION ASSETS //////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-type TransactionAsset struct {
-	Votes          []string                          `json:"votes,omitempty"`
-	Unvotes        []string                          `json:"unvotes,omitempty"`
-	Validator      *ValidatorAsset                   `json:"validator,omitempty"`
-	Username       *UsernameAsset                   `json:"validator,omitempty"`
-	MultiSignature *MultiSignatureRegistrationAsset  `json:"multiSignature,omitempty"`
-	Payments       []*MultiPaymentAsset              `json:"payments,omitempty"`
-}
-
-type ValidatorAsset struct {
-	ValidatorPublicKey string `json:"validatorPublicKey,omitempty"`
-}
-
-type UsernameAsset struct {
-	Username string `json:"username,omitempty"`
-}
-
-type MultiSignatureRegistrationAsset struct {
-	Min        byte     `json:"min,omitempty"`
-	PublicKeys []string `json:"publicKeys,omitempty"`
-}
-
-type MultiPaymentAsset struct {
-	Amount      FlexToshi `json:"amount,omitempty"`
-	RecipientId string    `json:"recipientId,omitempty"`
 }
 
 type BLSPrivateKey struct {
