@@ -2,12 +2,15 @@ package crypto
 
 import (
 	"crypto/sha256"
+	"errors"
 	"fmt"
 
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 )
+
+var ErrInvalidWif = errors.New("crypto: invalid WIF")
 
 const ecdsaCurveByteLength = 32
 
@@ -29,6 +32,33 @@ func PrivateKeyFromPassphrase(passphrase string) (*PrivateKey, error) {
 
 func PrivateKeyFromHex(privateKeyHex string) (*PrivateKey, error) {
 	return PrivateKeyFromBytes(HexDecode(privateKeyHex)), nil
+}
+
+func PrivateKeyFromWif(wif string) (*PrivateKey, error) {
+	decoded, version, err := base58.CheckDecode(wif)
+	if err != nil {
+		return nil, ErrInvalidWif
+	}
+	if version != GetNetwork().Wif {
+		return nil, ErrInvalidWif
+	}
+
+	switch len(decoded) {
+	case ecdsaCurveByteLength:
+		return PrivateKeyFromBytes(decoded), nil
+	case ecdsaCurveByteLength + 1:
+		return PrivateKeyFromBytes(decoded[:ecdsaCurveByteLength]), nil
+	default:
+		return nil, ErrInvalidWif
+	}
+}
+
+func WIFFromPassphrase(passphrase string) (string, error) {
+	privateKey, err := PrivateKeyFromPassphrase(passphrase)
+	if err != nil {
+		return "", err
+	}
+	return privateKey.ToWif(), nil
 }
 
 func PrivateKeyFromBytes(bytes []byte) *PrivateKey {

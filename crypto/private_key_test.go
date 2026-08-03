@@ -32,3 +32,30 @@ func TestPrivateKeyToWif(t *testing.T) {
 	assert := assert.New(t)
 	assert.Equal(fixture.Data.WIF, privateKey.ToWif())
 }
+
+func TestPrivateKeyFromWif(t *testing.T) {
+	fixture := GetIdentityFixture()
+
+	privateKey, err := PrivateKeyFromWif(fixture.Data.WIF)
+
+	assert := assert.New(t)
+	assert.NoError(err)
+	assert.Equal(fixture.Data.PrivateKey, privateKey.ToHex())
+}
+
+func TestPrivateKeyFromWifInvalidWifErrors(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := PrivateKeyFromWif("not-a-wif")
+	assert.ErrorIs(err, ErrInvalidWif)
+}
+
+func TestWIFFromPassphrase(t *testing.T) {
+	fixture := GetIdentityFixture()
+
+	wif, err := WIFFromPassphrase(fixture.Passphrase)
+
+	assert := assert.New(t)
+	assert.NoError(err)
+	assert.Equal(fixture.Data.WIF, wif)
+}
