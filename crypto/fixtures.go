@@ -77,12 +77,15 @@ func GetTransactionFixture(name string) TestingTransactionFixture {
 
 type TestingIdentityFixture struct {
 	Data struct {
-		PrivateKey string `json:"privateKey,omitempty"`
-		PublicKey  string `json:"publicKey,omitempty"`
-		Address    string `json:"address,omitempty"`
-		WIF        string `json:"wif,omitempty"`
+		PrivateKey          string `json:"privateKey,omitempty"`
+		PublicKey           string `json:"publicKey,omitempty"`
+		Address             string `json:"address,omitempty"`
+		WIF                 string `json:"wif,omitempty"`
+		ValidatorPublicKey  string `json:"validatorPublicKey,omitempty"`
+		ValidatorPrivateKey string `json:"validatorPrivateKey,omitempty"`
 	} `json:"data,omitempty"`
-	Passphrase string `json:"passphrase,omitempty"`
+	Passphrase       string `json:"passphrase,omitempty"`
+	SecondPassphrase string `json:"secondPassphrase,omitempty"`
 }
 
 type TestingMessageFixture struct {
