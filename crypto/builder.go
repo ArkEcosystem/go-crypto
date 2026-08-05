@@ -13,8 +13,6 @@ var (
 	DefaultGasLimit = big.NewInt(1_000_000)
 )
 
-// Concrete transaction-type builders (BuildTransfer, BuildVote, etc.) are
-// layered on top of this.
 func NewTransaction() *Transaction {
 	return &Transaction{
 		Nonce:    big.NewInt(1),
@@ -37,14 +35,14 @@ func BuildTransfer(to string, value *big.Int) (*Transaction, error) {
 }
 
 func BuildVote(validatorAddress string) (*Transaction, error) {
-	voteArg, err := AbiAddress(validatorAddress)
+	data, err := EncodeVoteData(validatorAddress)
 	if err != nil {
 		return nil, err
 	}
 
 	transaction := NewTransaction()
 	transaction.To = ContractConsensus
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureVote, voteArg)
+	transaction.Data = data
 	transaction.Vote = validatorAddress
 
 	return transaction, nil
@@ -53,7 +51,7 @@ func BuildVote(validatorAddress string) (*Transaction, error) {
 func BuildUnvote() *Transaction {
 	transaction := NewTransaction()
 	transaction.To = ContractConsensus
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureUnvote)
+	transaction.Data = EncodeUnvoteData()
 
 	return transaction
 }
@@ -92,7 +90,7 @@ func BuildValidatorUpdate(validatorPassphrase string) (*Transaction, error) {
 func BuildValidatorResignation() *Transaction {
 	transaction := NewTransaction()
 	transaction.To = ContractConsensus
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureResignValidator)
+	transaction.Data = EncodeValidatorResignationData()
 
 	return transaction
 }
@@ -122,13 +120,14 @@ func validateUsername(username string) error {
 }
 
 func BuildUsernameRegistration(username string) (*Transaction, error) {
-	if err := validateUsername(username); err != nil {
+	data, err := EncodeUsernameRegistrationData(username)
+	if err != nil {
 		return nil, err
 	}
 
 	transaction := NewTransaction()
 	transaction.To = ContractUsernames
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureRegisterUsername, AbiString(username))
+	transaction.Data = data
 	transaction.Username = username
 
 	return transaction, nil
@@ -137,7 +136,7 @@ func BuildUsernameRegistration(username string) (*Transaction, error) {
 func BuildUsernameResignation() *Transaction {
 	transaction := NewTransaction()
 	transaction.To = ContractUsernames
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureResignUsername)
+	transaction.Data = EncodeUsernameResignationData()
 
 	return transaction
 }
@@ -150,11 +149,7 @@ func BuildMultiPayment(addresses []string, amounts []*big.Int) (*Transaction, er
 		return nil, errors.New("crypto: multi-payment requires at least one recipient")
 	}
 
-	addressesArg, err := AbiAddressArray(addresses)
-	if err != nil {
-		return nil, err
-	}
-	amountsArg, err := AbiUint256Array(amounts)
+	data, err := EncodeMultiPaymentData(addresses, amounts)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +162,7 @@ func BuildMultiPayment(addresses []string, amounts []*big.Int) (*Transaction, er
 	transaction := NewTransaction()
 	transaction.To = ContractMultipayment
 	transaction.Value = total
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureMultipayment, addressesArg, amountsArg)
+	transaction.Data = data
 	transaction.PaymentAddresses = addresses
 	transaction.PaymentAmounts = amounts
 
@@ -194,22 +189,14 @@ func BuildBatchTransfer(tokenAddress string, recipients []string, amounts []*big
 		return nil, errors.New("crypto: batch transfer requires at least one recipient")
 	}
 
-	tokenArg, err := AbiAddress(tokenAddress)
-	if err != nil {
-		return nil, err
-	}
-	recipientsArg, err := AbiAddressArray(recipients)
-	if err != nil {
-		return nil, err
-	}
-	amountsArg, err := AbiUint256Array(amounts)
+	data, err := EncodeBatchTransferData(tokenAddress, recipients, amounts)
 	if err != nil {
 		return nil, err
 	}
 
 	transaction := NewTransaction()
 	transaction.To = ContractBatchTransfer
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20BatchTransferFrom, tokenArg, recipientsArg, amountsArg)
+	transaction.Data = data
 
 	return transaction, nil
 }
@@ -240,18 +227,14 @@ func BuildTokenTransfer(tokenAddress string, recipient string, amount *big.Int) 
 		return nil, err
 	}
 
-	recipientArg, err := AbiAddress(recipient)
-	if err != nil {
-		return nil, err
-	}
-	amountArg, err := AbiUint256(amount)
+	data, err := EncodeTokenTransferData(recipient, amount)
 	if err != nil {
 		return nil, err
 	}
 
 	transaction := NewTransaction()
 	transaction.To = tokenAddress
-	transaction.Data = AbiEncodeFunctionCall(AbiSignatureERC20Transfer, recipientArg, amountArg)
+	transaction.Data = data
 
 	return transaction, nil
 }
