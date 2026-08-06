@@ -1,9 +1,12 @@
 {
     "data": {
-        "privateKey": "d8839c2432bfd0a67ef10a804ba991eabba19f154a3d707917681d45822a5712",
-        "publicKey": "034151a3ec46b5670a682b0a63394f863587d1bc97483b1b6c70eb58e7f0aed192",
-        "address": "0xb0FF9213f7226bBB72b84dE16af86e56f1f38B01",
-        "wif": "Ue7A6vSx7ewATPp2dA6UbJ8F39DbZwaHTqhD1MrhzmJqRJmvfZ6C"
+        "publicKey": "0243333347c8cbf4e3cbc7a96964181d02a2b0c854faa2fef86b4b8d92afcf473d",
+        "privateKey": "50829dd3b7ffbe2df401d730b5e60cea7520ba3f3a18e5b1490707667fb43fae",
+        "address": "0x1E6747BEAa5B4076a6A98D735DF8c35a70D18Bdd",
+        "wif": "UZYnRZ8qpeQWTLeCNzw93guWSdKLmr2vHEWGG4sNv7TJofL7TZvy",
+        "validatorPublicKey": "b209f4a7454ae17c5808991dffbf204c747b851f351d2ce72a6e18903d0e2f609e0328ebbc3fb97cd4d3660b4bc156f1",
+        "validatorPrivateKey": "6ec4993df152b10e672567c1fdf854a4cee50708fa30986a7d9b259673099175"
     },
-    "passphrase": "this is a top secret passphrase"
+    "passphrase": "found lobster oblige describe ready addict body brave live vacuum display salute lizard combine gift resemble race senior quality reunion proud tell adjust angle",
+    "secondPassphrase": "gold favorite math anchor detect march purpose such sausage crucial reform novel connect misery update episode invite salute barely garbage exclude winner visa cruise"
 }

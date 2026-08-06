@@ -18,6 +18,22 @@ func AddressFromPassphrase(passphrase string) (string, error) {
 	return privateKey.ToAddress(), nil
 }
 
+func AddressFromPublicKey(publicKeyHex string) (string, error) {
+	publicKey, err := PublicKeyFromHex(publicKeyHex)
+	if err != nil {
+		return "", err
+	}
+	return publicKey.ToAddress(), nil
+}
+
+func AddressFromPrivateKey(privateKeyHex string) (string, error) {
+	privateKey, err := PrivateKeyFromHex(privateKeyHex)
+	if err != nil {
+		return "", err
+	}
+	return privateKey.ToAddress(), nil
+}
+
 func AddressToBytes(address string) ([]byte, error) {
 	if !strings.HasPrefix(address, "0x") || len(address) != 2+AddressByteLength*2 {
 		return nil, ErrInvalidAddress
