@@ -14,16 +14,16 @@ func EncodeUnvoteData() []byte {
 	return AbiEncodeFunctionCall(AbiSignatureUnvote)
 }
 
-func EncodeValidatorRegistrationData(validatorPassphrase string) ([]byte, error) {
-	pop, err := FromMnemonic(validatorPassphrase)
+func EncodeValidatorRegistrationData(validatorPassphrase string, registrantAddress string) ([]byte, error) {
+	pop, err := FromMnemonic(validatorPassphrase, registrantAddress)
 	if err != nil {
 		return nil, err
 	}
 	return AbiEncodeFunctionCall(AbiSignatureRegisterValidator, AbiBytes(pop.PK), AbiBytes(pop.POP)), nil
 }
 
-func EncodeValidatorUpdateData(validatorPassphrase string) ([]byte, error) {
-	pop, err := FromMnemonic(validatorPassphrase)
+func EncodeValidatorUpdateData(validatorPassphrase string, registrantAddress string) ([]byte, error) {
+	pop, err := FromMnemonic(validatorPassphrase, registrantAddress)
 	if err != nil {
 		return nil, err
 	}

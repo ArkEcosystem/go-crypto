@@ -56,8 +56,8 @@ func BuildUnvote() *Transaction {
 	return transaction
 }
 
-func BuildValidatorRegistration(validatorPassphrase string, stake *big.Int) (*Transaction, error) {
-	pop, err := FromMnemonic(validatorPassphrase)
+func BuildValidatorRegistration(validatorPassphrase string, registrantAddress string, stake *big.Int) (*Transaction, error) {
+	pop, err := FromMnemonic(validatorPassphrase, registrantAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,8 @@ func BuildValidatorRegistration(validatorPassphrase string, stake *big.Int) (*Tr
 	return transaction, nil
 }
 
-func BuildValidatorUpdate(validatorPassphrase string) (*Transaction, error) {
-	pop, err := FromMnemonic(validatorPassphrase)
+func BuildValidatorUpdate(validatorPassphrase string, registrantAddress string) (*Transaction, error) {
+	pop, err := FromMnemonic(validatorPassphrase, registrantAddress)
 	if err != nil {
 		return nil, err
 	}

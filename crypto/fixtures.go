@@ -130,6 +130,8 @@ type TestingTransactionFixture struct {
 
 type BLSMultiLangKeyFixture struct {
 	Mnemonic            string `json:"mnemonic"`
+	Address             string `json:"address"`
+	ChainId             int    `json:"chainId"`
 	ValidatorPrivateKey string `json:"validatorPrivateKey"`
 	ValidatorPublicKey  string `json:"validatorPublicKey"`
 	ValidatorPop        string `json:"validatorPop"`
