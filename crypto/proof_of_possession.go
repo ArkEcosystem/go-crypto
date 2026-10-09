@@ -3,13 +3,17 @@ package crypto
 import (
 	"encoding/hex"
 	"errors"
+	"fmt"
+	"math/big"
 	"strings"
 
 	blst "github.com/supranational/blst/bindings/go"
 	"github.com/tyler-smith/go-bip39"
 )
 
-const popDST = "BLS_POP_BLS12381G2_XMD:SHA-256_SSWU_RO_POP_"
+const popDST = "MAINSAIL_BLS_POP_BLS12381G2_XMD:SHA-256_SSWU_RO_POP_"
+
+var ErrInvalidProofOfPossession = errors.New("crypto: invalid proof of possession")
 
 type ProofOfPossessionResult struct {
 	PK  []byte
@@ -26,19 +30,28 @@ func DeriveBlsPublicKey(passphrase string) string {
 	return hex.EncodeToString(pk.Compress())
 }
 
-func BuildProofOfPossession(secretKeyBytes []byte) (*ProofOfPossessionResult, error) {
+func BuildProofOfPossession(secretKeyBytes []byte, registrantAddress string) (*ProofOfPossessionResult, error) {
+	if !isChecksumValidAddress(registrantAddress) {
+		return nil, fmt.Errorf("%w: invalid registrant address %q", ErrInvalidProofOfPossession, registrantAddress)
+	}
+	registrantBytes, _ := AddressToBytes(registrantAddress)
+
 	sk := new(blst.SecretKey)
 	if sk.Deserialize(secretKeyBytes) == nil {
 		return nil, errors.New("invalid secret key bytes")
 	}
 	pk := new(blst.P1Affine).From(sk)
 	pkBytes := pk.Compress()
-	sig := new(blst.P2Affine).Sign(sk, pkBytes, []byte(popDST))
+
+	chainId := abiPadWordLeft(big.NewInt(int64(GetNetwork().ChainId)).Bytes())
+	message := append(append(chainId, registrantBytes...), pkBytes...)
+
+	sig := new(blst.P2Affine).Sign(sk, message, []byte(popDST))
 	return &ProofOfPossessionResult{PK: pkBytes, POP: sig.Compress()}, nil
 }
 
-func FromMnemonic(passphrase string) (*ProofOfPossessionResult, error) {
-	return BuildProofOfPossession(DeriveBlsPrivateKey(passphrase))
+func FromMnemonic(passphrase string, registrantAddress string) (*ProofOfPossessionResult, error) {
+	return BuildProofOfPossession(DeriveBlsPrivateKey(passphrase), registrantAddress)
 }
 
 // Ideographic spaces (U+3000, used to separate words in the Japanese BIP-39

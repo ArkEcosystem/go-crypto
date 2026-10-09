@@ -32,7 +32,7 @@ func TestEncodeDataMatchesFixtures(t *testing.T) {
 		require := require.New(t)
 
 		fixture := GetTransactionFixture("validator_registration")
-		data, err := EncodeValidatorRegistrationData(validatorPassphraseFixture)
+		data, err := EncodeValidatorRegistrationData(validatorPassphraseFixture, validatorRegistrantFixture)
 		require.NoError(err)
 		assert.Equal(HexDecode(fixture.Data.Data), data)
 	})
@@ -42,7 +42,7 @@ func TestEncodeDataMatchesFixtures(t *testing.T) {
 		require := require.New(t)
 
 		fixture := GetTransactionFixture("validator_update")
-		data, err := EncodeValidatorUpdateData(validatorPassphraseFixture)
+		data, err := EncodeValidatorUpdateData(validatorPassphraseFixture, validatorRegistrantFixture)
 		require.NoError(err)
 		assert.Equal(HexDecode(fixture.Data.Data), data)
 	})

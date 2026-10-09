@@ -79,15 +79,16 @@ func TestBuildUnvoteRoundTrip(t *testing.T) {
 
 const (
 	validatorPassphraseFixture                  = "gold favorite math anchor detect march purpose such sausage crucial reform novel connect misery update episode invite salute barely garbage exclude winner visa cruise"
+	validatorRegistrantFixture                  = "0x1E6747BEAa5B4076a6A98D735DF8c35a70D18Bdd"
 	validatorPassphraseFixturePublicKey         = "a18dba7811b212bbb2f080d7c69935998ffbe7b38586e2d3e9e12079ea789996d1c69feb158c002aed327f69865be496"
-	validatorPassphraseFixtureProofOfPossession = "a124539f9d469919eb57224cc003d9d5b086a27c6de244abf60b74b35fb749fceab7f4c24b983475cddab7d0876de49c000b5c362f5e3ce18d964f5c2d20d4eadcf7cb77a73d8ee4cd87bad10f7ba0824cea6715d1c045b4f93865a2758b7bfe"
+	validatorPassphraseFixtureProofOfPossession = "8dff1b303bfacacb2eb716892b79123b256314d8fc91635aae307f0fd7faf58019bba25c494b38eb1adccd91f49923ef00e39947932d7edffe710c48b9ab61ad4a9bd48f41f9babcfdd5c88bf3ad74c4d70d091a407310297b1dc4bc84ec6d5f"
 )
 
 func TestBuildValidatorRegistrationRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	transaction, err := BuildValidatorRegistration(validatorPassphraseFixture, big.NewInt(2_500_000_000))
+	transaction, err := BuildValidatorRegistration(validatorPassphraseFixture, validatorRegistrantFixture, big.NewInt(2_500_000_000))
 	require.NoError(err)
 
 	assert.Equal(validatorPassphraseFixturePublicKey, transaction.ValidatorPublicKey)
@@ -106,7 +107,7 @@ func TestBuildValidatorUpdateRoundTrip(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	transaction, err := BuildValidatorUpdate(validatorPassphraseFixture)
+	transaction, err := BuildValidatorUpdate(validatorPassphraseFixture, validatorRegistrantFixture)
 	require.NoError(err)
 
 	assert.Equal(validatorPassphraseFixturePublicKey, transaction.ValidatorPublicKey)

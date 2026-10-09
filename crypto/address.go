@@ -55,3 +55,14 @@ func ValidateAddress(address string) (bool, error) {
 	_, err := AddressToBytes(address)
 	return err == nil, err
 }
+
+func isChecksumValidAddress(address string) bool {
+	if _, err := AddressToBytes(address); err != nil {
+		return false
+	}
+	body := address[2:]
+	if body == strings.ToLower(body) || body == strings.ToUpper(body) {
+		return true
+	}
+	return body == EIP55Checksum(body)
+}
