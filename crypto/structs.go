@@ -30,21 +30,24 @@ type PublicKey struct {
 // Nonce/GasPrice/GasLimit/Value are arbitrary-precision to accommodate
 // wei-scale amounts. R and S are each 32 bytes; V is the raw recovery id
 // (0-3), not yet EIP-155 encoded — that encoding is applied at serialize
-// time using the configured network's chain id.
+// time using the configured network's chain id. LegacySecondSignature is the
+// optional 65-byte r‖s‖recoveryId signature from a wallet's legacy second
+// key, appended as a 10th RLP field.
 type Transaction struct {
-	Nonce           *big.Int `json:"nonce,omitempty"`
-	GasPrice        *big.Int `json:"gasPrice,omitempty"`
-	GasLimit        *big.Int `json:"gasLimit,omitempty"`
-	To              string   `json:"to,omitempty"`
-	Value           *big.Int `json:"value,omitempty"`
-	Data            []byte   `json:"data,omitempty"`
-	V               int      `json:"v"`
-	R               []byte   `json:"r,omitempty"`
-	S               []byte   `json:"s,omitempty"`
-	SenderPublicKey string   `json:"senderPublicKey,omitempty"`
-	From            string   `json:"from,omitempty"`
-	Hash            string   `json:"hash,omitempty"`
-	Serialized      []byte   `json:"serialized,omitempty"`
+	Nonce                 *big.Int `json:"nonce,omitempty"`
+	GasPrice              *big.Int `json:"gasPrice,omitempty"`
+	GasLimit              *big.Int `json:"gasLimit,omitempty"`
+	To                    string   `json:"to,omitempty"`
+	Value                 *big.Int `json:"value,omitempty"`
+	Data                  []byte   `json:"data,omitempty"`
+	V                     int      `json:"v"`
+	R                     []byte   `json:"r,omitempty"`
+	S                     []byte   `json:"s,omitempty"`
+	LegacySecondSignature []byte   `json:"legacySecondSignature,omitempty"`
+	SenderPublicKey       string   `json:"senderPublicKey,omitempty"`
+	From                  string   `json:"from,omitempty"`
+	Hash                  string   `json:"hash,omitempty"`
+	Serialized            []byte   `json:"serialized,omitempty"`
 
 	// The fields below are populated only for the transaction kind they
 	// apply to, by DecodeTransactionArgs during deserialization; all others

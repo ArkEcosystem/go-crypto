@@ -5,7 +5,8 @@ import (
 )
 
 // Serialize encodes the transaction as an RLP list:
-// [nonce, gasPrice, gasLimit, to, value, data, v, r, s].
+// [nonce, gasPrice, gasLimit, to, value, data, v, r, s], followed by the
+// legacy second signature when the transaction is signed and carries one.
 //
 // If skipSignature is true, or no signature has been set on the transaction
 // yet, the v/r/s slots are replaced with the EIP-155 placeholder
@@ -15,6 +16,10 @@ import (
 // (v = recoveryId + chainId*2 + 35) alongside r and s — this is the final
 // wire encoding of a signed transaction.
 func (transaction *Transaction) Serialize(skipSignature bool) ([]byte, error) {
+	return transaction.serialize(skipSignature, false)
+}
+
+func (transaction *Transaction) serialize(skipSignature bool, skipLegacySecondSignature bool) ([]byte, error) {
 	var toBytes []byte
 	if transaction.To != "" {
 		var err error
@@ -46,6 +51,11 @@ func (transaction *Transaction) Serialize(skipSignature bool) ([]byte, error) {
 			NewRlpBigInt(new(big.Int).SetBytes(transaction.R)),
 			NewRlpBigInt(new(big.Int).SetBytes(transaction.S)),
 		)
+
+		if len(transaction.LegacySecondSignature) > 0 && !skipLegacySecondSignature {
+			legacySecondSignature := RlpBytes(transaction.LegacySecondSignature)
+			items = append(items, &legacySecondSignature)
+		}
 	} else {
 		items = append(items,
 			NewRlpBigInt(chainId),
