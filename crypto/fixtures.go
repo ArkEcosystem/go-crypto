@@ -75,6 +75,15 @@ func GetTransactionFixture(name string) TestingTransactionFixture {
 	return fixture
 }
 
+func GetLegacySecondSignatureVectorFixture() TestingLegacySecondSignatureVectorFixture {
+	data := GetFile("./fixtures/transactions/transfer_legacy_second_signature_vector.json")
+
+	var fixture TestingLegacySecondSignatureVectorFixture
+	_ = json.Unmarshal([]byte(data), &fixture)
+
+	return fixture
+}
+
 type TestingIdentityFixture struct {
 	Data struct {
 		PrivateKey          string `json:"privateKey,omitempty"`
@@ -111,20 +120,38 @@ type BLSKeyFixture struct {
 
 type TestingTransactionFixture struct {
 	Data struct {
-		Nonce           string `json:"nonce"`
-		GasPrice        string `json:"gasPrice"`
-		GasLimit        string `json:"gasLimit"`
-		To              string `json:"to"`
-		Value           string `json:"value"`
-		Data            string `json:"data"`
-		Network         int    `json:"network"`
-		V               int    `json:"v"`
-		R               string `json:"r"`
-		S               string `json:"s"`
-		SenderPublicKey string `json:"senderPublicKey"`
-		From            string `json:"from"`
-		Hash            string `json:"hash"`
+		Nonce                 string `json:"nonce"`
+		GasPrice              string `json:"gasPrice"`
+		GasLimit              string `json:"gasLimit"`
+		To                    string `json:"to"`
+		Value                 string `json:"value"`
+		Data                  string `json:"data"`
+		Network               int    `json:"network"`
+		V                     int    `json:"v"`
+		R                     string `json:"r"`
+		S                     string `json:"s"`
+		LegacySecondSignature string `json:"legacySecondSignature"`
+		SenderPublicKey       string `json:"senderPublicKey"`
+		From                  string `json:"from"`
+		Hash                  string `json:"hash"`
 	} `json:"data"`
+	Serialized string `json:"serialized"`
+}
+
+type TestingLegacySecondSignatureVectorFixture struct {
+	ChainId          int    `json:"chainId"`
+	PrivateKey       string `json:"privateKey"`
+	SecondPrivateKey string `json:"secondPrivateKey"`
+	Data             struct {
+		Nonce                 string `json:"nonce"`
+		GasPrice              string `json:"gasPrice"`
+		GasLimit              string `json:"gasLimit"`
+		To                    string `json:"to"`
+		Value                 string `json:"value"`
+		LegacySecondSignature string `json:"legacySecondSignature"`
+		Hash                  string `json:"hash"`
+	} `json:"data"`
+	Signed     string `json:"signed"`
 	Serialized string `json:"serialized"`
 }
 

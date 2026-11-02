@@ -12,7 +12,8 @@ var (
 )
 
 // DeserializeTransaction decodes a hex-encoded RLP transaction envelope:
-// [nonce, gasPrice, gasLimit, to, value, data, v, r, s].
+// [nonce, gasPrice, gasLimit, to, value, data, v, r, s], with an optional
+// 10th field holding the legacy second signature.
 func DeserializeTransaction(serializedHex string) (*Transaction, error) {
 	serialized := HexDecode(serializedHex)
 
@@ -57,6 +58,10 @@ func DeserializeTransaction(serializedHex string) (*Transaction, error) {
 	transaction.V = recoveryId
 	transaction.R = padCurveBytes([]byte(*items[7].(*RlpBytes)))
 	transaction.S = padCurveBytes([]byte(*items[8].(*RlpBytes)))
+
+	if len(items) > 9 {
+		transaction.LegacySecondSignature = []byte(*items[9].(*RlpBytes))
+	}
 
 	hash, err := transaction.GetHash()
 	if err != nil {

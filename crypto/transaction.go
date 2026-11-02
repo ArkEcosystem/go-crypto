@@ -8,7 +8,14 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-var ErrTransactionNotSigned = errors.New("crypto: transaction has no senderPublicKey to verify against")
+var (
+	ErrTransactionNotSigned               = errors.New("crypto: transaction has no senderPublicKey to verify against")
+	ErrLegacySecondSignatureBeforeSigning = errors.New("crypto: transaction must be signed before adding a legacy second signature")
+)
+
+// legacySecondSignatureDomain is 0x8f ‖ "MAINSAIL_LSS_V1", prefixed to the
+// transaction hash before the second key signs it.
+var legacySecondSignatureDomain = append([]byte{0x8f}, []byte("MAINSAIL_LSS_V1")...)
 
 func keccak256(data []byte) []byte {
 	hash := sha3.NewLegacyKeccak256()
@@ -27,9 +34,10 @@ func (transaction *Transaction) SigningHash() ([]byte, error) {
 }
 
 // Before signing, GetHash is identical to SigningHash (no v/r/s to embed
-// yet); once signed, it becomes the transaction's final hash/ID.
+// yet); once signed, it becomes the transaction's final hash/ID. The hash
+// never covers the legacy second signature.
 func (transaction *Transaction) GetHash() (string, error) {
-	serialized, err := transaction.Serialize(false)
+	serialized, err := transaction.serialize(false, true)
 	if err != nil {
 		return "", err
 	}
@@ -44,6 +52,10 @@ func (transaction *Transaction) Sign(passphrase string) error {
 		return err
 	}
 
+	return transaction.signWithPrivateKey(privateKey)
+}
+
+func (transaction *Transaction) signWithPrivateKey(privateKey *PrivateKey) error {
 	transaction.SenderPublicKey = privateKey.PublicKey.ToHex()
 	transaction.From = privateKey.PublicKey.ToAddress()
 
@@ -62,6 +74,44 @@ func (transaction *Transaction) Sign(passphrase string) error {
 		return err
 	}
 	transaction.Hash = hash
+
+	serialized, err := transaction.Serialize(false)
+	if err != nil {
+		return err
+	}
+	transaction.Serialized = serialized
+
+	return nil
+}
+
+// LegacySecondSign signs the transaction with the wallet's legacy second
+// passphrase. The second key signs keccak256(0x8f ‖ "MAINSAIL_LSS_V1" ‖ hash),
+// where hash is the hash of the already signed transaction, so Sign must be
+// called first.
+func (transaction *Transaction) LegacySecondSign(secondPassphrase string) error {
+	privateKey, err := PrivateKeyFromPassphrase(secondPassphrase)
+	if err != nil {
+		return err
+	}
+
+	return transaction.legacySecondSignWithPrivateKey(privateKey)
+}
+
+func (transaction *Transaction) legacySecondSignWithPrivateKey(privateKey *PrivateKey) error {
+	if len(transaction.R) == 0 || len(transaction.S) == 0 {
+		return ErrLegacySecondSignatureBeforeSigning
+	}
+
+	signed, err := transaction.serialize(false, true)
+	if err != nil {
+		return err
+	}
+
+	message := append(append([]byte{}, legacySecondSignatureDomain...), keccak256(signed)...)
+	sig := privateKey.Sign(keccak256(message))
+
+	legacySecondSignature := append(append([]byte{}, sig.R...), sig.S...)
+	transaction.LegacySecondSignature = append(legacySecondSignature, byte(sig.RecoveryId))
 
 	serialized, err := transaction.Serialize(false)
 	if err != nil {
